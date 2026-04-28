@@ -58,13 +58,13 @@
     </model>
     <model name="water_plane">
       <static>true</static>
-      <pose>-25 0 -3.5 0 0 0</pose>
+      <pose>0 0 -3.5 0 0 0</pose>
       <link name="water_link">
         <visual name="water_visual">
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>50 100</size>
+              <size>200 200</size>
             </plane>
           </geometry>
           <material>
@@ -75,6 +75,313 @@
         </visual>
       </link>
     </model>
-    
+    <model name="tree_0">
+      <static>true</static>
+      <pose>-5.00 -10.00 0.24 0 0 0</pose>
+      <link name="tree">
+        <collision name="trunk_col">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><cylinder><radius>0.4</radius><length>5.0</length></cylinder></geometry>
+        </collision>
+        <visual name="trunk_vis">
+          <pose>0 0 2.50 0 0 0</pose>
+          <geometry><cylinder><radius>0.4</radius><length>5.0</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="crown_vis">
+          <pose>0 0 6.05 0 0 0</pose>
+          <geometry><sphere><radius>1.75</radius></sphere></geometry>
+          <material><ambient>0.15 0.4 0.12 1</ambient><diffuse>0.2 0.5 0.15 1</diffuse></material>
+        </visual>
+        <collision name="crown_col">
+          <pose>0 0 6.05 0 0 0</pose>
+          <geometry><sphere><radius>1.75</radius></sphere></geometry>
+        </collision>
+        <visual name="branch1_vis">
+          <pose>0.88 0 3.50 0 0.40 0</pose>
+          <geometry><cylinder><radius>0.140</radius><length>2.10</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves1_vis">
+          <pose>1.57 0 4.20 0 0 0</pose>
+          <geometry><sphere><radius>0.88</radius></sphere></geometry>
+          <material><ambient>0.12 0.35 0.1 1</ambient><diffuse>0.18 0.45 0.12 1</diffuse></material>
+        </visual>
+        <visual name="branch2_vis">
+          <pose>-0.70 0.53 2.75 0.30 0 0</pose>
+          <geometry><cylinder><radius>0.120</radius><length>1.75</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves2_vis">
+          <pose>-1.22 0.88 3.27 0 0 0</pose>
+          <geometry><sphere><radius>0.79</radius></sphere></geometry>
+          <material><ambient>0.18 0.42 0.14 1</ambient><diffuse>0.22 0.52 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="tree_1">
+      <static>true</static>
+      <pose>5.00 0.00 0.00 0 0 0</pose>
+      <link name="tree">
+        <collision name="trunk_col">
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry><cylinder><radius>0.3</radius><length>4.0</length></cylinder></geometry>
+        </collision>
+        <visual name="trunk_vis">
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry><cylinder><radius>0.3</radius><length>4.0</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="crown_vis">
+          <pose>0 0 4.84 0 0 0</pose>
+          <geometry><sphere><radius>1.40</radius></sphere></geometry>
+          <material><ambient>0.15 0.4 0.12 1</ambient><diffuse>0.2 0.5 0.15 1</diffuse></material>
+        </visual>
+        <collision name="crown_col">
+          <pose>0 0 4.84 0 0 0</pose>
+          <geometry><sphere><radius>1.40</radius></sphere></geometry>
+        </collision>
+        <visual name="branch1_vis">
+          <pose>0.70 0 2.80 0 0.50 0</pose>
+          <geometry><cylinder><radius>0.105</radius><length>1.68</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves1_vis">
+          <pose>1.26 0 3.36 0 0 0</pose>
+          <geometry><sphere><radius>0.70</radius></sphere></geometry>
+          <material><ambient>0.12 0.35 0.1 1</ambient><diffuse>0.18 0.45 0.12 1</diffuse></material>
+        </visual>
+        <visual name="branch2_vis">
+          <pose>-0.56 0.42 2.20 0.45 0 0</pose>
+          <geometry><cylinder><radius>0.090</radius><length>1.40</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves2_vis">
+          <pose>-0.98 0.70 2.62 0 0 0</pose>
+          <geometry><sphere><radius>0.63</radius></sphere></geometry>
+          <material><ambient>0.18 0.42 0.14 1</ambient><diffuse>0.22 0.52 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="tree_2">
+      <static>true</static>
+      <pose>-2.00 8.00 -0.03 0 0 0</pose>
+      <link name="tree">
+        <collision name="trunk_col">
+          <pose>0 0 3.00 0 0 0</pose>
+          <geometry><cylinder><radius>0.35</radius><length>6.0</length></cylinder></geometry>
+        </collision>
+        <visual name="trunk_vis">
+          <pose>0 0 3.00 0 0 0</pose>
+          <geometry><cylinder><radius>0.35</radius><length>6.0</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="crown_vis">
+          <pose>0 0 7.26 0 0 0</pose>
+          <geometry><sphere><radius>2.10</radius></sphere></geometry>
+          <material><ambient>0.15 0.4 0.12 1</ambient><diffuse>0.2 0.5 0.15 1</diffuse></material>
+        </visual>
+        <collision name="crown_col">
+          <pose>0 0 7.26 0 0 0</pose>
+          <geometry><sphere><radius>2.10</radius></sphere></geometry>
+        </collision>
+        <visual name="branch1_vis">
+          <pose>1.05 0 4.20 0 0.60 0</pose>
+          <geometry><cylinder><radius>0.122</radius><length>2.52</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves1_vis">
+          <pose>1.89 0 5.04 0 0 0</pose>
+          <geometry><sphere><radius>1.05</radius></sphere></geometry>
+          <material><ambient>0.12 0.35 0.1 1</ambient><diffuse>0.18 0.45 0.12 1</diffuse></material>
+        </visual>
+        <visual name="branch2_vis">
+          <pose>-0.84 0.63 3.30 0.60 0 0</pose>
+          <geometry><cylinder><radius>0.105</radius><length>2.10</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves2_vis">
+          <pose>-1.47 1.05 3.93 0 0 0</pose>
+          <geometry><sphere><radius>0.94</radius></sphere></geometry>
+          <material><ambient>0.18 0.42 0.14 1</ambient><diffuse>0.22 0.52 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="tree_3">
+      <static>true</static>
+      <pose>10.00 -5.00 -0.46 0 0 0</pose>
+      <link name="tree">
+        <collision name="trunk_col">
+          <pose>0 0 1.75 0 0 0</pose>
+          <geometry><cylinder><radius>0.25</radius><length>3.5</length></cylinder></geometry>
+        </collision>
+        <visual name="trunk_vis">
+          <pose>0 0 1.75 0 0 0</pose>
+          <geometry><cylinder><radius>0.25</radius><length>3.5</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="crown_vis">
+          <pose>0 0 4.23 0 0 0</pose>
+          <geometry><sphere><radius>1.22</radius></sphere></geometry>
+          <material><ambient>0.15 0.4 0.12 1</ambient><diffuse>0.2 0.5 0.15 1</diffuse></material>
+        </visual>
+        <collision name="crown_col">
+          <pose>0 0 4.23 0 0 0</pose>
+          <geometry><sphere><radius>1.22</radius></sphere></geometry>
+        </collision>
+        <visual name="branch1_vis">
+          <pose>0.61 0 2.45 0 0.70 0</pose>
+          <geometry><cylinder><radius>0.087</radius><length>1.47</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves1_vis">
+          <pose>1.10 0 2.94 0 0 0</pose>
+          <geometry><sphere><radius>0.61</radius></sphere></geometry>
+          <material><ambient>0.12 0.35 0.1 1</ambient><diffuse>0.18 0.45 0.12 1</diffuse></material>
+        </visual>
+        <visual name="branch2_vis">
+          <pose>-0.49 0.37 1.93 0.75 0 0</pose>
+          <geometry><cylinder><radius>0.075</radius><length>1.22</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves2_vis">
+          <pose>-0.86 0.61 2.29 0 0 0</pose>
+          <geometry><sphere><radius>0.55</radius></sphere></geometry>
+          <material><ambient>0.18 0.42 0.14 1</ambient><diffuse>0.22 0.52 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="tree_4">
+      <static>true</static>
+      <pose>-12.00 -2.00 0.11 0 0 0</pose>
+      <link name="tree">
+        <collision name="trunk_col">
+          <pose>0 0 2.25 0 0 0</pose>
+          <geometry><cylinder><radius>0.3</radius><length>4.5</length></cylinder></geometry>
+        </collision>
+        <visual name="trunk_vis">
+          <pose>0 0 2.25 0 0 0</pose>
+          <geometry><cylinder><radius>0.3</radius><length>4.5</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="crown_vis">
+          <pose>0 0 5.45 0 0 0</pose>
+          <geometry><sphere><radius>1.57</radius></sphere></geometry>
+          <material><ambient>0.15 0.4 0.12 1</ambient><diffuse>0.2 0.5 0.15 1</diffuse></material>
+        </visual>
+        <collision name="crown_col">
+          <pose>0 0 5.45 0 0 0</pose>
+          <geometry><sphere><radius>1.57</radius></sphere></geometry>
+        </collision>
+        <visual name="branch1_vis">
+          <pose>0.79 0 3.15 0 0.80 0</pose>
+          <geometry><cylinder><radius>0.105</radius><length>1.89</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves1_vis">
+          <pose>1.42 0 3.78 0 0 0</pose>
+          <geometry><sphere><radius>0.79</radius></sphere></geometry>
+          <material><ambient>0.12 0.35 0.1 1</ambient><diffuse>0.18 0.45 0.12 1</diffuse></material>
+        </visual>
+        <visual name="branch2_vis">
+          <pose>-0.63 0.47 2.48 0.90 0 0</pose>
+          <geometry><cylinder><radius>0.090</radius><length>1.57</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves2_vis">
+          <pose>-1.10 0.79 2.95 0 0 0</pose>
+          <geometry><sphere><radius>0.71</radius></sphere></geometry>
+          <material><ambient>0.18 0.42 0.14 1</ambient><diffuse>0.22 0.52 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="tree_5">
+      <static>true</static>
+      <pose>3.00 -12.00 0.09 0 0 0</pose>
+      <link name="tree">
+        <collision name="trunk_col">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><cylinder><radius>0.2</radius><length>3.0</length></cylinder></geometry>
+        </collision>
+        <visual name="trunk_vis">
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry><cylinder><radius>0.2</radius><length>3.0</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="crown_vis">
+          <pose>0 0 3.63 0 0 0</pose>
+          <geometry><sphere><radius>1.05</radius></sphere></geometry>
+          <material><ambient>0.15 0.4 0.12 1</ambient><diffuse>0.2 0.5 0.15 1</diffuse></material>
+        </visual>
+        <collision name="crown_col">
+          <pose>0 0 3.63 0 0 0</pose>
+          <geometry><sphere><radius>1.05</radius></sphere></geometry>
+        </collision>
+        <visual name="branch1_vis">
+          <pose>0.52 0 2.10 0 0.90 0</pose>
+          <geometry><cylinder><radius>0.070</radius><length>1.26</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves1_vis">
+          <pose>0.94 0 2.52 0 0 0</pose>
+          <geometry><sphere><radius>0.52</radius></sphere></geometry>
+          <material><ambient>0.12 0.35 0.1 1</ambient><diffuse>0.18 0.45 0.12 1</diffuse></material>
+        </visual>
+        <visual name="branch2_vis">
+          <pose>-0.42 0.31 1.65 1.05 0 0</pose>
+          <geometry><cylinder><radius>0.060</radius><length>1.05</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves2_vis">
+          <pose>-0.73 0.52 1.97 0 0 0</pose>
+          <geometry><sphere><radius>0.47</radius></sphere></geometry>
+          <material><ambient>0.18 0.42 0.14 1</ambient><diffuse>0.22 0.52 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="tree_6">
+      <static>true</static>
+      <pose>-4.00 2.00 0.23 0 0 0</pose>
+      <link name="tree">
+        <collision name="trunk_col">
+          <pose>0 0 1.25 0 0 0</pose>
+          <geometry><cylinder><radius>0.5</radius><length>2.5</length></cylinder></geometry>
+        </collision>
+        <visual name="trunk_vis">
+          <pose>0 0 1.25 0 0 0</pose>
+          <geometry><cylinder><radius>0.5</radius><length>2.5</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="crown_vis">
+          <pose>0 0 3.10 0 0 0</pose>
+          <geometry><sphere><radius>1.00</radius></sphere></geometry>
+          <material><ambient>0.15 0.4 0.12 1</ambient><diffuse>0.2 0.5 0.15 1</diffuse></material>
+        </visual>
+        <collision name="crown_col">
+          <pose>0 0 3.10 0 0 0</pose>
+          <geometry><sphere><radius>1.00</radius></sphere></geometry>
+        </collision>
+        <visual name="branch1_vis">
+          <pose>0.50 0 1.75 0 1.00 0</pose>
+          <geometry><cylinder><radius>0.175</radius><length>1.20</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves1_vis">
+          <pose>0.90 0 2.15 0 0 0</pose>
+          <geometry><sphere><radius>0.50</radius></sphere></geometry>
+          <material><ambient>0.12 0.35 0.1 1</ambient><diffuse>0.18 0.45 0.12 1</diffuse></material>
+        </visual>
+        <visual name="branch2_vis">
+          <pose>-0.40 0.30 1.38 1.20 0 0</pose>
+          <geometry><cylinder><radius>0.150</radius><length>1.00</length></cylinder></geometry>
+          <material><ambient>0.35 0.25 0.15 1</ambient><diffuse>0.4 0.3 0.18 1</diffuse></material>
+        </visual>
+        <visual name="leaves2_vis">
+          <pose>-0.70 0.50 1.68 0 0 0</pose>
+          <geometry><sphere><radius>0.45</radius></sphere></geometry>
+          <material><ambient>0.18 0.42 0.14 1</ambient><diffuse>0.22 0.52 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
   </world>
 </sdf>
