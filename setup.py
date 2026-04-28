@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'waypoint_node = uav_navigation.waypoint_node:main',
+	    'terrain_scoring_node = uav_navigation.terrain_scoring_node:main',
         ],
     },
 )
