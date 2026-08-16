@@ -1,7 +1,5 @@
 from setuptools import find_packages, setup
-
 package_name = 'uav_navigation'
-
 setup(
     name=package_name,
     version='0.0.0',
@@ -15,13 +13,14 @@ setup(
     zip_safe=True,
     maintainer='dorian',
     maintainer_email='dorian@todo.todo',
-    description='TODO: Package description',
+    description='UAV navigation and terrain scoring for Capstone A',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'waypoint_node = uav_navigation.waypoint_node:main',
-	    'terrain_scoring_node = uav_navigation.terrain_scoring_node:main',
+            'terrain_scoring_node = uav_navigation.terrain_scoring_node:main',
+            'lidar_processor_node = uav_navigation.lidar_processor_node:main',
         ],
     },
 )
