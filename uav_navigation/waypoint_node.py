@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-from px4_msgs.msg import OffboardControlMode, TrajectorySetpoint, VehicleCommand
+from px4_msgs.msg import OffboardControlMode, TrajectorySetpoint, VehicleCommand, VehicleLocalPosition
 
 class WaypointNode(Node):
     def __init__(self):
@@ -18,9 +18,23 @@ class WaypointNode(Node):
         self.trajectory_pub = self.create_publisher(TrajectorySetpoint, '/fmu/in/trajectory_setpoint', qos)
         self.command_pub = self.create_publisher(VehicleCommand, '/fmu/in/vehicle_command', qos)
 
+        self.pos_sub = self.create_subscription(
+            VehicleLocalPosition,
+            '/fmu/out/vehicle_local_position_v1',
+            self.position_callback,
+            qos
+        )
+
+        self.px4_ready = False
         self.count = 0
         self.timer = self.create_timer(0.1, self.timer_callback)
-        self.get_logger().info('Waypoint node started')
+        self.get_logger().info('Waypoint node started - waiting for PX4...')
+
+    def position_callback(self, msg):
+        if not self.px4_ready and msg.xy_valid and msg.z_valid:
+            self.px4_ready = True
+            self.count = 0
+            self.get_logger().info('PX4 ready, starting offboard sequence...')
 
     def send_command(self, command, param1=0.0, param2=0.0):
         msg = VehicleCommand()
@@ -36,13 +50,14 @@ class WaypointNode(Node):
         self.command_pub.publish(msg)
 
     def timer_callback(self):
-        # Publier offboard mode en continu
+        if not self.px4_ready:
+            return
+
         msg = OffboardControlMode()
         msg.position = True
         msg.timestamp = int(self.get_clock().now().nanoseconds / 1000)
         self.offboard_pub.publish(msg)
 
-        # Publier waypoint en continu
         wp = TrajectorySetpoint()
         wp.position = [0.0, 0.0, -5.0]
         wp.yaw = 0.0
@@ -51,12 +66,10 @@ class WaypointNode(Node):
 
         self.count += 1
 
-        # A 2 secondes, passer en offboard
         if self.count == 20:
             self.get_logger().info('Switching to offboard mode...')
             self.send_command(176, 1.0, 6.0)
 
-        # A 3 secondes, armer
         if self.count == 30:
             self.get_logger().info('Arming...')
             self.send_command(400, 1.0, 0.0)
