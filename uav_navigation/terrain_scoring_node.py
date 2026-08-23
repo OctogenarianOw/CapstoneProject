@@ -109,6 +109,7 @@ class TerrainScoringNode(Node):
         self.safety_pub = self.create_publisher(OccupancyGrid, '/terrain/safety_map', 10)
         self.elev_pub = self.create_publisher(OccupancyGrid, '/terrain/elevation_map', 10)
         self.marker_pub = self.create_publisher(MarkerArray, '/terrain/markers', 10)
+        self.zcount_pub = self.create_publisher(OccupancyGrid, '/terrain/z_count', 10)
 
         # --- Timer ---
         self.create_timer(1.0, self.compute_and_publish)
@@ -268,6 +269,7 @@ class TerrainScoringNode(Node):
         self.publish_occupancy_grid(self.safety_pub, self.safety_score, stamp)
         self.publish_elevation_grid(self.elev_pub, self.elevation, observed, stamp)
         self.publish_markers(stamp)
+        self.publish_z_count(stamp)
 
     def publish_occupancy_grid(self, publisher, data, stamp):
         msg = OccupancyGrid()
@@ -280,6 +282,20 @@ class TerrainScoringNode(Node):
         flat = data.flatten()
         msg.data = np.where(flat < 0, -1, np.clip(flat, 0, 100)).astype(np.int8).tolist()
         publisher.publish(msg)
+
+    def publish_z_count(self, stamp):
+        """Publish raw observation count per cell for frontier detection."""
+        msg = OccupancyGrid()
+        msg.header = Header(stamp=stamp, frame_id='lidar_3d_link')
+        msg.info.resolution = self.resolution
+        msg.info.width = self.grid_size
+        msg.info.height = self.grid_size
+        msg.info.origin.position.x = self.grid_origin_x
+        msg.info.origin.position.y = self.grid_origin_y
+        # Clamp to 0-100 for OccupancyGrid (100+ points all map to 100)
+        clamped = np.clip(self.z_count, 0, 100).astype(np.int8)
+        msg.data = clamped.flatten().tolist()
+        self.zcount_pub.publish(msg)
 
     def publish_elevation_grid(self, publisher, elevation, observed, stamp):
         msg = OccupancyGrid()
