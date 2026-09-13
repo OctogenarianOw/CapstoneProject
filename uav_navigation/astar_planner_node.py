@@ -225,7 +225,50 @@ class AStarPlannerNode(Node):
                 return result
             self.get_logger().info(f'Nearest free start: ({start_gi}, {start_gj})')
 
-        if inflated[target_gj, target_gi] == 100:
+        # --- Receding horizon: plan directly toward an explicit waypoint ---
+        # If the true target is further than the horizon, A* used to be
+        # given the full-distance target and pick whichever node it had
+        # explored furthest from the start as a fallback -- that node was
+        # chosen by distance travelled, not by direction, so on repeated
+        # replans it could just as easily drift away from the target as
+        # toward it. Instead, compute the point at horizon distance along
+        # the straight line to the target and plan to that directly, reusing
+        # the same start/target A* logic (no special-cased fallback needed).
+        dist_to_target_cells = math.sqrt(
+            (target_gj - start_gj)**2 + (target_gi - start_gi)**2
+        )
+        if dist_to_target_cells > horizon_cells:
+            scale = horizon_cells / dist_to_target_cells
+            plan_gj = int(round(start_gj + (target_gj - start_gj) * scale))
+            plan_gi = int(round(start_gi + (target_gi - start_gi) * scale))
+            plan_gj = int(np.clip(plan_gj, 0, self.grid_size - 1))
+            plan_gi = int(np.clip(plan_gi, 0, self.grid_size - 1))
+
+            if inflated[plan_gj, plan_gi] == 100:
+                for radius in range(1, 6):
+                    found = False
+                    for dj in range(-radius, radius + 1):
+                        for di in range(-radius, radius + 1):
+                            nj = np.clip(plan_gj + dj, 0, self.grid_size - 1)
+                            ni = np.clip(plan_gi + di, 0, self.grid_size - 1)
+                            if inflated[nj, ni] != 100:
+                                plan_gj, plan_gi = nj, ni
+                                found = True
+                                break
+                        if found:
+                            break
+                    if found:
+                        break
+
+            self.get_logger().info(
+                f'Target {dist_to_target_cells * self.resolution:.1f}m away, '
+                f'beyond {horizon_m:.1f}m horizon | '
+                f'planning toward intermediate point instead'
+            )
+        else:
+            plan_gj, plan_gi = target_gj, target_gi
+
+        if inflated[plan_gj, plan_gi] == 100:
             self.get_logger().warn('Target cell is occupied')
             goal_handle.abort()
             result = PlanPath.Result()
@@ -242,7 +285,7 @@ class AStarPlannerNode(Node):
         path_cells = self._astar(
             inflated,
             (start_gj, start_gi),
-            (target_gj, target_gi),
+            (plan_gj, plan_gi),
             horizon_cells
         )
 
@@ -285,8 +328,11 @@ class AStarPlannerNode(Node):
         """
         A* on 2D grid. start and target are (j, i) tuples.
         Stops when target is reached OR when path length exceeds horizon_cells.
-        Returns list of (j, i) tuples from start to furthest reachable point
-        within horizon, or None if no path exists.
+        Returns list of (j, i) tuples from start to the explored node closest
+        to the target within horizon, or None if no path exists. In normal
+        operation the caller has already placed target within horizon_cells
+        of start, so this fallback only matters if obstacles block the
+        direct-ish route.
 
         Uses 8-connectivity with diagonal cost = sqrt(2).
         """
@@ -300,14 +346,18 @@ class AStarPlannerNode(Node):
         came_from = {}
         g_cost = {start: 0.0}
         best_node = start
-        best_g = 0.0
+        best_dist_to_target = math.sqrt((gj - tj)**2 + (gi - ti)**2)
 
         while open_set:
             f, g, j, i = heapq.heappop(open_set)
 
-            # Track furthest reachable node within horizon
-            if g <= horizon_cells and g > best_g:
-                best_g = g
+            # Track the explored node closest to the target within horizon
+            # (not the one furthest from the start -- that has no reason to
+            # be in the target's direction and can drift away from it on
+            # repeated replans).
+            dist_to_target = math.sqrt((j - tj)**2 + (i - ti)**2)
+            if g <= horizon_cells and dist_to_target < best_dist_to_target:
+                best_dist_to_target = dist_to_target
                 best_node = (j, i)
 
             # Goal reached
