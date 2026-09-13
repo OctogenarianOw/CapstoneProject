@@ -41,6 +41,8 @@ class ObstacleLayerNode(Node):
         self.safety_radius_m = 1.5       # never mark the drone's own
                                           # current position as an obstacle
 
+        self.prev_occupied = np.zeros((self.grid_size, self.grid_size), dtype=bool)
+
         self.drone_x = 0.0
         self.drone_y = 0.0
         self.drone_z = 0.0
@@ -140,6 +142,23 @@ class ObstacleLayerNode(Node):
         if len(gi) == 0:
             return
 
+        # Drop points within the safety radius of the drone's own current
+        # position before they ever reach the accumulators. Likely cause:
+        # the LiDAR seeing part of the drone's own airframe in its
+        # upward-pointing rays (a near-1.0 hit ratio reached within
+        # seconds, right at the launch point, points to a persistent
+        # self-detection rather than sensor noise). Masking this only in
+        # _compute_occupied_mask still let it accumulate underneath, so
+        # once the drone moved away the same spot reappeared as a
+        # permanent ghost obstacle.
+        gi_drone = int((self.drone_x - self.grid_origin_x) / self.resolution)
+        gj_drone = int((self.drone_y - self.grid_origin_y) / self.resolution)
+        radius_cells = int(np.ceil(self.safety_radius_m / self.resolution))
+        near_drone = (np.abs(gi - gi_drone) <= radius_cells) & (np.abs(gj - gj_drone) <= radius_cells)
+        gi, gj, wz = gi[~near_drone], gj[~near_drone], wz[~near_drone]
+        if len(gi) == 0:
+            return
+
         # Every lateral ray landing in a cell counts as one "look", whether
         # or not it was tall enough to be an obstacle -- this is the
         # denominator for the ratio computed in _compute_occupied_mask.
@@ -189,10 +208,35 @@ class ObstacleLayerNode(Node):
 
     def publish(self):
         stamp = self.get_clock().now().to_msg()
-        self._publish_occupancy_grid(stamp)
-        self._publish_markers(stamp)
+        occupied = self._compute_occupied_mask()
+        self._log_newly_occupied(occupied)
+        self._publish_occupancy_grid(stamp, occupied)
+        self._publish_markers(stamp, occupied)
+        self.prev_occupied = occupied
 
-    def _publish_occupancy_grid(self, stamp):
+    def _log_newly_occupied(self, occupied, max_logged=5):
+        """Log the hit/seen/ratio breakdown for any cell that just crossed
+        into occupied, so a marginal ratio (e.g. 3/6) is visible rather
+        than guessed at."""
+        newly = occupied & ~self.prev_occupied
+        js, is_ = np.where(newly)
+        if len(js) == 0:
+            return
+        for k in range(min(len(js), max_logged)):
+            j, i = int(js[k]), int(is_[k])
+            wx = self.grid_origin_x + (i + 0.5) * self.resolution
+            wy = self.grid_origin_y + (j + 0.5) * self.resolution
+            hits = int(self.obs_hits[j, i])
+            seen = int(self.obs_seen[j, i])
+            self.get_logger().warn(
+                f'Cell newly occupied at ({wx:.1f}, {wy:.1f}) | '
+                f'hits={hits} seen={seen} ratio={hits/seen:.2f} | '
+                f'z_max={float(self.obs_z_max[j, i]):.2f}'
+            )
+        if len(js) > max_logged:
+            self.get_logger().warn(f'... and {len(js) - max_logged} more newly occupied this cycle')
+
+    def _publish_occupancy_grid(self, stamp, occupied):
         msg = OccupancyGrid()
         msg.header = Header(stamp=stamp, frame_id='map')
         msg.info.resolution = self.resolution
@@ -201,12 +245,11 @@ class ObstacleLayerNode(Node):
         msg.info.origin.position.x = self.grid_origin_x
         msg.info.origin.position.y = self.grid_origin_y
         msg.info.origin.position.z = 0.0
-        occupied = self._compute_occupied_mask()
         grid_data = np.where(occupied, 100, -1).astype(np.int8)
         msg.data = grid_data.flatten().tolist()
         self.grid_pub.publish(msg)
 
-    def _publish_markers(self, stamp):
+    def _publish_markers(self, stamp, occupied):
         marker_array = MarkerArray()
         clear = Marker()
         clear.header = Header(stamp=stamp, frame_id='map')
@@ -224,7 +267,6 @@ class ObstacleLayerNode(Node):
         marker.scale.z = 0.5
         marker.color = ColorRGBA(r=1.0, g=0.2, b=0.0, a=0.7)
 
-        occupied = self._compute_occupied_mask()
         js, is_ = np.where(occupied)
         for j, i in zip(js, is_):
             cx = self.grid_origin_x + (i + 0.5) * self.resolution
@@ -248,15 +290,27 @@ class ObstacleLayerNode(Node):
         Also rejects two other invalid-return patterns found by
         inspection: points essentially at the sensor origin (0,0,0), and
         points at the LiDAR's max-range "no echo" distance (observed as
-        a repeated ~24-26m value) -- neither is a real obstacle hit. Note
-        this checks total range, not z specifically: unlike the downward
-        nodes, a real lateral obstacle can legitimately sit at close to
-        the sensor's own height (z near zero), so z alone can't be used
-        to spot a bad return here.
+        a repeated ~24-26m value) -- neither is a real obstacle hit.
+
+        A third check, on |z| specifically, was deliberately left out
+        earlier on the reasoning that a real lateral obstacle can sit at
+        the sensor's own height (z near zero). In practice this let
+        through a degenerate return pattern (x/y look like real, nonzero
+        values but z is near zero) that, once transformed to world frame,
+        lands right on the drone's own position at its own altitude --
+        confirmed by newly-occupied cells whose z_max consistently
+        matched the drone's current altitude and clustered on its recent
+        flight path. That happens far more often than a genuine obstacle
+        exactly level with the sensor, so the trade-off favours filtering
+        it: a rare same-height obstacle a few tenths of a metre thick is
+        still very likely to register from an adjacent ray or a later
+        pass, while this artifact was placing false obstacles directly
+        where the drone needs to fly.
         """
         MAX_SENSOR_RANGE = 200.0  # metres, garbage/sentinel-value safety net
         MIN_VALID_RANGE = 0.3    # metres, rejects near-(0,0,0) empty returns
         MAX_VALID_RANGE = 22.0   # metres, rejects near-max-range no-echo sentinel
+        MIN_VALID_ABS_Z = 0.3    # metres, rejects degenerate near-zero depth
 
         x_off = y_off = z_off = None
         for field in msg.fields:
@@ -287,7 +341,8 @@ class ObstacleLayerNode(Node):
             total_range[prefilter] = np.sqrt(np.sum(safe_points**2, axis=1))
         valid = (prefilter &
                  (total_range > MIN_VALID_RANGE) &
-                 (total_range < MAX_VALID_RANGE))
+                 (total_range < MAX_VALID_RANGE) &
+                 (np.abs(points[:, 2]) > MIN_VALID_ABS_Z))
         return points[valid]
 
 
