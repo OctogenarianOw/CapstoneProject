@@ -63,6 +63,15 @@ class ExplorationManagerNode(Node):
         self.last_replan_time = 0.0
         self.frontiers = []
         self.blacklisted_frontiers = {}  # (x,y) rounded -> blacklisted_until (s)
+        self.frontier_too_close_counts = {}  # (x,y) rounded -> consecutive
+                                              # times revisited without ever
+                                              # resolving (still too close)
+        self.frontier_giveup_threshold = 2       # after this many revisits
+        self.frontier_giveup_duration_s = 300.0  # give up on it for 5 min,
+                                                  # likely unreachable by the
+                                                  # terrain sensor from any
+                                                  # position the drone can
+                                                  # safely reach nearby
 
         # --- Drone position ---
         self.drone_x = 0.0
@@ -297,35 +306,62 @@ class ExplorationManagerNode(Node):
         """Stable key for a frontier location, for blacklist lookups."""
         return (round(fc.centroid_x, 1), round(fc.centroid_y, 1))
 
-    def _blacklist_frontier(self, fc):
+    def _blacklist_frontier(self, fc, duration=None):
         """Exclude this frontier from selection for a cooldown period,
         so a target that fails to plan (e.g. it turned out to be
         occupied) isn't retried every single tick forever."""
+        if duration is None:
+            duration = self.frontier_blacklist_duration_s
         now = self.get_clock().now().nanoseconds / 1e9
         key = self._frontier_key(fc)
-        self.blacklisted_frontiers[key] = now + self.frontier_blacklist_duration_s
+        self.blacklisted_frontiers[key] = now + duration
         self.get_logger().warn(
             f'Blacklisting frontier ({fc.centroid_x:.1f}, {fc.centroid_y:.1f}) '
-            f'for {self.frontier_blacklist_duration_s:.0f}s'
+            f'for {duration:.0f}s'
         )
 
     def _select_best_frontier(self):
         """
         Select frontier with best ratio: information_gain / distance_to_drone.
-        Ignores frontiers with zero distance (drone already there), zero
-        information gain, or currently blacklisted after a planning failure.
+        Ignores frontiers with zero information gain or currently
+        blacklisted (after a planning failure, or after being too close
+        to the drone -- see below).
+
+        A frontier within arrival_threshold_exploration is one the drone
+        has already effectively visited. If frontier_detector_node hasn't
+        cleared it from the list (e.g. the unknown cell that makes it a
+        frontier sits just past what the terrain LiDAR's cone can reach
+        even from directly overhead), it would otherwise be silently
+        skipped every single tick forever with nothing else to select --
+        blacklisting it instead gives it a cooldown, so this loops at most
+        once per blacklist duration rather than once per tick.
         """
         now = self.get_clock().now().nanoseconds / 1e9
         best = None
         best_score = -1.0
 
         for fc in self.frontiers:
+            key = self._frontier_key(fc)
+            blacklisted_until = self.blacklisted_frontiers.get(key)
+            if blacklisted_until is not None and now < blacklisted_until:
+                continue
+
             if fc.distance_to_drone < self.arrival_threshold_exploration:
+                key = self._frontier_key(fc)
+                count = self.frontier_too_close_counts.get(key, 0) + 1
+                self.frontier_too_close_counts[key] = count
+                if count > self.frontier_giveup_threshold:
+                    self.get_logger().warn(
+                        f'Frontier ({fc.centroid_x:.1f}, {fc.centroid_y:.1f}) '
+                        f'revisited {count} times without ever resolving -- '
+                        f'likely unreachable by the terrain sensor from any '
+                        f'nearby position, giving up on it for longer'
+                    )
+                    self._blacklist_frontier(fc, duration=self.frontier_giveup_duration_s)
+                else:
+                    self._blacklist_frontier(fc)
                 continue
             if fc.information_gain <= 0:
-                continue
-            blacklisted_until = self.blacklisted_frontiers.get(self._frontier_key(fc))
-            if blacklisted_until is not None and now < blacklisted_until:
                 continue
 
             score = fc.information_gain / fc.distance_to_drone
