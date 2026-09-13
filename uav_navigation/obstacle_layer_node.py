@@ -29,9 +29,15 @@ class ObstacleLayerNode(Node):
         self.min_obstacle_height_m = 0.3
         self.max_obstacle_height_m = 30.0
         self.publish_rate = 2.0
-        self.min_obstacle_confidence = 3  # detections needed before a cell
-                                          # counts as a real obstacle, not
-                                          # one stray/quantised point
+        self.min_obstacle_hits = 3       # minimum obstacle-height detections,
+                                          # so one stray point never counts
+        self.min_obstacle_ratio = 0.5    # of all times a cell was looked at
+                                          # (any lateral ray landing there),
+                                          # this fraction must be obstacle-
+                                          # height. A cell seen 50 times and
+                                          # positive 3 times by noise reads
+                                          # very differently from one seen
+                                          # 5 times and positive all 5.
         self.safety_radius_m = 1.5       # never mark the drone's own
                                           # current position as an obstacle
 
@@ -46,7 +52,8 @@ class ObstacleLayerNode(Node):
         self.attitude_valid = False
 
         self.obs_z_max = np.full((self.grid_size, self.grid_size), -np.inf, dtype=np.float32)
-        self.obs_count = np.zeros((self.grid_size, self.grid_size), dtype=np.int32)
+        self.obs_hits = np.zeros((self.grid_size, self.grid_size), dtype=np.int32)
+        self.obs_seen = np.zeros((self.grid_size, self.grid_size), dtype=np.int32)
 
         sensor_qos = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT,
                                 history=HistoryPolicy.KEEP_LAST, depth=5)
@@ -125,11 +132,6 @@ class ObstacleLayerNode(Node):
         wy = points_ned[:, 1] + self.drone_y
         wz = -(points_ned[:, 2] + self.drone_z)
 
-        height_mask = (wz >= self.min_obstacle_height_m) & (wz <= self.max_obstacle_height_m)
-        wx, wy, wz = wx[height_mask], wy[height_mask], wz[height_mask]
-        if len(wx) == 0:
-            return
-
         gi = ((wx - self.grid_origin_x) / self.resolution).astype(np.int32)
         gj = ((wy - self.grid_origin_y) / self.resolution).astype(np.int32)
         in_bounds = ((gi >= 0) & (gi < self.grid_size) &
@@ -138,8 +140,16 @@ class ObstacleLayerNode(Node):
         if len(gi) == 0:
             return
 
-        np.maximum.at(self.obs_z_max, (gj, gi), wz)
-        np.add.at(self.obs_count, (gj, gi), 1)
+        # Every lateral ray landing in a cell counts as one "look", whether
+        # or not it was tall enough to be an obstacle -- this is the
+        # denominator for the ratio computed in _compute_occupied_mask.
+        np.add.at(self.obs_seen, (gj, gi), 1)
+
+        height_mask = (wz >= self.min_obstacle_height_m) & (wz <= self.max_obstacle_height_m)
+        gi_hit, gj_hit, wz_hit = gi[height_mask], gj[height_mask], wz[height_mask]
+        if len(gi_hit) > 0:
+            np.maximum.at(self.obs_z_max, (gj_hit, gi_hit), wz_hit)
+            np.add.at(self.obs_hits, (gj_hit, gi_hit), 1)
 
         if self.scan_count % 50 == 0:
             occupied = int(np.sum(self._compute_occupied_mask()))
@@ -149,12 +159,21 @@ class ObstacleLayerNode(Node):
                 f'drone ({self.drone_x:.1f}, {self.drone_y:.1f}, {-self.drone_z:.1f}m)')
 
     def _compute_occupied_mask(self):
-        """Cells counted as obstacles: enough independent detections to
-        not be a single stray/quantised point, and never the drone's own
-        current position (a small radius around it is always cleared,
-        regardless of what the accumulated grid says).
+        """Cells counted as obstacles: enough obstacle-height detections
+        (not a single stray/quantised point) AND a high enough fraction
+        of all the times the cell was looked at, so a cell that's mostly
+        clear with a few noisy hits mixed in over many passes doesn't
+        get promoted to a permanent obstacle just from repeated exposure.
+        Never the drone's own current position (a small radius around it
+        is always cleared, regardless of what the accumulated grid says).
         """
-        occupied = np.isfinite(self.obs_z_max) & (self.obs_count >= self.min_obstacle_confidence)
+        with np.errstate(divide='ignore', invalid='ignore'):
+            hit_ratio = np.where(self.obs_seen > 0,
+                                  self.obs_hits / np.maximum(self.obs_seen, 1), 0.0)
+
+        occupied = (np.isfinite(self.obs_z_max) &
+                    (self.obs_hits >= self.min_obstacle_hits) &
+                    (hit_ratio >= self.min_obstacle_ratio))
 
         gi_drone = int((self.drone_x - self.grid_origin_x) / self.resolution)
         gj_drone = int((self.drone_y - self.grid_origin_y) / self.resolution)
