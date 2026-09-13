@@ -51,6 +51,10 @@ class ExplorationManagerNode(Node):
         # --- Parameters ---
         self.arrival_threshold_exploration = 2.0  # metres
         self.replan_cooldown_s = 2.0  # minimum seconds between replan attempts
+        self.frontier_blacklist_duration_s = 30.0  # cooldown for a target
+                                                    # that failed to plan,
+                                                    # so it isn't retried
+                                                    # every single tick
 
         # --- State machine ---
         self.state = State.IDLE
@@ -58,6 +62,7 @@ class ExplorationManagerNode(Node):
         self.current_frontier = None
         self.last_replan_time = 0.0
         self.frontiers = []
+        self.blacklisted_frontiers = {}  # (x,y) rounded -> blacklisted_until (s)
 
         # --- Drone position ---
         self.drone_x = 0.0
@@ -153,20 +158,46 @@ class ExplorationManagerNode(Node):
         self.state = State.REPLANNING
 
     def reached_callback(self, msg: Bool):
-        """React to final waypoint reached."""
+        """React to the current partial path's final waypoint being reached.
+
+        astar_planner_node plans with a receding horizon (~5m per plan,
+        seen as 'horizon=5.0m' in its logs) even when a full-distance goal
+        is requested. So this final waypoint may only be an intermediate
+        point on the way to the frontier, not the frontier itself. Check
+        the real remaining distance before declaring victory, otherwise
+        the manager abandons a frontier it never actually reached and it
+        just keeps reappearing in the frontier list.
+        """
         if not msg.data:
             return
 
         if self.state != State.NAVIGATING:
             return
 
-        self.get_logger().info(
-            f'Frontier ({self.current_frontier.centroid_x:.1f}, '
-            f'{self.current_frontier.centroid_y:.1f}) reached | '
-            f'returning to SELECTING'
+        if self.current_frontier is None:
+            self.state = State.SELECTING
+            return
+
+        dist = math.sqrt(
+            (self.drone_x - self.current_frontier.centroid_x)**2 +
+            (self.drone_y - self.current_frontier.centroid_y)**2
         )
-        self.current_frontier = None
-        self.state = State.SELECTING
+
+        if dist < self.arrival_threshold_exploration:
+            self.get_logger().info(
+                f'Frontier ({self.current_frontier.centroid_x:.1f}, '
+                f'{self.current_frontier.centroid_y:.1f}) reached | '
+                f'returning to SELECTING'
+            )
+            self.current_frontier = None
+            self.state = State.SELECTING
+        else:
+            self.get_logger().info(
+                f'Horizon segment complete, {dist:.1f}m still to frontier '
+                f'({self.current_frontier.centroid_x:.1f}, '
+                f'{self.current_frontier.centroid_y:.1f}) | continuing'
+            )
+            self._send_plan_goal(self.current_frontier)
 
     # -------------------------------------------------------------------------
     # State machine
@@ -262,19 +293,39 @@ class ExplorationManagerNode(Node):
     # Frontier selection
     # -------------------------------------------------------------------------
 
+    def _frontier_key(self, fc):
+        """Stable key for a frontier location, for blacklist lookups."""
+        return (round(fc.centroid_x, 1), round(fc.centroid_y, 1))
+
+    def _blacklist_frontier(self, fc):
+        """Exclude this frontier from selection for a cooldown period,
+        so a target that fails to plan (e.g. it turned out to be
+        occupied) isn't retried every single tick forever."""
+        now = self.get_clock().now().nanoseconds / 1e9
+        key = self._frontier_key(fc)
+        self.blacklisted_frontiers[key] = now + self.frontier_blacklist_duration_s
+        self.get_logger().warn(
+            f'Blacklisting frontier ({fc.centroid_x:.1f}, {fc.centroid_y:.1f}) '
+            f'for {self.frontier_blacklist_duration_s:.0f}s'
+        )
+
     def _select_best_frontier(self):
         """
         Select frontier with best ratio: information_gain / distance_to_drone.
-        Ignores frontiers with zero distance (drone already there) or
-        zero information gain.
+        Ignores frontiers with zero distance (drone already there), zero
+        information gain, or currently blacklisted after a planning failure.
         """
+        now = self.get_clock().now().nanoseconds / 1e9
         best = None
         best_score = -1.0
 
         for fc in self.frontiers:
-            if fc.distance_to_drone < 0.1:
+            if fc.distance_to_drone < self.arrival_threshold_exploration:
                 continue
             if fc.information_gain <= 0:
+                continue
+            blacklisted_until = self.blacklisted_frontiers.get(self._frontier_key(fc))
+            if blacklisted_until is not None and now < blacklisted_until:
                 continue
 
             score = fc.information_gain / fc.distance_to_drone
@@ -316,6 +367,8 @@ class ExplorationManagerNode(Node):
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.get_logger().warn('PlanPath goal rejected')
+            if self.current_frontier is not None:
+                self._blacklist_frontier(self.current_frontier)
             self.state = State.SELECTING
             return
 
@@ -327,6 +380,8 @@ class ExplorationManagerNode(Node):
         result = future.result().result
         if not result.success:
             self.get_logger().warn(f'Planning failed: {result.message}')
+            if self.current_frontier is not None:
+                self._blacklist_frontier(self.current_frontier)
             self.state = State.SELECTING
             return
 

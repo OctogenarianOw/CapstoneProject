@@ -13,7 +13,7 @@ from visualization_msgs.msg import Marker, MarkerArray
 from geometry_msgs.msg import Point
 from std_msgs.msg import ColorRGBA, Header
 import numpy as np
-import math
+from scipy.spatial.transform import Rotation
 
 
 class ObstacleLayerNode(Node):
@@ -29,12 +29,21 @@ class ObstacleLayerNode(Node):
         self.min_obstacle_height_m = 0.3
         self.max_obstacle_height_m = 30.0
         self.publish_rate = 2.0
+        self.min_obstacle_confidence = 3  # detections needed before a cell
+                                          # counts as a real obstacle, not
+                                          # one stray/quantised point
+        self.safety_radius_m = 1.5       # never mark the drone's own
+                                          # current position as an obstacle
 
         self.drone_x = 0.0
         self.drone_y = 0.0
         self.drone_z = 0.0
         self.drone_heading = 0.0
         self.position_valid = False
+
+        # --- Orientation (from PX4 VehicleAttitude, FRD body -> NED world) ---
+        self.drone_rotation = None
+        self.attitude_valid = False
 
         self.obs_z_max = np.full((self.grid_size, self.grid_size), -np.inf, dtype=np.float32)
         self.obs_count = np.zeros((self.grid_size, self.grid_size), dtype=np.int32)
@@ -57,6 +66,16 @@ class ObstacleLayerNode(Node):
             self.get_logger().warn('px4_msgs not available')
             self.pos_sub = None
 
+        try:
+            from px4_msgs.msg import VehicleAttitude
+            self.att_sub = self.create_subscription(
+                VehicleAttitude, '/fmu/out/vehicle_attitude',
+                self.attitude_callback, sensor_qos)
+            self.get_logger().info('Subscribed to VehicleAttitude')
+        except ImportError:
+            self.get_logger().warn('px4_msgs VehicleAttitude not found')
+            self.att_sub = None
+
         self.grid_pub = self.create_publisher(OccupancyGrid, '/obstacle_grid', reliable_qos)
         self.marker_pub = self.create_publisher(MarkerArray, '/obstacle_grid/markers', reliable_qos)
         self.create_timer(1.0 / self.publish_rate, self.publish)
@@ -75,11 +94,17 @@ class ObstacleLayerNode(Node):
             self.drone_heading = msg.heading
             self.position_valid = True
 
+    def attitude_callback(self, msg):
+        """Update drone orientation from PX4 VehicleAttitude (FRD body -> NED world)."""
+        w, x, y, z = msg.q  # PX4 gives [w, x, y, z]
+        self.drone_rotation = Rotation.from_quat([x, y, z, w])  # scipy wants [x, y, z, w]
+        self.attitude_valid = True
+
     def pointcloud_callback(self, msg: PointCloud2):
         self.scan_count += 1
-        if not self.position_valid:
+        if not self.position_valid or not self.attitude_valid:
             if self.scan_count % 50 == 0:
-                self.get_logger().warn('Waiting for valid drone position...')
+                self.get_logger().warn('Waiting for valid drone position/attitude...')
             return
 
         points = self._extract_xyz_vectorised(msg)
@@ -92,11 +117,13 @@ class ObstacleLayerNode(Node):
         if len(points) == 0:
             return
 
-        cos_h = math.cos(self.drone_heading)
-        sin_h = math.sin(self.drone_heading)
-        wx = points[:, 0] * cos_h - points[:, 1] * sin_h + self.drone_x
-        wy = points[:, 0] * sin_h + points[:, 1] * cos_h + self.drone_y
-        wz = -self.drone_z + points[:, 2]
+        # Full roll/pitch/yaw correction (not yaw-only); same FLU-body ->
+        # FRD -> NED-rotate -> world convention as terrain_scoring_node.
+        points_frd = points * np.array([1.0, -1.0, -1.0], dtype=np.float32)
+        points_ned = self.drone_rotation.apply(points_frd)
+        wx = points_ned[:, 0] + self.drone_x
+        wy = points_ned[:, 1] + self.drone_y
+        wz = -(points_ned[:, 2] + self.drone_z)
 
         height_mask = (wz >= self.min_obstacle_height_m) & (wz <= self.max_obstacle_height_m)
         wx, wy, wz = wx[height_mask], wy[height_mask], wz[height_mask]
@@ -115,11 +142,31 @@ class ObstacleLayerNode(Node):
         np.add.at(self.obs_count, (gj, gi), 1)
 
         if self.scan_count % 50 == 0:
-            occupied = int(np.sum(np.isfinite(self.obs_z_max)))
+            occupied = int(np.sum(self._compute_occupied_mask()))
             self.get_logger().info(
                 f'Scan {self.scan_count}: {len(points)} lateral pts | '
                 f'{occupied} obstacle cells | '
                 f'drone ({self.drone_x:.1f}, {self.drone_y:.1f}, {-self.drone_z:.1f}m)')
+
+    def _compute_occupied_mask(self):
+        """Cells counted as obstacles: enough independent detections to
+        not be a single stray/quantised point, and never the drone's own
+        current position (a small radius around it is always cleared,
+        regardless of what the accumulated grid says).
+        """
+        occupied = np.isfinite(self.obs_z_max) & (self.obs_count >= self.min_obstacle_confidence)
+
+        gi_drone = int((self.drone_x - self.grid_origin_x) / self.resolution)
+        gj_drone = int((self.drone_y - self.grid_origin_y) / self.resolution)
+        radius_cells = int(np.ceil(self.safety_radius_m / self.resolution))
+        i0 = max(0, gi_drone - radius_cells)
+        i1 = min(self.grid_size, gi_drone + radius_cells + 1)
+        j0 = max(0, gj_drone - radius_cells)
+        j1 = min(self.grid_size, gj_drone + radius_cells + 1)
+        if i1 > i0 and j1 > j0:
+            occupied[j0:j1, i0:i1] = False
+
+        return occupied
 
     def publish(self):
         stamp = self.get_clock().now().to_msg()
@@ -135,7 +182,7 @@ class ObstacleLayerNode(Node):
         msg.info.origin.position.x = self.grid_origin_x
         msg.info.origin.position.y = self.grid_origin_y
         msg.info.origin.position.z = 0.0
-        occupied = np.isfinite(self.obs_z_max)
+        occupied = self._compute_occupied_mask()
         grid_data = np.where(occupied, 100, -1).astype(np.int8)
         msg.data = grid_data.flatten().tolist()
         self.grid_pub.publish(msg)
@@ -158,7 +205,8 @@ class ObstacleLayerNode(Node):
         marker.scale.z = 0.5
         marker.color = ColorRGBA(r=1.0, g=0.2, b=0.0, a=0.7)
 
-        js, is_ = np.where(np.isfinite(self.obs_z_max))
+        occupied = self._compute_occupied_mask()
+        js, is_ = np.where(occupied)
         for j, i in zip(js, is_):
             cx = self.grid_origin_x + (i + 0.5) * self.resolution
             cy = self.grid_origin_y + (j + 0.5) * self.resolution
@@ -169,6 +217,28 @@ class ObstacleLayerNode(Node):
         self.marker_pub.publish(marker_array)
 
     def _extract_xyz_vectorised(self, msg: PointCloud2):
+        """Extract XYZ from PointCloud2, rejecting sentinel/garbage returns.
+
+        Some rays that hit nothing within range come back as a huge
+        sentinel value instead of NaN/Inf. np.isfinite() alone lets those
+        through, which caused the overflow warnings and the invalid casts
+        into grid indices downstream. MAX_SENSOR_RANGE rejects those here,
+        via abs() only (no squaring), so a huge value can never overflow
+        before rejection.
+
+        Also rejects two other invalid-return patterns found by
+        inspection: points essentially at the sensor origin (0,0,0), and
+        points at the LiDAR's max-range "no echo" distance (observed as
+        a repeated ~24-26m value) -- neither is a real obstacle hit. Note
+        this checks total range, not z specifically: unlike the downward
+        nodes, a real lateral obstacle can legitimately sit at close to
+        the sensor's own height (z near zero), so z alone can't be used
+        to spot a bad return here.
+        """
+        MAX_SENSOR_RANGE = 200.0  # metres, garbage/sentinel-value safety net
+        MIN_VALID_RANGE = 0.3    # metres, rejects near-(0,0,0) empty returns
+        MAX_VALID_RANGE = 22.0   # metres, rejects near-max-range no-echo sentinel
+
         x_off = y_off = z_off = None
         for field in msg.fields:
             if field.name == 'x':
@@ -191,7 +261,15 @@ class ObstacleLayerNode(Node):
         z = np.frombuffer(data[z_off::step][:n_points * 4].copy(), dtype=np.float32)[:n_points]
 
         points = np.column_stack([x, y, z])
-        return points[np.isfinite(points).all(axis=1)]
+        prefilter = np.isfinite(points).all(axis=1) & (np.abs(points) < MAX_SENSOR_RANGE).all(axis=1)
+        total_range = np.full(len(points), np.inf, dtype=np.float64)
+        safe_points = points[prefilter].astype(np.float64)
+        if len(safe_points) > 0:
+            total_range[prefilter] = np.sqrt(np.sum(safe_points**2, axis=1))
+        valid = (prefilter &
+                 (total_range > MIN_VALID_RANGE) &
+                 (total_range < MAX_VALID_RANGE))
+        return points[valid]
 
 
 def main(args=None):

@@ -53,6 +53,12 @@ class WaypointNode(Node):
         # -8.0 = 8m above origin in NED frame
         self.cruise_altitude_ned = -8.0
 
+        # The altitude setpoint actually sent to PX4, rate-limited so a
+        # noisy terrain estimate can't command an abrupt multi-metre climb
+        # or dive from one 10Hz cycle to the next.
+        self.commanded_altitude_ned = -8.0
+        self.max_altitude_rate_mps = 2.0  # metres/second, generous but bounded
+
         # --- State ---
         self.drone_x = 0.0
         self.drone_y = 0.0
@@ -121,7 +127,8 @@ class WaypointNode(Node):
             f'WaypointNode started | '
             f'default altitude {self.cruise_altitude_ned}m NED | '
             f'exploration threshold {self.arrival_threshold_exploration}m | '
-            f'SLZ threshold {self.arrival_threshold_slz}m'
+            f'SLZ threshold {self.arrival_threshold_slz}m | '
+            f'max altitude rate {self.max_altitude_rate_mps}m/s'
         )
 
     # -------------------------------------------------------------------------
@@ -191,6 +198,19 @@ class WaypointNode(Node):
 
         # --- Waypoint following ---
         target_x, target_y = self._get_current_target()
+
+        # Step the commanded altitude toward the raw terrain-follower
+        # target by at most max_altitude_rate_mps, so a noisy estimate
+        # can't demand an abrupt climb/dive in a single 10Hz tick.
+        max_step = self.max_altitude_rate_mps * 0.1  # dt = 1/10Hz
+        delta = self.cruise_altitude_ned - self.commanded_altitude_ned
+        if delta > max_step:
+            self.commanded_altitude_ned += max_step
+        elif delta < -max_step:
+            self.commanded_altitude_ned -= max_step
+        else:
+            self.commanded_altitude_ned = self.cruise_altitude_ned
+
         self._send_trajectory_setpoint(target_x, target_y)
 
         # --- Check arrival ---
@@ -208,7 +228,7 @@ class WaypointNode(Node):
     def _send_trajectory_setpoint(self, target_x, target_y):
         """Send TrajectorySetpoint to PX4."""
         wp = TrajectorySetpoint()
-        wp.position = [target_x, target_y, self.cruise_altitude_ned]
+        wp.position = [target_x, target_y, self.commanded_altitude_ned]
         wp.yaw = float('nan')   # Let PX4 handle yaw
         wp.timestamp = int(self.get_clock().now().nanoseconds / 1000)
         self.trajectory_pub.publish(wp)

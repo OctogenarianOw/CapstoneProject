@@ -31,6 +31,7 @@ from std_msgs.msg import ColorRGBA, Header
 import numpy as np
 import struct
 import math
+from scipy.spatial.transform import Rotation
 
 
 class TerrainScoringNode(Node):
@@ -63,9 +64,14 @@ class TerrainScoringNode(Node):
         self.drone_heading = 0.0
         self.position_valid = False
 
+        # --- Drone orientation (from PX4 VehicleAttitude, FRD body -> NED world) ---
+        self.drone_rotation = None
+        self.attitude_valid = False
+
         # --- Elevation grid storage ---
         self.z_sum = np.zeros((self.grid_size, self.grid_size), dtype=np.float64)
         self.z_sq_sum = np.zeros((self.grid_size, self.grid_size), dtype=np.float64)
+        self.weight_sum = np.zeros((self.grid_size, self.grid_size), dtype=np.float64)
         self.z_count = np.zeros((self.grid_size, self.grid_size), dtype=np.int32)
         self.z_min = np.full((self.grid_size, self.grid_size), np.inf)
         self.z_max = np.full((self.grid_size, self.grid_size), -np.inf)
@@ -105,6 +111,19 @@ class TerrainScoringNode(Node):
             self.get_logger().warn('px4_msgs not found')
             self.pos_sub = None
 
+        try:
+            from px4_msgs.msg import VehicleAttitude
+            self.att_sub = self.create_subscription(
+                VehicleAttitude,
+                '/fmu/out/vehicle_attitude',
+                self.attitude_callback,
+                sensor_qos
+            )
+            self.get_logger().info('Subscribed to VehicleAttitude')
+        except ImportError:
+            self.get_logger().warn('px4_msgs VehicleAttitude not found')
+            self.att_sub = None
+
         # --- Publishers ---
         self.safety_pub = self.create_publisher(OccupancyGrid, '/terrain/safety_map', 10)
         self.elev_pub = self.create_publisher(OccupancyGrid, '/terrain/elevation_map', 10)
@@ -129,28 +148,49 @@ class TerrainScoringNode(Node):
             self.drone_heading = msg.heading
             self.position_valid = True
 
+    def attitude_callback(self, msg):
+        """Update drone orientation from PX4 VehicleAttitude (FRD body -> NED world)."""
+        w, x, y, z = msg.q  # PX4 gives [w, x, y, z]
+        self.drone_rotation = Rotation.from_quat([x, y, z, w])  # scipy wants [x, y, z, w]
+        self.attitude_valid = True
+
     def pointcloud_callback(self, msg: PointCloud2):
         """Extract XYZ points, transform to world frame, accumulate."""
         self.scan_count += 1
 
-        if not self.position_valid:
+        if not self.position_valid or not self.attitude_valid:
             if self.scan_count % 100 == 0:
-                self.get_logger().warn('Waiting for drone position...')
+                self.get_logger().warn('Waiting for drone position/attitude...')
             return
 
-        points = self.extract_xyz(msg)
+        points, weights = self.extract_xyz(msg)
         if points is None or len(points) == 0:
             return
 
-        cos_h = math.cos(self.drone_heading)
-        sin_h = math.sin(self.drone_heading)
+        if self.scan_count % 50 == 0:
+            self.get_logger().info(
+                f'Raw points range (post-filter): '
+                f'x=[{points[:,0].min():.1f}, {points[:,0].max():.1f}] '
+                f'y=[{points[:,1].min():.1f}, {points[:,1].max():.1f}] '
+                f'z=[{points[:,2].min():.1f}, {points[:,2].max():.1f}]'
+            )
 
-        # Rotate by heading and translate by drone position
-        wx = points[:, 0] * cos_h - points[:, 1] * sin_h + self.drone_x
-        wy = points[:, 0] * sin_h + points[:, 1] * cos_h + self.drone_y
-        # PX4 NED: drone_z is negative when above ground
-        # LiDAR z: negative = below sensor
-        wz = -self.drone_z + points[:, 2]
+        # Full 3D orientation correction (roll, pitch, yaw), replacing the
+        # old yaw-only rotation. Points arrive in a FLU-style body frame
+        # (x-forward, y-left, z-up -- matching how z used to be added
+        # directly as "up" and y used a standard CCW yaw rotation below).
+        # PX4's attitude quaternion rotates FRD body (x-forward, y-right,
+        # z-down) into NED world, so points are converted FLU -> FRD,
+        # rotated, then read back out in the same north/east-direct,
+        # up-positive convention drone_x/drone_y/drone_z already use.
+        # When roll = pitch = 0 this reduces to exactly the old formula.
+        points_frd = points * np.array([1.0, -1.0, -1.0], dtype=np.float32)
+        points_ned = self.drone_rotation.apply(points_frd)
+
+        wx = points_ned[:, 0] + self.drone_x
+        wy = points_ned[:, 1] + self.drone_y
+        # PX4 NED: down is positive; negate to get "up is positive"
+        wz = -(points_ned[:, 2] + self.drone_z)
 
         # Convert to grid indices
         gi = ((wx - self.grid_origin_x) / self.resolution).astype(np.int32)
@@ -163,14 +203,16 @@ class TerrainScoringNode(Node):
         gi = gi[valid]
         gj = gj[valid]
         wz = wz[valid]
+        weights = weights[valid]
 
         if len(gi) == 0:
             return
 
         for k in range(len(gi)):
-            i, j, z = gi[k], gj[k], wz[k]
-            self.z_sum[j, i] += z
-            self.z_sq_sum[j, i] += z * z
+            i, j, z, w = gi[k], gj[k], wz[k], weights[k]
+            self.z_sum[j, i] += w * z
+            self.z_sq_sum[j, i] += w * z * z
+            self.weight_sum[j, i] += w
             self.z_count[j, i] += 1
             if z < self.z_min[j, i]:
                 self.z_min[j, i] = z
@@ -178,16 +220,47 @@ class TerrainScoringNode(Node):
                 self.z_max[j, i] = z
 
         if self.scan_count % 50 == 0:
+            roll, pitch, yaw = self.drone_rotation.as_euler('xyz', degrees=True)
             observed = int(np.sum(self.z_count > 0))
             confident = int(np.sum(self.z_count >= self.min_points_confidence))
             self.get_logger().info(
                 f'Scan {self.scan_count}: {observed} observed, '
                 f'{confident} confident | '
-                f'Drone: ({self.drone_x:.1f}, {self.drone_y:.1f}, {self.drone_z:.1f})'
+                f'Drone: ({self.drone_x:.1f}, {self.drone_y:.1f}, {self.drone_z:.1f}) | '
+                f'Attitude: roll={roll:.1f} pitch={pitch:.1f} yaw={yaw:.1f}'
             )
 
     def extract_xyz(self, msg: PointCloud2):
-        """Extract XYZ from PointCloud2."""
+        """Extract XYZ from PointCloud2, dropping non-finite and implausible points.
+
+        Some rays that hit nothing within sensor range come back as a huge
+        sentinel value instead of NaN/Inf. np.isfinite() lets those through,
+        and casting a huge float to int32 for the grid index wraps around
+        unpredictably, which can land inside the valid grid bounds and
+        pollute a random cell. MAX_SENSOR_RANGE rejects those before that
+        can happen.
+
+        Also returns a per-point quality weight (cos of the incidence angle
+        from straight down). Pollyea & Fairley (2012) show LiDAR-based
+        roughness estimates systematically overestimate the true roughness
+        as incidence angle grows, and recommend keeping scan half-angles
+        under 22.5 deg to keep that error under ~5%. A later oblique point
+        is not more trustworthy than an earlier one taken near-nadir, so
+        weighting by angle (not recency) is what should decide how much a
+        point counts.
+
+        Two more invalid-return patterns are rejected: points whose local
+        z is near zero, which cannot be a real downward ground hit no
+        matter what x/y are, and points at the LiDAR's max-range "no
+        echo" distance (observed as a repeated ~24-26m value).
+        """
+        MAX_SENSOR_RANGE = 200.0        # metres, garbage/sentinel-value safety net
+        MAX_HORIZONTAL_RANGE = 15.0     # metres, absolute cap regardless of altitude
+        MAX_INCIDENCE_ANGLE_DEG = 22.5  # Pollyea & Fairley (2012) recommended limit
+        MIN_VALID_ABS_Z = 0.3           # metres, rejects degenerate near-zero depth
+        MAX_VALID_RANGE = 22.0          # metres, rejects near-max-range no-echo sentinel
+                                        # (observed as a repeated exact ~24-26m value)
+
         x_off = y_off = z_off = None
         for field in msg.fields:
             if field.name == 'x':
@@ -198,14 +271,14 @@ class TerrainScoringNode(Node):
                 z_off = field.offset
 
         if x_off is None or y_off is None or z_off is None:
-            return None
+            return None, None
 
         point_step = msg.point_step
         data = bytes(msg.data)
         n_points = msg.width * msg.height
 
         if n_points == 0:
-            return None
+            return None, None
 
         points = np.zeros((n_points, 3), dtype=np.float32)
         for i in range(n_points):
@@ -217,8 +290,36 @@ class TerrainScoringNode(Node):
             except struct.error:
                 break
 
-        valid = np.isfinite(points).all(axis=1)
-        return points[valid]
+        # Prefilter on finiteness and magnitude via abs() (no squaring) so
+        # a sentinel value can never overflow float32 before it's dropped.
+        prefilter = np.isfinite(points).all(axis=1) & (np.abs(points) < MAX_SENSOR_RANGE).all(axis=1)
+        horizontal_dist = np.full(n_points, np.inf, dtype=np.float64)
+        total_range = np.full(n_points, np.inf, dtype=np.float64)
+        safe_points = points[prefilter].astype(np.float64)
+        if len(safe_points) > 0:
+            h = np.sqrt(safe_points[:, 0]**2 + safe_points[:, 1]**2)
+            horizontal_dist[prefilter] = h
+            total_range[prefilter] = np.sqrt(h**2 + safe_points[:, 2]**2)
+
+        angle_limit = np.abs(points[:, 2]) * np.tan(np.radians(MAX_INCIDENCE_ANGLE_DEG))
+        valid = (prefilter &
+                 (np.abs(points[:, 2]) > MIN_VALID_ABS_Z) &
+                 (total_range < MAX_VALID_RANGE) &
+                 (horizontal_dist < MAX_HORIZONTAL_RANGE) &
+                 (horizontal_dist < angle_limit))
+
+        h_dist = horizontal_dist[valid]
+        points = points[valid]
+        if len(points) == 0:
+            return points, np.zeros(0)
+
+        # weight = cos(incidence angle) = |z| / range, 1.0 at true nadir,
+        # falling toward cos(22.5 deg) ~= 0.92 at the admitted cutoff
+        z_abs = np.abs(points[:, 2])
+        point_range = np.sqrt(h_dist**2 + z_abs**2)
+        weights = np.where(point_range > 1e-6, z_abs / np.maximum(point_range, 1e-6), 1.0)
+
+        return points, weights
 
     def compute_and_publish(self):
         """Compute terrain features and publish maps."""
@@ -228,15 +329,17 @@ class TerrainScoringNode(Node):
         if not np.any(observed):
             return
 
-        # 1. Elevation
+        # 1. Elevation (weighted by incidence-angle quality, not just averaged)
         with np.errstate(divide='ignore', invalid='ignore'):
             self.elevation = np.where(observed,
-                                       self.z_sum / np.maximum(self.z_count, 1), 0.0)
+                                       self.z_sum / np.maximum(self.weight_sum, 1e-6), 0.0)
 
-        # 2. Roughness (Beycimen et al.: std_dev of z)
+        # 2. Roughness (Beycimen et al.: std_dev of z), weighted so a point
+        # taken near-nadir counts more than one taken obliquely, regardless
+        # of which arrived first or last (Pollyea & Fairley, 2012)
         with np.errstate(divide='ignore', invalid='ignore'):
-            mean_z = self.z_sum / np.maximum(self.z_count, 1)
-            var_z = np.maximum((self.z_sq_sum / np.maximum(self.z_count, 1)) - mean_z**2, 0.0)
+            mean_z = self.z_sum / np.maximum(self.weight_sum, 1e-6)
+            var_z = np.maximum((self.z_sq_sum / np.maximum(self.weight_sum, 1e-6)) - mean_z**2, 0.0)
             self.roughness = np.where(confident, np.sqrt(var_z), 0.0)
 
         # 3. Step height (Beycimen et al.: max - min)

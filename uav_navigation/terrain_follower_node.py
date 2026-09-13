@@ -26,7 +26,7 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from sensor_msgs.msg import PointCloud2
 from std_msgs.msg import Float32
 import numpy as np
-import math
+from scipy.spatial.transform import Rotation
 
 
 class TerrainFollowerNode(Node):
@@ -69,6 +69,10 @@ class TerrainFollowerNode(Node):
         self.drone_heading = 0.0
         self.position_valid = False
 
+        # --- Orientation (from PX4 VehicleAttitude, FRD body -> NED world) ---
+        self.drone_rotation = None
+        self.attitude_valid = False
+
         # Filtered ground height estimate (world frame, metres above origin)
         self.ground_z_estimate = None
 
@@ -108,6 +112,19 @@ class TerrainFollowerNode(Node):
             self.get_logger().warn('px4_msgs not available')
             self.pos_sub = None
 
+        try:
+            from px4_msgs.msg import VehicleAttitude
+            self.att_sub = self.create_subscription(
+                VehicleAttitude,
+                '/fmu/out/vehicle_attitude',
+                self.attitude_callback,
+                sensor_qos
+            )
+            self.get_logger().info('Subscribed to VehicleAttitude')
+        except ImportError:
+            self.get_logger().warn('px4_msgs VehicleAttitude not found')
+            self.att_sub = None
+
         # --- Publisher ---
         self.altitude_pub = self.create_publisher(
             Float32, '/cruise_altitude', reliable_qos
@@ -137,6 +154,12 @@ class TerrainFollowerNode(Node):
             self.drone_heading = msg.heading
             self.position_valid = True
 
+    def attitude_callback(self, msg):
+        """Update drone orientation from PX4 VehicleAttitude (FRD body -> NED world)."""
+        w, x, y, z = msg.q  # PX4 gives [w, x, y, z]
+        self.drone_rotation = Rotation.from_quat([x, y, z, w])  # scipy wants [x, y, z, w]
+        self.attitude_valid = True
+
     def pointcloud_callback(self, msg: PointCloud2):
         """
         Extract downward LiDAR points, find ground height below drone,
@@ -144,9 +167,9 @@ class TerrainFollowerNode(Node):
         """
         self.scan_count += 1
 
-        if not self.position_valid:
+        if not self.position_valid or not self.attitude_valid:
             if self.scan_count % 50 == 0:
-                self.get_logger().warn('Waiting for valid drone position...')
+                self.get_logger().warn('Waiting for valid drone position/attitude...')
             return
 
         points = self._extract_xyz_vectorised(msg)
@@ -168,21 +191,37 @@ class TerrainFollowerNode(Node):
         if len(points) == 0:
             return
 
-        # --- Transform to world frame (same convention as terrain_scoring_node) ---
-        cos_h = math.cos(self.drone_heading)
-        sin_h = math.sin(self.drone_heading)
-        wx = points[:, 0] * cos_h - points[:, 1] * sin_h + self.drone_x
-        wy = points[:, 0] * sin_h + points[:, 1] * cos_h + self.drone_y
-        wz = -self.drone_z + points[:, 2]
+        # --- Transform to world frame using full roll/pitch/yaw (not yaw-only) ---
+        # Same FLU-body -> FRD -> NED-rotate -> world convention as
+        # terrain_scoring_node; reduces to the old formula when level.
+        points_frd = points * np.array([1.0, -1.0, -1.0], dtype=np.float32)
+        points_ned = self.drone_rotation.apply(points_frd)
+        wx = points_ned[:, 0] + self.drone_x
+        wy = points_ned[:, 1] + self.drone_y
+        wz = -(points_ned[:, 2] + self.drone_z)
 
         # --- Sanity filter on world z ---
         valid = (wz >= self.ground_z_min) & (wz <= self.ground_z_max)
+        points_kept = points[valid]
         wz = wz[valid]
-        if len(wz) == 0:
+
+        MIN_POINTS_FOR_UPDATE = 5  # a median over fewer points is barely
+                                   # robust to outliers at all
+        if len(wz) < MIN_POINTS_FOR_UPDATE:
             return
 
         # Ground estimate = median of downward returns (robust to outliers)
         ground_z_raw = float(np.median(wz))
+
+        if abs(ground_z_raw) > 2.0:
+            roll, pitch, yaw = self.drone_rotation.as_euler('xyz', degrees=True)
+            self.get_logger().warn(
+                f'Suspect ground reading: ground_z_raw={ground_z_raw:.2f}m | '
+                f'n_points={len(wz)} | roll={roll:.1f} pitch={pitch:.1f} yaw={yaw:.1f} | '
+                f'drone_z={self.drone_z:.2f} | '
+                f'local nadir points (x,y,z) first 3: {points_kept[:3].tolist()} | '
+                f'world wz first 3: {wz[:3].tolist()}'
+            )
 
         # --- Low-pass filter ---
         if self.ground_z_estimate is None:
@@ -228,7 +267,27 @@ class TerrainFollowerNode(Node):
     # -------------------------------------------------------------------------
 
     def _extract_xyz_vectorised(self, msg: PointCloud2):
-        """Extract XYZ from PointCloud2 using numpy (vectorised)."""
+        """Extract XYZ from PointCloud2 using numpy (vectorised).
+
+        Some rays that hit nothing within range come back as a huge
+        sentinel value instead of NaN/Inf. np.isfinite() alone lets those
+        through, which is what caused the overflow warnings downstream
+        when xy_dist = sqrt(x**2 + y**2) squared them. MAX_SENSOR_RANGE
+        rejects those here, at the source, and is applied via abs() only
+        (no squaring) so a huge value can never overflow before rejection.
+
+        Also rejects two other invalid-return patterns found by
+        inspection: points whose local z is near zero, which cannot be a
+        real downward ground hit no matter what x/y are (some invalid
+        returns have plausible-looking x/y with a degenerate z), and
+        points at the LiDAR's max-range "no echo" distance (observed as
+        a repeated ~24-26m value), which mean "nothing detected", not
+        "ground detected 24m away".
+        """
+        MAX_SENSOR_RANGE = 200.0   # metres, garbage/sentinel-value safety net
+        MIN_VALID_ABS_Z = 0.3     # metres, rejects degenerate near-zero depth
+        MAX_VALID_RANGE = 22.0    # metres, rejects near-max-range no-echo sentinel
+
         x_off = y_off = z_off = None
         for field in msg.fields:
             if field.name == 'x':
@@ -252,7 +311,17 @@ class TerrainFollowerNode(Node):
         z = np.frombuffer(data[z_off::step][:n_points * 4].copy(), dtype=np.float32)[:n_points]
 
         points = np.column_stack([x, y, z])
-        return points[np.isfinite(points).all(axis=1)]
+        # Prefilter on finiteness and magnitude via abs() (no squaring) so
+        # a sentinel value can never overflow float32 before it's dropped.
+        prefilter = np.isfinite(points).all(axis=1) & (np.abs(points) < MAX_SENSOR_RANGE).all(axis=1)
+        total_range = np.full(len(points), np.inf, dtype=np.float64)
+        safe_points = points[prefilter].astype(np.float64)
+        if len(safe_points) > 0:
+            total_range[prefilter] = np.sqrt(np.sum(safe_points**2, axis=1))
+        valid = (prefilter &
+                 (np.abs(points[:, 2]) > MIN_VALID_ABS_Z) &
+                 (total_range < MAX_VALID_RANGE))
+        return points[valid]
 
 
 def main(args=None):

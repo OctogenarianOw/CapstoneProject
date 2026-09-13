@@ -16,12 +16,12 @@ echo ""
 read -p "Choose 1, 2 or 3: " choice
 
 if [ "$choice" = "1" ]; then
-    PX4_CMD="cd ~/PX4-Autopilot && PX4_GZ_WORLD=coastal_world PX4_GZ_MODEL_POSE=0,-5,0.1,0,0,0 make px4_sitl gz_x500_lidar_3d"
+    PX4_CMD="cd ~/PX4-Autopilot && PX4_GZ_WORLD=default PX4_GZ_MODEL_POSE=0,-5,0.1,0,0,0 make px4_sitl gz_x500_lidar_3d"
 elif [ "$choice" = "2" ] || [ "$choice" = "3" ]; then
-    PX4_CMD="cd ~/PX4-Autopilot && HEADLESS=1 PX4_GZ_WORLD=coastal_world PX4_GZ_MODEL_POSE=0,-5,0.1,0,0,0 make px4_sitl gz_x500_lidar_3d"
+    PX4_CMD="cd ~/PX4-Autopilot && HEADLESS=1 PX4_GZ_WORLD=default PX4_GZ_MODEL_POSE=0,-5,0.1,0,0,0 make px4_sitl gz_x500_lidar_3d"
 else
     echo "Invalid choice, launching in full mode by default"
-    PX4_CMD="cd ~/PX4-Autopilot && PX4_GZ_WORLD=coastal_world PX4_GZ_MODEL_POSE=0,-5,0.1,0,0,0 make px4_sitl gz_x500_lidar_3d"
+    PX4_CMD="cd ~/PX4-Autopilot && PX4_GZ_WORLD=default PX4_GZ_MODEL_POSE=0,-5,0.1,0,0,0 make px4_sitl gz_x500_lidar_3d"
 fi
 
 echo "Done. Launching simulation..."

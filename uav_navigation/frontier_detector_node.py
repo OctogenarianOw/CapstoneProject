@@ -194,9 +194,22 @@ class FrontierDetectorNode(Node):
         for cells in clusters:
             cells_arr = np.array(cells)  # shape (N, 2): [[j, i], ...]
 
-            # Centroid in grid coordinates
-            cj = float(np.mean(cells_arr[:, 0]))
-            ci = float(np.mean(cells_arr[:, 1]))
+            # Mean position of the cluster
+            mean_j = float(np.mean(cells_arr[:, 0]))
+            mean_i = float(np.mean(cells_arr[:, 1]))
+
+            # Snap to the actual cluster member closest to the mean. The
+            # raw mean can land on a cell that was never part of the
+            # cluster at all (e.g. an elongated or L-shaped cluster
+            # wrapping around an obstacle), including an occupied one,
+            # which astar_planner_node then rightly refuses forever since
+            # nothing here would change on the next cycle. Every cluster
+            # member is, by construction, known_free, so snapping to one
+            # guarantees a valid target.
+            dists_to_mean = (cells_arr[:, 0] - mean_j)**2 + (cells_arr[:, 1] - mean_i)**2
+            nearest_idx = int(np.argmin(dists_to_mean))
+            cj = float(cells_arr[nearest_idx, 0])
+            ci = float(cells_arr[nearest_idx, 1])
 
             # Centroid in world coordinates
             cx = self.grid_origin_x + (ci + 0.5) * self.resolution

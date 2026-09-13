@@ -24,6 +24,7 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from nav_msgs.msg import Path, OccupancyGrid
 from uav_navigation_msgs.msg import WatchdogAlert
 import numpy as np
+import math
 
 
 class PathWatchdogNode(Node):
@@ -40,6 +41,13 @@ class PathWatchdogNode(Node):
         # --- Parameters ---
         # Check rate (Hz). Higher = more reactive, more CPU.
         self.check_rate = 5.0
+
+        # Only check this far ahead along the path, not the whole remaining
+        # route. A watchdog should catch imminent risk; a flagged cell far
+        # down a path that will be replanned several times before the
+        # drone gets there just causes needless replan churn, especially
+        # since the obstacle grid only ever accumulates and never decays.
+        self.check_horizon_m = 5.0
 
         # --- State ---
         self.current_path = None    # list of (x, y) world coordinates
@@ -72,7 +80,8 @@ class PathWatchdogNode(Node):
         self.create_timer(1.0 / self.check_rate, self.check_path)
 
         self.get_logger().info(
-            f'PathWatchdogNode started | check_rate={self.check_rate}Hz'
+            f'PathWatchdogNode started | check_rate={self.check_rate}Hz | '
+            f'check_horizon={self.check_horizon_m}m'
         )
 
     # -------------------------------------------------------------------------
@@ -109,7 +118,16 @@ class PathWatchdogNode(Node):
         obstacle_y = 0.0
         blocked_count = 0
 
+        cumulative_dist = 0.0
+        prev_xy = None
         for idx, (wx, wy) in enumerate(self.current_path):
+            if prev_xy is not None:
+                cumulative_dist += math.hypot(wx - prev_xy[0], wy - prev_xy[1])
+            prev_xy = (wx, wy)
+
+            if cumulative_dist > self.check_horizon_m:
+                break
+
             gi = int((wx - self.grid_origin_x) / self.resolution)
             gj = int((wy - self.grid_origin_y) / self.resolution)
 
