@@ -333,7 +333,29 @@ class ExplorationManagerNode(Node):
                 best_score = score
                 best = fc
 
+        if best is None and len(self.frontiers) > 0:
+            self._log_frontier_rejections(now)
+
         return best
+
+    def _log_frontier_rejections(self, now):
+        """Diagnostic: explain why every current frontier was rejected,
+        so a prolonged 'no valid frontier found' can be traced to too-close
+        / zero-gain / blacklisted rather than guessed at."""
+        for fc in self.frontiers:
+            reasons = []
+            if fc.distance_to_drone < self.arrival_threshold_exploration:
+                reasons.append(f'too close ({fc.distance_to_drone:.1f}m)')
+            if fc.information_gain <= 0:
+                reasons.append(f'zero gain ({fc.information_gain})')
+            blacklisted_until = self.blacklisted_frontiers.get(self._frontier_key(fc))
+            if blacklisted_until is not None and now < blacklisted_until:
+                reasons.append(f'blacklisted, {blacklisted_until - now:.0f}s left')
+            if reasons:
+                self.get_logger().warn(
+                    f'  rejected ({fc.centroid_x:.1f}, {fc.centroid_y:.1f}): '
+                    f'{", ".join(reasons)}'
+                )
 
     # -------------------------------------------------------------------------
     # Action client
