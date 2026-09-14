@@ -256,7 +256,19 @@ class TerrainScoringNode(Node):
         """
         MAX_SENSOR_RANGE = 200.0        # metres, garbage/sentinel-value safety net
         MAX_HORIZONTAL_RANGE = 15.0     # metres, absolute cap regardless of altitude
-        MAX_INCIDENCE_ANGLE_DEG = 22.5  # Pollyea & Fairley (2012) recommended limit
+        MAX_INCIDENCE_ANGLE_DEG = 30.0  # widened from the Pollyea & Fairley (2012)
+                                        # 22.5 deg recommendation as a light-touch
+                                        # trial: the tighter limit was capping the
+                                        # useful ground footprint at ~8-10m from
+                                        # typical cruise altitude, which is likely
+                                        # why frontiers just past that radius were
+                                        # never getting scanned even on repeat
+                                        # visits, stalling exploration. This trades
+                                        # a bit more oblique-angle roughness error
+                                        # for a wider, faster-growing footprint
+                                        # (~11.5-15m at the altitudes seen in
+                                        # testing). Revert to 22.5 if it reintroduces
+                                        # the noisy terrain scoring we fixed earlier.
         MIN_VALID_ABS_Z = 0.3           # metres, rejects degenerate near-zero depth
         MAX_VALID_RANGE = 22.0          # metres, rejects near-max-range no-echo sentinel
                                         # (observed as a repeated exact ~24-26m value)
