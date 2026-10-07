@@ -35,6 +35,7 @@ from std_msgs.msg import ColorRGBA, Header
 from uav_navigation_msgs.msg import FrontierCluster, FrontierArray
 import numpy as np
 from collections import deque
+import math
 
 
 class FrontierDetectorNode(Node):
@@ -68,6 +69,11 @@ class FrontierDetectorNode(Node):
         self.drone_x = 0.0
         self.drone_y = 0.0
         self.position_valid = False
+        self.close_frontier_streak = {}  # (cj,ci) -> consecutive cycles
+                                          # seen within diagnostic range,
+                                          # so the neighbourhood dump below
+                                          # only fires once it looks stuck,
+                                          # not on every routine approach
 
         # --- QoS ---
         reliable_qos = QoSProfile(
@@ -214,6 +220,34 @@ class FrontierDetectorNode(Node):
             # Centroid in world coordinates
             cx = self.grid_origin_x + (ci + 0.5) * self.resolution
             cy = self.grid_origin_y + (cj + 0.5) * self.resolution
+
+            # Diagnostic: for a frontier close to the drone that keeps
+            # showing up cycle after cycle (the case that stalls
+            # exploration), print the raw z_count grid right around it so
+            # we can see exactly which neighbour cell is still 0. Gated on
+            # a streak, not the first approach, since routinely passing
+            # within 5m on the way to a normal frontier is not itself a
+            # problem and would otherwise log on every single visit.
+            key = (int(cj), int(ci))
+            drone_dist_now = math.sqrt((self.drone_x - cx)**2 + (self.drone_y - cy)**2)
+            if drone_dist_now < 5.0:
+                streak = self.close_frontier_streak.get(key, 0) + 1
+                self.close_frontier_streak[key] = streak
+            else:
+                streak = 0
+                self.close_frontier_streak.pop(key, None)
+
+            if streak >= 4:
+                j0, j1 = max(0, int(cj) - 2), min(self.grid_size, int(cj) + 3)
+                i0, i1 = max(0, int(ci) - 2), min(self.grid_size, int(ci) + 3)
+                neighbourhood = self.z_count_grid[j0:j1, i0:i1]
+                obstacle_neighbourhood = self.obstacle_grid[j0:j1, i0:i1]
+                self.get_logger().warn(
+                    f'Frontier ({cx:.1f}, {cy:.1f}) at cell (j={int(cj)}, i={int(ci)}) '
+                    f'stuck {streak} cycles, {drone_dist_now:.1f}m from drone | '
+                    f'z_count neighbourhood (rows=j/y, cols=i/x):\n{neighbourhood}\n'
+                    f'obstacle neighbourhood:\n{obstacle_neighbourhood}'
+                )
 
             # Information gain: unknown cells within LiDAR range of centroid
             info_gain = self._estimate_information_gain(int(cj), int(ci), unknown)
