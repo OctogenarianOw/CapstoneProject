@@ -13,6 +13,8 @@ from sensor_msgs_py import point_cloud2
 
 from px4_msgs.msg import VehicleLocalPosition, VehicleAttitude
 
+from uav_core.elevation_grid import ElevationGrid
+
 
 def quat_to_matrix(q):
     """Rotation FRD corps vers NED terre. q est [w, x, y, z]."""
@@ -36,6 +38,16 @@ class CloudWorld(Node):
         self.max_range = self.get_parameter('max_usable_range').value
         self.sensor_offset = np.array(
             [0.0, 0.0, self.get_parameter('sensor_offset_down').value])
+
+        self.declare_parameter('grid_size', 100.0)
+        self.declare_parameter('grid_resolution', 1.0)
+        self.declare_parameter('measurement_variance', 0.09)
+
+        self.grid = ElevationGrid(
+            size_m=self.get_parameter('grid_size').value,
+            resolution=self.get_parameter('grid_resolution').value,
+        )
+        self.meas_var = self.get_parameter('measurement_variance').value
 
         px4_qos = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
@@ -103,12 +115,16 @@ class CloudWorld(Node):
         self.world_pub.publish(
             point_cloud2.create_cloud_xyz32(header, pts_ned.tolist()))
 
+        self.grid.update(pts_ned, self.meas_var)
+
         self.log_counter += 1
         if self.log_counter % 20 == 0:
-            z = pts_ned[:, 2]
+            known = self.grid.known_cells()
+            valid = self.grid.elevation[self.grid.count > 0]
             self.get_logger().info(
-                f'{pts_ned.shape[0]} pts | z moyen {z.mean():+.3f} '
-                f'| min {z.min():+.3f} | max {z.max():+.3f}')
+                f'{pts_ned.shape[0]} pts | {known} cellules | '
+                f'z carte moyen {valid.mean():+.3f} '
+                f'| ecart-type {valid.std():.3f}')
 
 
 def main(args=None):
