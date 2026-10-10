@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': ['offboard_demo = uav_core.offboard_demo:main',
+                            'square_mission = uav_core.square_mission:main',
         ],
     },
 )
