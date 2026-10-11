@@ -21,26 +21,33 @@ class ElevationGrid:
         iy = ((y - self.origin_y) / self.resolution).astype(np.int32)
         return ix, iy
 
-    def update(self, points, variance):
-        """points : tableau (N, 3) en NED. variance : scalaire."""
+    def update(self, points, variances):
+        """points : tableau (N, 3) en NED.
+        variances : tableau (N,) ou scalaire, en m^2."""
         if points.shape[0] == 0:
             return 0
+
+        variances = np.asarray(variances, dtype=np.float32)
+        if variances.ndim == 0:
+            variances = np.full(points.shape[0], float(variances),
+                                dtype=np.float32)
 
         ix, iy = self.to_index(points[:, 0], points[:, 1])
 
         inside = (ix >= 0) & (ix < self.n) & (iy >= 0) & (iy < self.n)
         ix, iy = ix[inside], iy[inside]
         z = points[inside, 2]
+        r = variances[inside]
         if z.size == 0:
             return 0
 
-        for i, j, zm in zip(ix, iy, z):
+        for i, j, zm, rm in zip(ix, iy, z, r):
             if self.count[i, j] == 0:
                 self.elevation[i, j] = zm
-                self.variance[i, j] = variance
+                self.variance[i, j] = rm
             else:
                 p = self.variance[i, j]
-                k = p / (p + variance)
+                k = p / (p + rm)
                 self.elevation[i, j] += k * (zm - self.elevation[i, j])
                 self.variance[i, j] = (1.0 - k) * p
             self.count[i, j] += 1

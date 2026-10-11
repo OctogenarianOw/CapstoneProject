@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 
 import rclpy
@@ -33,21 +35,24 @@ class CloudWorld(Node):
         self.declare_parameter('min_range', 0.3)
         self.declare_parameter('max_usable_range', 20.0)
         self.declare_parameter('sensor_offset_down', 0.15)
+        self.declare_parameter('grid_size', 100.0)
+        self.declare_parameter('grid_resolution', 1.0)
+        self.declare_parameter('sigma_range_m', 0.02)
+        self.declare_parameter('sigma_angular_rad', 0.009)
+        self.declare_parameter('map_path', '/tmp/elevation_map.npz')
 
         self.min_range = self.get_parameter('min_range').value
         self.max_range = self.get_parameter('max_usable_range').value
         self.sensor_offset = np.array(
             [0.0, 0.0, self.get_parameter('sensor_offset_down').value])
-
-        self.declare_parameter('grid_size', 100.0)
-        self.declare_parameter('grid_resolution', 1.0)
-        self.declare_parameter('measurement_variance', 0.09)
+        self.sigma_range = self.get_parameter('sigma_range_m').value
+        self.sigma_angular = self.get_parameter('sigma_angular_rad').value
+        self.map_path = self.get_parameter('map_path').value
 
         self.grid = ElevationGrid(
             size_m=self.get_parameter('grid_size').value,
             resolution=self.get_parameter('grid_resolution').value,
         )
-        self.meas_var = self.get_parameter('measurement_variance').value
 
         px4_qos = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
@@ -73,6 +78,7 @@ class CloudWorld(Node):
             PointCloud2, '/cloud_world', 10)
 
         self.log_counter = 0
+        self.save_timer = self.create_timer(5.0, self.save_map)
 
     def on_position(self, msg):
         self.position = np.array([msg.x, msg.y, msg.z])
@@ -99,6 +105,7 @@ class CloudWorld(Node):
         norms = np.linalg.norm(pts, axis=1)
         keep = (norms > self.min_range) & (norms < self.max_range)
         pts = pts[keep]
+        dist = norms[keep]
         if pts.shape[0] == 0:
             return
 
@@ -109,13 +116,18 @@ class CloudWorld(Node):
         rot = quat_to_matrix(self.attitude)
         pts_ned = pts_frd @ rot.T + self.position
 
+        # Incertitude verticale : bruit du capteur plus erreur angulaire,
+        # qui croit avec la distance d'observation.
+        sigma = self.sigma_range + self.sigma_angular * dist
+        variances = (sigma ** 2).astype(np.float32)
+
         header = Header()
         header.stamp = self.get_clock().now().to_msg()
         header.frame_id = 'map_ned'
         self.world_pub.publish(
             point_cloud2.create_cloud_xyz32(header, pts_ned.tolist()))
 
-        self.grid.update(pts_ned, self.meas_var)
+        self.grid.update(pts_ned, variances)
 
         self.log_counter += 1
         if self.log_counter % 20 == 0:
@@ -125,6 +137,21 @@ class CloudWorld(Node):
                 f'{pts_ned.shape[0]} pts | {known} cellules | '
                 f'z carte moyen {valid.mean():+.3f} '
                 f'| ecart-type {valid.std():.3f}')
+
+    def save_map(self):
+        if self.grid.known_cells() == 0:
+            return
+        tmp = self.map_path + '.tmp'
+        np.savez(
+            tmp,
+            elevation=self.grid.elevation,
+            variance=self.grid.variance,
+            count=self.grid.count,
+            resolution=self.grid.resolution,
+            origin_x=self.grid.origin_x,
+            origin_y=self.grid.origin_y,
+        )
+        os.replace(tmp + '.npz', self.map_path)
 
 
 def main(args=None):

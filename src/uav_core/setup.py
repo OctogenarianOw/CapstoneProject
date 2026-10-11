@@ -26,6 +26,7 @@ setup(
         'console_scripts': ['offboard_demo = uav_core.offboard_demo:main',
                             'square_mission = uav_core.square_mission:main',
                             'cloud_world = uav_core.cloud_world:main',
+                            'survey_mission = uav_core.survey_mission:main',
         ],
     },
 )

@@ -6,3 +6,10 @@
 #
 PX4_SIM_MODEL=${PX4_SIM_MODEL:=x500_slz}
 . ${R}etc/init.d-posix/airframes/4001_gz_x500
+
+# Simulated battery drains in 60 s by default, which triggers an RTL
+# failsafe in the middle of a survey and fights the offboard setpoints.
+# Energy feasibility is modelled explicitly in this project, so the
+# simulated battery is stretched well past any mission duration.
+param set-default SIM_BAT_DRAIN 3000
+param set-default SIM_BAT_MIN_PCT 95
