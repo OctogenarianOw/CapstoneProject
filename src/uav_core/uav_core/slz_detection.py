@@ -151,7 +151,12 @@ def detect(layers, elevation, resolution, origin_xy,
     safety_margin_m grows the refused region before the footprint test,
     so candidates keep their distance from anything that failed.
     """
-    radius = max(1, int(round(footprint_m / resolution / 2.0)))
+    # Cells spanned by the footprint, as an odd count centred on the
+    # cell: 2*radius+1 <= footprint_m / resolution. A radius of 0 is
+    # legitimate when the footprint fits in one cell, because the cell
+    # test already checks the 3x3 analysis window around it.
+    radius = int(max(0.0, (footprint_m / resolution - 1.0) / 2.0))
+    
     margin = int(round(safety_margin_m / resolution))
 
     cell_ok = classify_cells(layers, **thresholds)
