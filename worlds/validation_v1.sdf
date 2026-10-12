@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <world name="validation">
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <scene>
+      <grid>false</grid>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1 1</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>500 500</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+        <pose>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <pose>0 0 0 0 -0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <light name="sunUTC" type="directional">
+      <pose>0 0 500 0 -0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0.001 0.625 -0.78</direction>
+      <diffuse>0.904 0.904 0.904 1</diffuse>
+      <specular>0.271 0.271 0.271 1</specular>
+      <attenuation>
+        <range>2000</range>
+        <linear>0</linear>
+        <constant>1</constant>
+        <quadratic>0</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>47.397971057728974</latitude_deg>
+      <longitude_deg> 8.546163739800146</longitude_deg>
+      <elevation>0</elevation>
+    </spherical_coordinates>
+      <model name="validation_terrain">
+      <static>true</static>
+      <link name="terrain_link">
+      <collision name="ramp_10_col"><pose>20.0000 0.0000 1.2039 0 -0.174533 0</pose><geometry><box><size>15.0000 15.0000 0.2000</size></box></geometry></collision>
+      <visual name="ramp_10_vis"><pose>20.0000 0.0000 1.2039 0 -0.174533 0</pose><geometry><box><size>15.0000 15.0000 0.2000</size></box></geometry><material><ambient>0.55 0.45 0.35 1</ambient><diffuse>0.55 0.45 0.35 1</diffuse></material></visual>
+      <collision name="ramp_25_col"><pose>-20.0000 0.0000 3.0790 0 -0.436332 0</pose><geometry><box><size>15.0000 15.0000 0.2000</size></box></geometry></collision>
+      <visual name="ramp_25_vis"><pose>-20.0000 0.0000 3.0790 0 -0.436332 0</pose><geometry><box><size>15.0000 15.0000 0.2000</size></box></geometry><material><ambient>0.55 0.45 0.35 1</ambient><diffuse>0.55 0.45 0.35 1</diffuse></material></visual>
+      <collision name="rock_0_col"><pose>-5.7000 14.3000 0.1217 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2435</size></box></geometry></collision>
+      <visual name="rock_0_vis"><pose>-5.7000 14.3000 0.1217 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2435</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_1_col"><pose>-5.7000 14.9000 0.0799 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1597</size></box></geometry></collision>
+      <visual name="rock_1_vis"><pose>-5.7000 14.9000 0.0799 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1597</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_2_col"><pose>-5.7000 15.5000 0.1323 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2646</size></box></geometry></collision>
+      <visual name="rock_2_vis"><pose>-5.7000 15.5000 0.1323 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2646</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_3_col"><pose>-5.7000 16.1000 0.1122 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2243</size></box></geometry></collision>
+      <visual name="rock_3_vis"><pose>-5.7000 16.1000 0.1122 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2243</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_4_col"><pose>-5.7000 16.7000 0.0368 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0735</size></box></geometry></collision>
+      <visual name="rock_4_vis"><pose>-5.7000 16.7000 0.0368 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0735</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_5_col"><pose>-5.7000 17.3000 0.1470 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2939</size></box></geometry></collision>
+      <visual name="rock_5_vis"><pose>-5.7000 17.3000 0.1470 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2939</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_6_col"><pose>-5.7000 17.9000 0.1201 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2403</size></box></geometry></collision>
+      <visual name="rock_6_vis"><pose>-5.7000 17.9000 0.1201 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2403</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_7_col"><pose>-5.7000 18.5000 0.1233 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2465</size></box></geometry></collision>
+      <visual name="rock_7_vis"><pose>-5.7000 18.5000 0.1233 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2465</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_8_col"><pose>-5.7000 19.1000 0.0410 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0820</size></box></geometry></collision>
+      <visual name="rock_8_vis"><pose>-5.7000 19.1000 0.0410 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0820</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_9_col"><pose>-5.7000 19.7000 0.0813 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1626</size></box></geometry></collision>
+      <visual name="rock_9_vis"><pose>-5.7000 19.7000 0.0813 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1626</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_10_col"><pose>-5.7000 20.3000 0.0713 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1427</size></box></geometry></collision>
+      <visual name="rock_10_vis"><pose>-5.7000 20.3000 0.0713 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1427</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_11_col"><pose>-5.7000 20.9000 0.1408 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2817</size></box></geometry></collision>
+      <visual name="rock_11_vis"><pose>-5.7000 20.9000 0.1408 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2817</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_12_col"><pose>-5.7000 21.5000 0.1055 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2110</size></box></geometry></collision>
+      <visual name="rock_12_vis"><pose>-5.7000 21.5000 0.1055 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2110</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_13_col"><pose>-5.7000 22.1000 0.1278 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2557</size></box></geometry></collision>
+      <visual name="rock_13_vis"><pose>-5.7000 22.1000 0.1278 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2557</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_14_col"><pose>-5.7000 22.7000 0.0804 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1609</size></box></geometry></collision>
+      <visual name="rock_14_vis"><pose>-5.7000 22.7000 0.0804 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1609</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_15_col"><pose>-5.7000 23.3000 0.0534 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1068</size></box></geometry></collision>
+      <visual name="rock_15_vis"><pose>-5.7000 23.3000 0.0534 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1068</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_16_col"><pose>-5.7000 23.9000 0.0943 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1886</size></box></geometry></collision>
+      <visual name="rock_16_vis"><pose>-5.7000 23.9000 0.0943 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1886</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_17_col"><pose>-5.7000 24.5000 0.0330 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0660</size></box></geometry></collision>
+      <visual name="rock_17_vis"><pose>-5.7000 24.5000 0.0330 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0660</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_18_col"><pose>-5.7000 25.1000 0.1285 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2569</size></box></geometry></collision>
+      <visual name="rock_18_vis"><pose>-5.7000 25.1000 0.1285 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2569</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_19_col"><pose>-5.7000 25.7000 0.1040 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2079</size></box></geometry></collision>
+      <visual name="rock_19_vis"><pose>-5.7000 25.7000 0.1040 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2079</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_20_col"><pose>-5.1000 14.3000 0.1198 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2395</size></box></geometry></collision>
+      <visual name="rock_20_vis"><pose>-5.1000 14.3000 0.1198 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2395</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_21_col"><pose>-5.1000 14.9000 0.0693 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1386</size></box></geometry></collision>
+      <visual name="rock_21_vis"><pose>-5.1000 14.9000 0.0693 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1386</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_22_col"><pose>-5.1000 15.5000 0.1463 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2927</size></box></geometry></collision>
+      <visual name="rock_22_vis"><pose>-5.1000 15.5000 0.1463 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2927</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_23_col"><pose>-5.1000 16.1000 0.1366 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2733</size></box></geometry></collision>
+      <visual name="rock_23_vis"><pose>-5.1000 16.1000 0.1366 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2733</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_24_col"><pose>-5.1000 16.7000 0.1223 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2446</size></box></geometry></collision>
+      <visual name="rock_24_vis"><pose>-5.1000 16.7000 0.1223 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2446</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_25_col"><pose>-5.1000 17.3000 0.0493 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0987</size></box></geometry></collision>
+      <visual name="rock_25_vis"><pose>-5.1000 17.3000 0.0493 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0987</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_26_col"><pose>-5.1000 17.9000 0.0833 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1667</size></box></geometry></collision>
+      <visual name="rock_26_vis"><pose>-5.1000 17.9000 0.0833 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1667</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_27_col"><pose>-5.1000 18.5000 0.0305 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0610</size></box></geometry></collision>
+      <visual name="rock_27_vis"><pose>-5.1000 18.5000 0.0305 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0610</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_28_col"><pose>-5.1000 19.1000 0.0443 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0886</size></box></geometry></collision>
+      <visual name="rock_28_vis"><pose>-5.1000 19.1000 0.0443 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0886</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_29_col"><pose>-5.1000 19.7000 0.1104 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2208</size></box></geometry></collision>
+      <visual name="rock_29_vis"><pose>-5.1000 19.7000 0.1104 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2208</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_30_col"><pose>-5.1000 20.3000 0.1181 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2362</size></box></geometry></collision>
+      <visual name="rock_30_vis"><pose>-5.1000 20.3000 0.1181 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2362</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_31_col"><pose>-5.1000 20.9000 0.1459 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2919</size></box></geometry></collision>
+      <visual name="rock_31_vis"><pose>-5.1000 20.9000 0.1459 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2919</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_32_col"><pose>-5.1000 21.5000 0.0657 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1315</size></box></geometry></collision>
+      <visual name="rock_32_vis"><pose>-5.1000 21.5000 0.0657 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1315</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_33_col"><pose>-5.1000 22.1000 0.0713 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1426</size></box></geometry></collision>
+      <visual name="rock_33_vis"><pose>-5.1000 22.1000 0.0713 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1426</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_34_col"><pose>-5.1000 22.7000 0.0837 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1674</size></box></geometry></collision>
+      <visual name="rock_34_vis"><pose>-5.1000 22.7000 0.0837 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1674</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_35_col"><pose>-5.1000 23.3000 0.0487 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0974</size></box></geometry></collision>
+      <visual name="rock_35_vis"><pose>-5.1000 23.3000 0.0487 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0974</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_36_col"><pose>-5.1000 23.9000 0.0412 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0825</size></box></geometry></collision>
+      <visual name="rock_36_vis"><pose>-5.1000 23.9000 0.0412 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0825</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_37_col"><pose>-5.1000 24.5000 0.0845 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1689</size></box></geometry></collision>
+      <visual name="rock_37_vis"><pose>-5.1000 24.5000 0.0845 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1689</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_38_col"><pose>-5.1000 25.1000 0.0534 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1067</size></box></geometry></collision>
+      <visual name="rock_38_vis"><pose>-5.1000 25.1000 0.0534 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1067</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_39_col"><pose>-5.1000 25.7000 0.1087 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2175</size></box></geometry></collision>
+      <visual name="rock_39_vis"><pose>-5.1000 25.7000 0.1087 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2175</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_40_col"><pose>-4.5000 14.3000 0.0796 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1593</size></box></geometry></collision>
+      <visual name="rock_40_vis"><pose>-4.5000 14.3000 0.0796 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1593</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_41_col"><pose>-4.5000 14.9000 0.1291 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2582</size></box></geometry></collision>
+      <visual name="rock_41_vis"><pose>-4.5000 14.9000 0.1291 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2582</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_42_col"><pose>-4.5000 15.5000 0.1125 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2251</size></box></geometry></collision>
+      <visual name="rock_42_vis"><pose>-4.5000 15.5000 0.1125 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2251</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_43_col"><pose>-4.5000 16.1000 0.0640 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1281</size></box></geometry></collision>
+      <visual name="rock_43_vis"><pose>-4.5000 16.1000 0.0640 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1281</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_44_col"><pose>-4.5000 16.7000 0.1290 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2581</size></box></geometry></collision>
+      <visual name="rock_44_vis"><pose>-4.5000 16.7000 0.1290 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2581</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_45_col"><pose>-4.5000 17.3000 0.1256 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2512</size></box></geometry></collision>
+      <visual name="rock_45_vis"><pose>-4.5000 17.3000 0.1256 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2512</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_46_col"><pose>-4.5000 17.9000 0.0734 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1469</size></box></geometry></collision>
+      <visual name="rock_46_vis"><pose>-4.5000 17.9000 0.0734 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1469</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_47_col"><pose>-4.5000 18.5000 0.0610 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1221</size></box></geometry></collision>
+      <visual name="rock_47_vis"><pose>-4.5000 18.5000 0.0610 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1221</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_48_col"><pose>-4.5000 19.1000 0.1103 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2206</size></box></geometry></collision>
+      <visual name="rock_48_vis"><pose>-4.5000 19.1000 0.1103 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2206</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_49_col"><pose>-4.5000 19.7000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0849</size></box></geometry></collision>
+      <visual name="rock_49_vis"><pose>-4.5000 19.7000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0849</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_50_col"><pose>-4.5000 20.3000 0.0500 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1000</size></box></geometry></collision>
+      <visual name="rock_50_vis"><pose>-4.5000 20.3000 0.0500 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1000</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_51_col"><pose>-4.5000 20.9000 0.0259 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0518</size></box></geometry></collision>
+      <visual name="rock_51_vis"><pose>-4.5000 20.9000 0.0259 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0518</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_52_col"><pose>-4.5000 21.5000 0.1234 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2467</size></box></geometry></collision>
+      <visual name="rock_52_vis"><pose>-4.5000 21.5000 0.1234 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2467</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_53_col"><pose>-4.5000 22.1000 0.1081 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2162</size></box></geometry></collision>
+      <visual name="rock_53_vis"><pose>-4.5000 22.1000 0.1081 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2162</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_54_col"><pose>-4.5000 22.7000 0.1131 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2263</size></box></geometry></collision>
+      <visual name="rock_54_vis"><pose>-4.5000 22.7000 0.1131 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2263</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_55_col"><pose>-4.5000 23.3000 0.1226 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2452</size></box></geometry></collision>
+      <visual name="rock_55_vis"><pose>-4.5000 23.3000 0.1226 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2452</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_56_col"><pose>-4.5000 23.9000 0.0824 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1647</size></box></geometry></collision>
+      <visual name="rock_56_vis"><pose>-4.5000 23.9000 0.0824 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1647</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_57_col"><pose>-4.5000 24.5000 0.0961 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1922</size></box></geometry></collision>
+      <visual name="rock_57_vis"><pose>-4.5000 24.5000 0.0961 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1922</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_58_col"><pose>-4.5000 25.1000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0849</size></box></geometry></collision>
+      <visual name="rock_58_vis"><pose>-4.5000 25.1000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0849</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_59_col"><pose>-4.5000 25.7000 0.0393 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0786</size></box></geometry></collision>
+      <visual name="rock_59_vis"><pose>-4.5000 25.7000 0.0393 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0786</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_60_col"><pose>-3.9000 14.3000 0.1086 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2171</size></box></geometry></collision>
+      <visual name="rock_60_vis"><pose>-3.9000 14.3000 0.1086 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2171</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_61_col"><pose>-3.9000 14.9000 0.0839 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1678</size></box></geometry></collision>
+      <visual name="rock_61_vis"><pose>-3.9000 14.9000 0.0839 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1678</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_62_col"><pose>-3.9000 15.5000 0.0957 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1913</size></box></geometry></collision>
+      <visual name="rock_62_vis"><pose>-3.9000 15.5000 0.0957 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1913</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_63_col"><pose>-3.9000 16.1000 0.1206 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2412</size></box></geometry></collision>
+      <visual name="rock_63_vis"><pose>-3.9000 16.1000 0.1206 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2412</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_64_col"><pose>-3.9000 16.7000 0.1043 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2087</size></box></geometry></collision>
+      <visual name="rock_64_vis"><pose>-3.9000 16.7000 0.1043 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2087</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_65_col"><pose>-3.9000 17.3000 0.0942 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1884</size></box></geometry></collision>
+      <visual name="rock_65_vis"><pose>-3.9000 17.3000 0.0942 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1884</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_66_col"><pose>-3.9000 17.9000 0.0949 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1898</size></box></geometry></collision>
+      <visual name="rock_66_vis"><pose>-3.9000 17.9000 0.0949 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1898</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_67_col"><pose>-3.9000 18.5000 0.0630 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1260</size></box></geometry></collision>
+      <visual name="rock_67_vis"><pose>-3.9000 18.5000 0.0630 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1260</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_68_col"><pose>-3.9000 19.1000 0.0289 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0577</size></box></geometry></collision>
+      <visual name="rock_68_vis"><pose>-3.9000 19.1000 0.0289 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0577</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_69_col"><pose>-3.9000 19.7000 0.0796 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1592</size></box></geometry></collision>
+      <visual name="rock_69_vis"><pose>-3.9000 19.7000 0.0796 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1592</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_70_col"><pose>-3.9000 20.3000 0.0518 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1036</size></box></geometry></collision>
+      <visual name="rock_70_vis"><pose>-3.9000 20.3000 0.0518 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1036</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_71_col"><pose>-3.9000 20.9000 0.0761 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1521</size></box></geometry></collision>
+      <visual name="rock_71_vis"><pose>-3.9000 20.9000 0.0761 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1521</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_72_col"><pose>-3.9000 21.5000 0.1317 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2634</size></box></geometry></collision>
+      <visual name="rock_72_vis"><pose>-3.9000 21.5000 0.1317 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2634</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_73_col"><pose>-3.9000 22.1000 0.0542 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1085</size></box></geometry></collision>
+      <visual name="rock_73_vis"><pose>-3.9000 22.1000 0.0542 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1085</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_74_col"><pose>-3.9000 22.7000 0.0323 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0646</size></box></geometry></collision>
+      <visual name="rock_74_vis"><pose>-3.9000 22.7000 0.0323 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0646</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_75_col"><pose>-3.9000 23.3000 0.0602 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1203</size></box></geometry></collision>
+      <visual name="rock_75_vis"><pose>-3.9000 23.3000 0.0602 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1203</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_76_col"><pose>-3.9000 23.9000 0.0617 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1234</size></box></geometry></collision>
+      <visual name="rock_76_vis"><pose>-3.9000 23.9000 0.0617 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1234</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_77_col"><pose>-3.9000 24.5000 0.1077 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2155</size></box></geometry></collision>
+      <visual name="rock_77_vis"><pose>-3.9000 24.5000 0.1077 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2155</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_78_col"><pose>-3.9000 25.1000 0.0946 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1893</size></box></geometry></collision>
+      <visual name="rock_78_vis"><pose>-3.9000 25.1000 0.0946 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1893</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_79_col"><pose>-3.9000 25.7000 0.1230 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2460</size></box></geometry></collision>
+      <visual name="rock_79_vis"><pose>-3.9000 25.7000 0.1230 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2460</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_80_col"><pose>-3.3000 14.3000 0.1080 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2161</size></box></geometry></collision>
+      <visual name="rock_80_vis"><pose>-3.3000 14.3000 0.1080 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2161</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_81_col"><pose>-3.3000 14.9000 0.0758 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1516</size></box></geometry></collision>
+      <visual name="rock_81_vis"><pose>-3.3000 14.9000 0.0758 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1516</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_82_col"><pose>-3.3000 15.5000 0.1268 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2535</size></box></geometry></collision>
+      <visual name="rock_82_vis"><pose>-3.3000 15.5000 0.1268 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2535</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_83_col"><pose>-3.3000 16.1000 0.0459 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0917</size></box></geometry></collision>
+      <visual name="rock_83_vis"><pose>-3.3000 16.1000 0.0459 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0917</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_84_col"><pose>-3.3000 16.7000 0.0278 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0557</size></box></geometry></collision>
+      <visual name="rock_84_vis"><pose>-3.3000 16.7000 0.0278 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0557</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_85_col"><pose>-3.3000 17.3000 0.0363 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0725</size></box></geometry></collision>
+      <visual name="rock_85_vis"><pose>-3.3000 17.3000 0.0363 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0725</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_86_col"><pose>-3.3000 17.9000 0.1153 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2306</size></box></geometry></collision>
+      <visual name="rock_86_vis"><pose>-3.3000 17.9000 0.1153 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2306</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_87_col"><pose>-3.3000 18.5000 0.0827 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1655</size></box></geometry></collision>
+      <visual name="rock_87_vis"><pose>-3.3000 18.5000 0.0827 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1655</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_88_col"><pose>-3.3000 19.1000 0.0452 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0903</size></box></geometry></collision>
+      <visual name="rock_88_vis"><pose>-3.3000 19.1000 0.0452 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0903</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_89_col"><pose>-3.3000 19.7000 0.0876 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1753</size></box></geometry></collision>
+      <visual name="rock_89_vis"><pose>-3.3000 19.7000 0.0876 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1753</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_90_col"><pose>-3.3000 20.3000 0.0440 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0881</size></box></geometry></collision>
+      <visual name="rock_90_vis"><pose>-3.3000 20.3000 0.0440 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0881</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_91_col"><pose>-3.3000 20.9000 0.1120 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2241</size></box></geometry></collision>
+      <visual name="rock_91_vis"><pose>-3.3000 20.9000 0.1120 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2241</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_92_col"><pose>-3.3000 21.5000 0.0808 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1615</size></box></geometry></collision>
+      <visual name="rock_92_vis"><pose>-3.3000 21.5000 0.0808 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1615</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_93_col"><pose>-3.3000 22.1000 0.0726 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1453</size></box></geometry></collision>
+      <visual name="rock_93_vis"><pose>-3.3000 22.1000 0.0726 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1453</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_94_col"><pose>-3.3000 22.7000 0.0627 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1254</size></box></geometry></collision>
+      <visual name="rock_94_vis"><pose>-3.3000 22.7000 0.0627 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1254</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_95_col"><pose>-3.3000 23.3000 0.1038 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2076</size></box></geometry></collision>
+      <visual name="rock_95_vis"><pose>-3.3000 23.3000 0.1038 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2076</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_96_col"><pose>-3.3000 23.9000 0.0702 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1405</size></box></geometry></collision>
+      <visual name="rock_96_vis"><pose>-3.3000 23.9000 0.0702 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1405</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_97_col"><pose>-3.3000 24.5000 0.0360 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0719</size></box></geometry></collision>
+      <visual name="rock_97_vis"><pose>-3.3000 24.5000 0.0360 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0719</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_98_col"><pose>-3.3000 25.1000 0.0398 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0795</size></box></geometry></collision>
+      <visual name="rock_98_vis"><pose>-3.3000 25.1000 0.0398 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0795</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_99_col"><pose>-3.3000 25.7000 0.1452 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2905</size></box></geometry></collision>
+      <visual name="rock_99_vis"><pose>-3.3000 25.7000 0.1452 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2905</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_100_col"><pose>-2.7000 14.3000 0.1386 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2771</size></box></geometry></collision>
+      <visual name="rock_100_vis"><pose>-2.7000 14.3000 0.1386 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2771</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_101_col"><pose>-2.7000 14.9000 0.1125 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2249</size></box></geometry></collision>
+      <visual name="rock_101_vis"><pose>-2.7000 14.9000 0.1125 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2249</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_102_col"><pose>-2.7000 15.5000 0.0582 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1165</size></box></geometry></collision>
+      <visual name="rock_102_vis"><pose>-2.7000 15.5000 0.0582 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1165</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_103_col"><pose>-2.7000 16.1000 0.1461 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2923</size></box></geometry></collision>
+      <visual name="rock_103_vis"><pose>-2.7000 16.1000 0.1461 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2923</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_104_col"><pose>-2.7000 16.7000 0.1223 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2447</size></box></geometry></collision>
+      <visual name="rock_104_vis"><pose>-2.7000 16.7000 0.1223 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2447</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_105_col"><pose>-2.7000 17.3000 0.1146 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2292</size></box></geometry></collision>
+      <visual name="rock_105_vis"><pose>-2.7000 17.3000 0.1146 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2292</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_106_col"><pose>-2.7000 17.9000 0.0812 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1623</size></box></geometry></collision>
+      <visual name="rock_106_vis"><pose>-2.7000 17.9000 0.0812 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1623</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_107_col"><pose>-2.7000 18.5000 0.0590 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1181</size></box></geometry></collision>
+      <visual name="rock_107_vis"><pose>-2.7000 18.5000 0.0590 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1181</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_108_col"><pose>-2.7000 19.1000 0.0370 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0741</size></box></geometry></collision>
+      <visual name="rock_108_vis"><pose>-2.7000 19.1000 0.0370 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0741</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_109_col"><pose>-2.7000 19.7000 0.1378 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2757</size></box></geometry></collision>
+      <visual name="rock_109_vis"><pose>-2.7000 19.7000 0.1378 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2757</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_110_col"><pose>-2.7000 20.3000 0.0820 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1639</size></box></geometry></collision>
+      <visual name="rock_110_vis"><pose>-2.7000 20.3000 0.0820 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1639</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_111_col"><pose>-2.7000 20.9000 0.0503 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1006</size></box></geometry></collision>
+      <visual name="rock_111_vis"><pose>-2.7000 20.9000 0.0503 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1006</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_112_col"><pose>-2.7000 21.5000 0.0632 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1265</size></box></geometry></collision>
+      <visual name="rock_112_vis"><pose>-2.7000 21.5000 0.0632 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1265</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_113_col"><pose>-2.7000 22.1000 0.0974 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1948</size></box></geometry></collision>
+      <visual name="rock_113_vis"><pose>-2.7000 22.1000 0.0974 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1948</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_114_col"><pose>-2.7000 22.7000 0.0471 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0942</size></box></geometry></collision>
+      <visual name="rock_114_vis"><pose>-2.7000 22.7000 0.0471 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0942</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_115_col"><pose>-2.7000 23.3000 0.1321 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2642</size></box></geometry></collision>
+      <visual name="rock_115_vis"><pose>-2.7000 23.3000 0.1321 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2642</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_116_col"><pose>-2.7000 23.9000 0.1198 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2396</size></box></geometry></collision>
+      <visual name="rock_116_vis"><pose>-2.7000 23.9000 0.1198 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2396</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_117_col"><pose>-2.7000 24.5000 0.1149 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2299</size></box></geometry></collision>
+      <visual name="rock_117_vis"><pose>-2.7000 24.5000 0.1149 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2299</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_118_col"><pose>-2.7000 25.1000 0.0790 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1580</size></box></geometry></collision>
+      <visual name="rock_118_vis"><pose>-2.7000 25.1000 0.0790 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1580</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_119_col"><pose>-2.7000 25.7000 0.1034 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2068</size></box></geometry></collision>
+      <visual name="rock_119_vis"><pose>-2.7000 25.7000 0.1034 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2068</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_120_col"><pose>-2.1000 14.3000 0.0980 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1960</size></box></geometry></collision>
+      <visual name="rock_120_vis"><pose>-2.1000 14.3000 0.0980 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1960</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_121_col"><pose>-2.1000 14.9000 0.1062 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2125</size></box></geometry></collision>
+      <visual name="rock_121_vis"><pose>-2.1000 14.9000 0.1062 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2125</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_122_col"><pose>-2.1000 15.5000 0.0356 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0711</size></box></geometry></collision>
+      <visual name="rock_122_vis"><pose>-2.1000 15.5000 0.0356 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0711</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_123_col"><pose>-2.1000 16.1000 0.0770 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1540</size></box></geometry></collision>
+      <visual name="rock_123_vis"><pose>-2.1000 16.1000 0.0770 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1540</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_124_col"><pose>-2.1000 16.7000 0.0302 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0604</size></box></geometry></collision>
+      <visual name="rock_124_vis"><pose>-2.1000 16.7000 0.0302 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0604</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_125_col"><pose>-2.1000 17.3000 0.0867 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1735</size></box></geometry></collision>
+      <visual name="rock_125_vis"><pose>-2.1000 17.3000 0.0867 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1735</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_126_col"><pose>-2.1000 17.9000 0.0662 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1325</size></box></geometry></collision>
+      <visual name="rock_126_vis"><pose>-2.1000 17.9000 0.0662 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1325</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_127_col"><pose>-2.1000 18.5000 0.0431 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0861</size></box></geometry></collision>
+      <visual name="rock_127_vis"><pose>-2.1000 18.5000 0.0431 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0861</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_128_col"><pose>-2.1000 19.1000 0.0379 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0759</size></box></geometry></collision>
+      <visual name="rock_128_vis"><pose>-2.1000 19.1000 0.0379 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0759</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_129_col"><pose>-2.1000 19.7000 0.0985 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1969</size></box></geometry></collision>
+      <visual name="rock_129_vis"><pose>-2.1000 19.7000 0.0985 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1969</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_130_col"><pose>-2.1000 20.3000 0.0463 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0926</size></box></geometry></collision>
+      <visual name="rock_130_vis"><pose>-2.1000 20.3000 0.0463 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0926</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_131_col"><pose>-2.1000 20.9000 0.1406 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2813</size></box></geometry></collision>
+      <visual name="rock_131_vis"><pose>-2.1000 20.9000 0.1406 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2813</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_132_col"><pose>-2.1000 21.5000 0.0976 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1953</size></box></geometry></collision>
+      <visual name="rock_132_vis"><pose>-2.1000 21.5000 0.0976 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1953</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_133_col"><pose>-2.1000 22.1000 0.0684 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1367</size></box></geometry></collision>
+      <visual name="rock_133_vis"><pose>-2.1000 22.1000 0.0684 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1367</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_134_col"><pose>-2.1000 22.7000 0.0989 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1977</size></box></geometry></collision>
+      <visual name="rock_134_vis"><pose>-2.1000 22.7000 0.0989 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1977</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_135_col"><pose>-2.1000 23.3000 0.0279 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0557</size></box></geometry></collision>
+      <visual name="rock_135_vis"><pose>-2.1000 23.3000 0.0279 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0557</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_136_col"><pose>-2.1000 23.9000 0.1448 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2896</size></box></geometry></collision>
+      <visual name="rock_136_vis"><pose>-2.1000 23.9000 0.1448 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2896</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_137_col"><pose>-2.1000 24.5000 0.0853 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1706</size></box></geometry></collision>
+      <visual name="rock_137_vis"><pose>-2.1000 24.5000 0.0853 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1706</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_138_col"><pose>-2.1000 25.1000 0.1228 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2457</size></box></geometry></collision>
+      <visual name="rock_138_vis"><pose>-2.1000 25.1000 0.1228 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2457</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_139_col"><pose>-2.1000 25.7000 0.0353 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0707</size></box></geometry></collision>
+      <visual name="rock_139_vis"><pose>-2.1000 25.7000 0.0353 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0707</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_140_col"><pose>-1.5000 14.3000 0.0858 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1717</size></box></geometry></collision>
+      <visual name="rock_140_vis"><pose>-1.5000 14.3000 0.0858 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1717</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_141_col"><pose>-1.5000 14.9000 0.0863 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1727</size></box></geometry></collision>
+      <visual name="rock_141_vis"><pose>-1.5000 14.9000 0.0863 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1727</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_142_col"><pose>-1.5000 15.5000 0.1422 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2845</size></box></geometry></collision>
+      <visual name="rock_142_vis"><pose>-1.5000 15.5000 0.1422 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2845</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_143_col"><pose>-1.5000 16.1000 0.0965 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1929</size></box></geometry></collision>
+      <visual name="rock_143_vis"><pose>-1.5000 16.1000 0.0965 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1929</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_144_col"><pose>-1.5000 16.7000 0.0842 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1684</size></box></geometry></collision>
+      <visual name="rock_144_vis"><pose>-1.5000 16.7000 0.0842 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1684</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_145_col"><pose>-1.5000 17.3000 0.0584 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1167</size></box></geometry></collision>
+      <visual name="rock_145_vis"><pose>-1.5000 17.3000 0.0584 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1167</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_146_col"><pose>-1.5000 17.9000 0.0664 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1329</size></box></geometry></collision>
+      <visual name="rock_146_vis"><pose>-1.5000 17.9000 0.0664 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1329</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_147_col"><pose>-1.5000 18.5000 0.0901 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1802</size></box></geometry></collision>
+      <visual name="rock_147_vis"><pose>-1.5000 18.5000 0.0901 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1802</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_148_col"><pose>-1.5000 19.1000 0.0799 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1597</size></box></geometry></collision>
+      <visual name="rock_148_vis"><pose>-1.5000 19.1000 0.0799 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1597</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_149_col"><pose>-1.5000 19.7000 0.0277 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0554</size></box></geometry></collision>
+      <visual name="rock_149_vis"><pose>-1.5000 19.7000 0.0277 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0554</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_150_col"><pose>-1.5000 20.3000 0.1283 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2566</size></box></geometry></collision>
+      <visual name="rock_150_vis"><pose>-1.5000 20.3000 0.1283 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2566</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_151_col"><pose>-1.5000 20.9000 0.1370 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2740</size></box></geometry></collision>
+      <visual name="rock_151_vis"><pose>-1.5000 20.9000 0.1370 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2740</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_152_col"><pose>-1.5000 21.5000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0851</size></box></geometry></collision>
+      <visual name="rock_152_vis"><pose>-1.5000 21.5000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0851</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_153_col"><pose>-1.5000 22.1000 0.0943 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1885</size></box></geometry></collision>
+      <visual name="rock_153_vis"><pose>-1.5000 22.1000 0.0943 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1885</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_154_col"><pose>-1.5000 22.7000 0.0386 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0771</size></box></geometry></collision>
+      <visual name="rock_154_vis"><pose>-1.5000 22.7000 0.0386 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0771</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_155_col"><pose>-1.5000 23.3000 0.1090 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2181</size></box></geometry></collision>
+      <visual name="rock_155_vis"><pose>-1.5000 23.3000 0.1090 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2181</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_156_col"><pose>-1.5000 23.9000 0.0602 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1203</size></box></geometry></collision>
+      <visual name="rock_156_vis"><pose>-1.5000 23.9000 0.0602 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1203</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_157_col"><pose>-1.5000 24.5000 0.1074 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2149</size></box></geometry></collision>
+      <visual name="rock_157_vis"><pose>-1.5000 24.5000 0.1074 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2149</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_158_col"><pose>-1.5000 25.1000 0.1159 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2317</size></box></geometry></collision>
+      <visual name="rock_158_vis"><pose>-1.5000 25.1000 0.1159 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2317</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_159_col"><pose>-1.5000 25.7000 0.1211 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2422</size></box></geometry></collision>
+      <visual name="rock_159_vis"><pose>-1.5000 25.7000 0.1211 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2422</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_160_col"><pose>-0.9000 14.3000 0.0385 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0769</size></box></geometry></collision>
+      <visual name="rock_160_vis"><pose>-0.9000 14.3000 0.0385 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0769</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_161_col"><pose>-0.9000 14.9000 0.1395 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2790</size></box></geometry></collision>
+      <visual name="rock_161_vis"><pose>-0.9000 14.9000 0.1395 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2790</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_162_col"><pose>-0.9000 15.5000 0.0538 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1076</size></box></geometry></collision>
+      <visual name="rock_162_vis"><pose>-0.9000 15.5000 0.0538 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1076</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_163_col"><pose>-0.9000 16.1000 0.0297 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0594</size></box></geometry></collision>
+      <visual name="rock_163_vis"><pose>-0.9000 16.1000 0.0297 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0594</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_164_col"><pose>-0.9000 16.7000 0.0944 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1887</size></box></geometry></collision>
+      <visual name="rock_164_vis"><pose>-0.9000 16.7000 0.0944 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1887</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_165_col"><pose>-0.9000 17.3000 0.0714 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1427</size></box></geometry></collision>
+      <visual name="rock_165_vis"><pose>-0.9000 17.3000 0.0714 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1427</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_166_col"><pose>-0.9000 17.9000 0.1287 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2574</size></box></geometry></collision>
+      <visual name="rock_166_vis"><pose>-0.9000 17.9000 0.1287 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2574</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_167_col"><pose>-0.9000 18.5000 0.1260 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2521</size></box></geometry></collision>
+      <visual name="rock_167_vis"><pose>-0.9000 18.5000 0.1260 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2521</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_168_col"><pose>-0.9000 19.1000 0.0646 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1293</size></box></geometry></collision>
+      <visual name="rock_168_vis"><pose>-0.9000 19.1000 0.0646 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1293</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_169_col"><pose>-0.9000 19.7000 0.1441 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2882</size></box></geometry></collision>
+      <visual name="rock_169_vis"><pose>-0.9000 19.7000 0.1441 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2882</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_170_col"><pose>-0.9000 20.3000 0.0614 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1227</size></box></geometry></collision>
+      <visual name="rock_170_vis"><pose>-0.9000 20.3000 0.0614 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1227</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_171_col"><pose>-0.9000 20.9000 0.0894 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1788</size></box></geometry></collision>
+      <visual name="rock_171_vis"><pose>-0.9000 20.9000 0.0894 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1788</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_172_col"><pose>-0.9000 21.5000 0.0570 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1140</size></box></geometry></collision>
+      <visual name="rock_172_vis"><pose>-0.9000 21.5000 0.0570 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1140</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_173_col"><pose>-0.9000 22.1000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry></collision>
+      <visual name="rock_173_vis"><pose>-0.9000 22.1000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_174_col"><pose>-0.9000 22.7000 0.0456 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0912</size></box></geometry></collision>
+      <visual name="rock_174_vis"><pose>-0.9000 22.7000 0.0456 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0912</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_175_col"><pose>-0.9000 23.3000 0.0306 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0612</size></box></geometry></collision>
+      <visual name="rock_175_vis"><pose>-0.9000 23.3000 0.0306 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0612</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_176_col"><pose>-0.9000 23.9000 0.0794 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1588</size></box></geometry></collision>
+      <visual name="rock_176_vis"><pose>-0.9000 23.9000 0.0794 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1588</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_177_col"><pose>-0.9000 24.5000 0.1490 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2981</size></box></geometry></collision>
+      <visual name="rock_177_vis"><pose>-0.9000 24.5000 0.1490 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2981</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_178_col"><pose>-0.9000 25.1000 0.1365 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2729</size></box></geometry></collision>
+      <visual name="rock_178_vis"><pose>-0.9000 25.1000 0.1365 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2729</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_179_col"><pose>-0.9000 25.7000 0.1186 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2372</size></box></geometry></collision>
+      <visual name="rock_179_vis"><pose>-0.9000 25.7000 0.1186 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2372</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_180_col"><pose>-0.3000 14.3000 0.1363 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2727</size></box></geometry></collision>
+      <visual name="rock_180_vis"><pose>-0.3000 14.3000 0.1363 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2727</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_181_col"><pose>-0.3000 14.9000 0.1367 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2734</size></box></geometry></collision>
+      <visual name="rock_181_vis"><pose>-0.3000 14.9000 0.1367 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2734</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_182_col"><pose>-0.3000 15.5000 0.0899 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1797</size></box></geometry></collision>
+      <visual name="rock_182_vis"><pose>-0.3000 15.5000 0.0899 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1797</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_183_col"><pose>-0.3000 16.1000 0.0645 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1290</size></box></geometry></collision>
+      <visual name="rock_183_vis"><pose>-0.3000 16.1000 0.0645 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1290</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_184_col"><pose>-0.3000 16.7000 0.1215 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2430</size></box></geometry></collision>
+      <visual name="rock_184_vis"><pose>-0.3000 16.7000 0.1215 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2430</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_185_col"><pose>-0.3000 17.3000 0.1077 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2154</size></box></geometry></collision>
+      <visual name="rock_185_vis"><pose>-0.3000 17.3000 0.1077 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2154</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_186_col"><pose>-0.3000 17.9000 0.0717 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1434</size></box></geometry></collision>
+      <visual name="rock_186_vis"><pose>-0.3000 17.9000 0.0717 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1434</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_187_col"><pose>-0.3000 18.5000 0.0368 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0736</size></box></geometry></collision>
+      <visual name="rock_187_vis"><pose>-0.3000 18.5000 0.0368 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0736</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_188_col"><pose>-0.3000 19.1000 0.1183 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2367</size></box></geometry></collision>
+      <visual name="rock_188_vis"><pose>-0.3000 19.1000 0.1183 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2367</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_189_col"><pose>-0.3000 19.7000 0.0578 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1156</size></box></geometry></collision>
+      <visual name="rock_189_vis"><pose>-0.3000 19.7000 0.0578 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1156</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_190_col"><pose>-0.3000 20.3000 0.1421 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2842</size></box></geometry></collision>
+      <visual name="rock_190_vis"><pose>-0.3000 20.3000 0.1421 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2842</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_191_col"><pose>-0.3000 20.9000 0.0551 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1102</size></box></geometry></collision>
+      <visual name="rock_191_vis"><pose>-0.3000 20.9000 0.0551 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1102</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_192_col"><pose>-0.3000 21.5000 0.0403 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0807</size></box></geometry></collision>
+      <visual name="rock_192_vis"><pose>-0.3000 21.5000 0.0403 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0807</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_193_col"><pose>-0.3000 22.1000 0.1289 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2578</size></box></geometry></collision>
+      <visual name="rock_193_vis"><pose>-0.3000 22.1000 0.1289 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2578</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_194_col"><pose>-0.3000 22.7000 0.0442 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0883</size></box></geometry></collision>
+      <visual name="rock_194_vis"><pose>-0.3000 22.7000 0.0442 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0883</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_195_col"><pose>-0.3000 23.3000 0.0474 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0948</size></box></geometry></collision>
+      <visual name="rock_195_vis"><pose>-0.3000 23.3000 0.0474 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0948</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_196_col"><pose>-0.3000 23.9000 0.0999 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1998</size></box></geometry></collision>
+      <visual name="rock_196_vis"><pose>-0.3000 23.9000 0.0999 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1998</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_197_col"><pose>-0.3000 24.5000 0.1343 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2686</size></box></geometry></collision>
+      <visual name="rock_197_vis"><pose>-0.3000 24.5000 0.1343 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2686</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_198_col"><pose>-0.3000 25.1000 0.0496 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0991</size></box></geometry></collision>
+      <visual name="rock_198_vis"><pose>-0.3000 25.1000 0.0496 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0991</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_199_col"><pose>-0.3000 25.7000 0.0638 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1276</size></box></geometry></collision>
+      <visual name="rock_199_vis"><pose>-0.3000 25.7000 0.0638 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1276</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_200_col"><pose>0.3000 14.3000 0.1222 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2444</size></box></geometry></collision>
+      <visual name="rock_200_vis"><pose>0.3000 14.3000 0.1222 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2444</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_201_col"><pose>0.3000 14.9000 0.1465 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2930</size></box></geometry></collision>
+      <visual name="rock_201_vis"><pose>0.3000 14.9000 0.1465 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2930</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_202_col"><pose>0.3000 15.5000 0.0876 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1752</size></box></geometry></collision>
+      <visual name="rock_202_vis"><pose>0.3000 15.5000 0.0876 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1752</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_203_col"><pose>0.3000 16.1000 0.0430 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0860</size></box></geometry></collision>
+      <visual name="rock_203_vis"><pose>0.3000 16.1000 0.0430 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0860</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_204_col"><pose>0.3000 16.7000 0.0267 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0535</size></box></geometry></collision>
+      <visual name="rock_204_vis"><pose>0.3000 16.7000 0.0267 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0535</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_205_col"><pose>0.3000 17.3000 0.0537 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1074</size></box></geometry></collision>
+      <visual name="rock_205_vis"><pose>0.3000 17.3000 0.0537 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1074</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_206_col"><pose>0.3000 17.9000 0.0415 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0830</size></box></geometry></collision>
+      <visual name="rock_206_vis"><pose>0.3000 17.9000 0.0415 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0830</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_207_col"><pose>0.3000 18.5000 0.1097 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2194</size></box></geometry></collision>
+      <visual name="rock_207_vis"><pose>0.3000 18.5000 0.1097 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2194</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_208_col"><pose>0.3000 19.1000 0.0402 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0805</size></box></geometry></collision>
+      <visual name="rock_208_vis"><pose>0.3000 19.1000 0.0402 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0805</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_209_col"><pose>0.3000 19.7000 0.0883 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1766</size></box></geometry></collision>
+      <visual name="rock_209_vis"><pose>0.3000 19.7000 0.0883 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1766</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_210_col"><pose>0.3000 20.3000 0.1118 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2236</size></box></geometry></collision>
+      <visual name="rock_210_vis"><pose>0.3000 20.3000 0.1118 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2236</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_211_col"><pose>0.3000 20.9000 0.0976 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1953</size></box></geometry></collision>
+      <visual name="rock_211_vis"><pose>0.3000 20.9000 0.0976 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1953</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_212_col"><pose>0.3000 21.5000 0.0500 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0999</size></box></geometry></collision>
+      <visual name="rock_212_vis"><pose>0.3000 21.5000 0.0500 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0999</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_213_col"><pose>0.3000 22.1000 0.1255 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2510</size></box></geometry></collision>
+      <visual name="rock_213_vis"><pose>0.3000 22.1000 0.1255 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2510</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_214_col"><pose>0.3000 22.7000 0.1144 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2289</size></box></geometry></collision>
+      <visual name="rock_214_vis"><pose>0.3000 22.7000 0.1144 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2289</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_215_col"><pose>0.3000 23.3000 0.1174 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2347</size></box></geometry></collision>
+      <visual name="rock_215_vis"><pose>0.3000 23.3000 0.1174 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2347</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_216_col"><pose>0.3000 23.9000 0.0414 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0828</size></box></geometry></collision>
+      <visual name="rock_216_vis"><pose>0.3000 23.9000 0.0414 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0828</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_217_col"><pose>0.3000 24.5000 0.0405 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0809</size></box></geometry></collision>
+      <visual name="rock_217_vis"><pose>0.3000 24.5000 0.0405 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0809</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_218_col"><pose>0.3000 25.1000 0.1409 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2819</size></box></geometry></collision>
+      <visual name="rock_218_vis"><pose>0.3000 25.1000 0.1409 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2819</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_219_col"><pose>0.3000 25.7000 0.0747 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1494</size></box></geometry></collision>
+      <visual name="rock_219_vis"><pose>0.3000 25.7000 0.0747 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1494</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_220_col"><pose>0.9000 14.3000 0.0626 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1252</size></box></geometry></collision>
+      <visual name="rock_220_vis"><pose>0.9000 14.3000 0.0626 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1252</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_221_col"><pose>0.9000 14.9000 0.0861 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1721</size></box></geometry></collision>
+      <visual name="rock_221_vis"><pose>0.9000 14.9000 0.0861 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1721</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_222_col"><pose>0.9000 15.5000 0.1079 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2157</size></box></geometry></collision>
+      <visual name="rock_222_vis"><pose>0.9000 15.5000 0.1079 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2157</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_223_col"><pose>0.9000 16.1000 0.1445 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2889</size></box></geometry></collision>
+      <visual name="rock_223_vis"><pose>0.9000 16.1000 0.1445 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2889</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_224_col"><pose>0.9000 16.7000 0.0608 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1216</size></box></geometry></collision>
+      <visual name="rock_224_vis"><pose>0.9000 16.7000 0.0608 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1216</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_225_col"><pose>0.9000 17.3000 0.1406 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2812</size></box></geometry></collision>
+      <visual name="rock_225_vis"><pose>0.9000 17.3000 0.1406 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2812</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_226_col"><pose>0.9000 17.9000 0.0281 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0562</size></box></geometry></collision>
+      <visual name="rock_226_vis"><pose>0.9000 17.9000 0.0281 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0562</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_227_col"><pose>0.9000 18.5000 0.0944 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1888</size></box></geometry></collision>
+      <visual name="rock_227_vis"><pose>0.9000 18.5000 0.0944 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1888</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_228_col"><pose>0.9000 19.1000 0.1042 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2085</size></box></geometry></collision>
+      <visual name="rock_228_vis"><pose>0.9000 19.1000 0.1042 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2085</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_229_col"><pose>0.9000 19.7000 0.0382 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0765</size></box></geometry></collision>
+      <visual name="rock_229_vis"><pose>0.9000 19.7000 0.0382 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0765</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_230_col"><pose>0.9000 20.3000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0851</size></box></geometry></collision>
+      <visual name="rock_230_vis"><pose>0.9000 20.3000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0851</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_231_col"><pose>0.9000 20.9000 0.0774 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1548</size></box></geometry></collision>
+      <visual name="rock_231_vis"><pose>0.9000 20.9000 0.0774 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1548</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_232_col"><pose>0.9000 21.5000 0.1458 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2916</size></box></geometry></collision>
+      <visual name="rock_232_vis"><pose>0.9000 21.5000 0.1458 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2916</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_233_col"><pose>0.9000 22.1000 0.0995 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1990</size></box></geometry></collision>
+      <visual name="rock_233_vis"><pose>0.9000 22.1000 0.0995 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1990</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_234_col"><pose>0.9000 22.7000 0.1416 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2833</size></box></geometry></collision>
+      <visual name="rock_234_vis"><pose>0.9000 22.7000 0.1416 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2833</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_235_col"><pose>0.9000 23.3000 0.1255 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2511</size></box></geometry></collision>
+      <visual name="rock_235_vis"><pose>0.9000 23.3000 0.1255 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2511</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_236_col"><pose>0.9000 23.9000 0.0834 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1668</size></box></geometry></collision>
+      <visual name="rock_236_vis"><pose>0.9000 23.9000 0.0834 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1668</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_237_col"><pose>0.9000 24.5000 0.1231 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2462</size></box></geometry></collision>
+      <visual name="rock_237_vis"><pose>0.9000 24.5000 0.1231 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2462</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_238_col"><pose>0.9000 25.1000 0.0272 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0545</size></box></geometry></collision>
+      <visual name="rock_238_vis"><pose>0.9000 25.1000 0.0272 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0545</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_239_col"><pose>0.9000 25.7000 0.0386 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0773</size></box></geometry></collision>
+      <visual name="rock_239_vis"><pose>0.9000 25.7000 0.0386 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0773</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_240_col"><pose>1.5000 14.3000 0.1287 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2574</size></box></geometry></collision>
+      <visual name="rock_240_vis"><pose>1.5000 14.3000 0.1287 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2574</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_241_col"><pose>1.5000 14.9000 0.1246 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2492</size></box></geometry></collision>
+      <visual name="rock_241_vis"><pose>1.5000 14.9000 0.1246 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2492</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_242_col"><pose>1.5000 15.5000 0.0541 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1082</size></box></geometry></collision>
+      <visual name="rock_242_vis"><pose>1.5000 15.5000 0.0541 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1082</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_243_col"><pose>1.5000 16.1000 0.0913 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1827</size></box></geometry></collision>
+      <visual name="rock_243_vis"><pose>1.5000 16.1000 0.0913 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1827</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_244_col"><pose>1.5000 16.7000 0.1008 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2015</size></box></geometry></collision>
+      <visual name="rock_244_vis"><pose>1.5000 16.7000 0.1008 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2015</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_245_col"><pose>1.5000 17.3000 0.1335 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2669</size></box></geometry></collision>
+      <visual name="rock_245_vis"><pose>1.5000 17.3000 0.1335 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2669</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_246_col"><pose>1.5000 17.9000 0.1004 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2008</size></box></geometry></collision>
+      <visual name="rock_246_vis"><pose>1.5000 17.9000 0.1004 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2008</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_247_col"><pose>1.5000 18.5000 0.0766 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1531</size></box></geometry></collision>
+      <visual name="rock_247_vis"><pose>1.5000 18.5000 0.0766 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1531</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_248_col"><pose>1.5000 19.1000 0.0718 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1435</size></box></geometry></collision>
+      <visual name="rock_248_vis"><pose>1.5000 19.1000 0.0718 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1435</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_249_col"><pose>1.5000 19.7000 0.0782 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1565</size></box></geometry></collision>
+      <visual name="rock_249_vis"><pose>1.5000 19.7000 0.0782 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1565</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_250_col"><pose>1.5000 20.3000 0.1065 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2130</size></box></geometry></collision>
+      <visual name="rock_250_vis"><pose>1.5000 20.3000 0.1065 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2130</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_251_col"><pose>1.5000 20.9000 0.1334 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2669</size></box></geometry></collision>
+      <visual name="rock_251_vis"><pose>1.5000 20.9000 0.1334 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2669</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_252_col"><pose>1.5000 21.5000 0.0817 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1635</size></box></geometry></collision>
+      <visual name="rock_252_vis"><pose>1.5000 21.5000 0.0817 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1635</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_253_col"><pose>1.5000 22.1000 0.0560 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1120</size></box></geometry></collision>
+      <visual name="rock_253_vis"><pose>1.5000 22.1000 0.0560 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1120</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_254_col"><pose>1.5000 22.7000 0.0546 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1092</size></box></geometry></collision>
+      <visual name="rock_254_vis"><pose>1.5000 22.7000 0.0546 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1092</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_255_col"><pose>1.5000 23.3000 0.1183 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2365</size></box></geometry></collision>
+      <visual name="rock_255_vis"><pose>1.5000 23.3000 0.1183 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2365</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_256_col"><pose>1.5000 23.9000 0.1271 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2541</size></box></geometry></collision>
+      <visual name="rock_256_vis"><pose>1.5000 23.9000 0.1271 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2541</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_257_col"><pose>1.5000 24.5000 0.0382 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0763</size></box></geometry></collision>
+      <visual name="rock_257_vis"><pose>1.5000 24.5000 0.0382 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0763</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_258_col"><pose>1.5000 25.1000 0.0333 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0666</size></box></geometry></collision>
+      <visual name="rock_258_vis"><pose>1.5000 25.1000 0.0333 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0666</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_259_col"><pose>1.5000 25.7000 0.0993 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1986</size></box></geometry></collision>
+      <visual name="rock_259_vis"><pose>1.5000 25.7000 0.0993 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1986</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_260_col"><pose>2.1000 14.3000 0.0433 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0865</size></box></geometry></collision>
+      <visual name="rock_260_vis"><pose>2.1000 14.3000 0.0433 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0865</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_261_col"><pose>2.1000 14.9000 0.1281 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2562</size></box></geometry></collision>
+      <visual name="rock_261_vis"><pose>2.1000 14.9000 0.1281 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2562</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_262_col"><pose>2.1000 15.5000 0.0638 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1276</size></box></geometry></collision>
+      <visual name="rock_262_vis"><pose>2.1000 15.5000 0.0638 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1276</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_263_col"><pose>2.1000 16.1000 0.0430 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0860</size></box></geometry></collision>
+      <visual name="rock_263_vis"><pose>2.1000 16.1000 0.0430 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0860</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_264_col"><pose>2.1000 16.7000 0.1401 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2802</size></box></geometry></collision>
+      <visual name="rock_264_vis"><pose>2.1000 16.7000 0.1401 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2802</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_265_col"><pose>2.1000 17.3000 0.0457 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0914</size></box></geometry></collision>
+      <visual name="rock_265_vis"><pose>2.1000 17.3000 0.0457 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0914</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_266_col"><pose>2.1000 17.9000 0.0606 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1212</size></box></geometry></collision>
+      <visual name="rock_266_vis"><pose>2.1000 17.9000 0.0606 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1212</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_267_col"><pose>2.1000 18.5000 0.0442 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0884</size></box></geometry></collision>
+      <visual name="rock_267_vis"><pose>2.1000 18.5000 0.0442 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0884</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_268_col"><pose>2.1000 19.1000 0.0394 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0789</size></box></geometry></collision>
+      <visual name="rock_268_vis"><pose>2.1000 19.1000 0.0394 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0789</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_269_col"><pose>2.1000 19.7000 0.0276 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0553</size></box></geometry></collision>
+      <visual name="rock_269_vis"><pose>2.1000 19.7000 0.0276 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0553</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_270_col"><pose>2.1000 20.3000 0.0319 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0638</size></box></geometry></collision>
+      <visual name="rock_270_vis"><pose>2.1000 20.3000 0.0319 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0638</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_271_col"><pose>2.1000 20.9000 0.0468 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0937</size></box></geometry></collision>
+      <visual name="rock_271_vis"><pose>2.1000 20.9000 0.0468 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0937</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_272_col"><pose>2.1000 21.5000 0.0317 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0633</size></box></geometry></collision>
+      <visual name="rock_272_vis"><pose>2.1000 21.5000 0.0317 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0633</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_273_col"><pose>2.1000 22.1000 0.0989 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1978</size></box></geometry></collision>
+      <visual name="rock_273_vis"><pose>2.1000 22.1000 0.0989 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1978</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_274_col"><pose>2.1000 22.7000 0.1101 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2202</size></box></geometry></collision>
+      <visual name="rock_274_vis"><pose>2.1000 22.7000 0.1101 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2202</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_275_col"><pose>2.1000 23.3000 0.0742 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1484</size></box></geometry></collision>
+      <visual name="rock_275_vis"><pose>2.1000 23.3000 0.0742 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1484</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_276_col"><pose>2.1000 23.9000 0.0647 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1295</size></box></geometry></collision>
+      <visual name="rock_276_vis"><pose>2.1000 23.9000 0.0647 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1295</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_277_col"><pose>2.1000 24.5000 0.0881 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1761</size></box></geometry></collision>
+      <visual name="rock_277_vis"><pose>2.1000 24.5000 0.0881 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1761</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_278_col"><pose>2.1000 25.1000 0.1344 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2688</size></box></geometry></collision>
+      <visual name="rock_278_vis"><pose>2.1000 25.1000 0.1344 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2688</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_279_col"><pose>2.1000 25.7000 0.1314 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2628</size></box></geometry></collision>
+      <visual name="rock_279_vis"><pose>2.1000 25.7000 0.1314 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2628</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_280_col"><pose>2.7000 14.3000 0.0304 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0609</size></box></geometry></collision>
+      <visual name="rock_280_vis"><pose>2.7000 14.3000 0.0304 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0609</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_281_col"><pose>2.7000 14.9000 0.0477 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0954</size></box></geometry></collision>
+      <visual name="rock_281_vis"><pose>2.7000 14.9000 0.0477 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0954</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_282_col"><pose>2.7000 15.5000 0.0546 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1092</size></box></geometry></collision>
+      <visual name="rock_282_vis"><pose>2.7000 15.5000 0.0546 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1092</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_283_col"><pose>2.7000 16.1000 0.0562 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1123</size></box></geometry></collision>
+      <visual name="rock_283_vis"><pose>2.7000 16.1000 0.0562 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1123</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_284_col"><pose>2.7000 16.7000 0.0964 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1928</size></box></geometry></collision>
+      <visual name="rock_284_vis"><pose>2.7000 16.7000 0.0964 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1928</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_285_col"><pose>2.7000 17.3000 0.0770 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1541</size></box></geometry></collision>
+      <visual name="rock_285_vis"><pose>2.7000 17.3000 0.0770 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1541</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_286_col"><pose>2.7000 17.9000 0.0312 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0623</size></box></geometry></collision>
+      <visual name="rock_286_vis"><pose>2.7000 17.9000 0.0312 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0623</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_287_col"><pose>2.7000 18.5000 0.0717 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1434</size></box></geometry></collision>
+      <visual name="rock_287_vis"><pose>2.7000 18.5000 0.0717 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1434</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_288_col"><pose>2.7000 19.1000 0.0905 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1809</size></box></geometry></collision>
+      <visual name="rock_288_vis"><pose>2.7000 19.1000 0.0905 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1809</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_289_col"><pose>2.7000 19.7000 0.0377 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0754</size></box></geometry></collision>
+      <visual name="rock_289_vis"><pose>2.7000 19.7000 0.0377 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0754</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_290_col"><pose>2.7000 20.3000 0.1292 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2584</size></box></geometry></collision>
+      <visual name="rock_290_vis"><pose>2.7000 20.3000 0.1292 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2584</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_291_col"><pose>2.7000 20.9000 0.0315 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0630</size></box></geometry></collision>
+      <visual name="rock_291_vis"><pose>2.7000 20.9000 0.0315 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0630</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_292_col"><pose>2.7000 21.5000 0.1406 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2812</size></box></geometry></collision>
+      <visual name="rock_292_vis"><pose>2.7000 21.5000 0.1406 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2812</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_293_col"><pose>2.7000 22.1000 0.0374 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0748</size></box></geometry></collision>
+      <visual name="rock_293_vis"><pose>2.7000 22.1000 0.0374 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0748</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_294_col"><pose>2.7000 22.7000 0.1304 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2609</size></box></geometry></collision>
+      <visual name="rock_294_vis"><pose>2.7000 22.7000 0.1304 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2609</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_295_col"><pose>2.7000 23.3000 0.1378 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2757</size></box></geometry></collision>
+      <visual name="rock_295_vis"><pose>2.7000 23.3000 0.1378 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2757</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_296_col"><pose>2.7000 23.9000 0.1474 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2949</size></box></geometry></collision>
+      <visual name="rock_296_vis"><pose>2.7000 23.9000 0.1474 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2949</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_297_col"><pose>2.7000 24.5000 0.1253 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2505</size></box></geometry></collision>
+      <visual name="rock_297_vis"><pose>2.7000 24.5000 0.1253 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2505</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_298_col"><pose>2.7000 25.1000 0.1224 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2449</size></box></geometry></collision>
+      <visual name="rock_298_vis"><pose>2.7000 25.1000 0.1224 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2449</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_299_col"><pose>2.7000 25.7000 0.1053 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2106</size></box></geometry></collision>
+      <visual name="rock_299_vis"><pose>2.7000 25.7000 0.1053 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2106</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_300_col"><pose>3.3000 14.3000 0.1224 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2447</size></box></geometry></collision>
+      <visual name="rock_300_vis"><pose>3.3000 14.3000 0.1224 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2447</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_301_col"><pose>3.3000 14.9000 0.0418 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0836</size></box></geometry></collision>
+      <visual name="rock_301_vis"><pose>3.3000 14.9000 0.0418 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0836</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_302_col"><pose>3.3000 15.5000 0.0920 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1840</size></box></geometry></collision>
+      <visual name="rock_302_vis"><pose>3.3000 15.5000 0.0920 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1840</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_303_col"><pose>3.3000 16.1000 0.0893 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1786</size></box></geometry></collision>
+      <visual name="rock_303_vis"><pose>3.3000 16.1000 0.0893 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1786</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_304_col"><pose>3.3000 16.7000 0.1322 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2644</size></box></geometry></collision>
+      <visual name="rock_304_vis"><pose>3.3000 16.7000 0.1322 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2644</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_305_col"><pose>3.3000 17.3000 0.0828 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1657</size></box></geometry></collision>
+      <visual name="rock_305_vis"><pose>3.3000 17.3000 0.0828 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1657</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_306_col"><pose>3.3000 17.9000 0.0731 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1463</size></box></geometry></collision>
+      <visual name="rock_306_vis"><pose>3.3000 17.9000 0.0731 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1463</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_307_col"><pose>3.3000 18.5000 0.1049 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2099</size></box></geometry></collision>
+      <visual name="rock_307_vis"><pose>3.3000 18.5000 0.1049 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2099</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_308_col"><pose>3.3000 19.1000 0.0583 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1166</size></box></geometry></collision>
+      <visual name="rock_308_vis"><pose>3.3000 19.1000 0.0583 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1166</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_309_col"><pose>3.3000 19.7000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0849</size></box></geometry></collision>
+      <visual name="rock_309_vis"><pose>3.3000 19.7000 0.0425 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0849</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_310_col"><pose>3.3000 20.3000 0.0847 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1695</size></box></geometry></collision>
+      <visual name="rock_310_vis"><pose>3.3000 20.3000 0.0847 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1695</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_311_col"><pose>3.3000 20.9000 0.0771 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1542</size></box></geometry></collision>
+      <visual name="rock_311_vis"><pose>3.3000 20.9000 0.0771 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1542</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_312_col"><pose>3.3000 21.5000 0.0541 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1081</size></box></geometry></collision>
+      <visual name="rock_312_vis"><pose>3.3000 21.5000 0.0541 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1081</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_313_col"><pose>3.3000 22.1000 0.0709 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1419</size></box></geometry></collision>
+      <visual name="rock_313_vis"><pose>3.3000 22.1000 0.0709 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1419</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_314_col"><pose>3.3000 22.7000 0.0708 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1416</size></box></geometry></collision>
+      <visual name="rock_314_vis"><pose>3.3000 22.7000 0.0708 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1416</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_315_col"><pose>3.3000 23.3000 0.0659 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1319</size></box></geometry></collision>
+      <visual name="rock_315_vis"><pose>3.3000 23.3000 0.0659 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1319</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_316_col"><pose>3.3000 23.9000 0.0724 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1449</size></box></geometry></collision>
+      <visual name="rock_316_vis"><pose>3.3000 23.9000 0.0724 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1449</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_317_col"><pose>3.3000 24.5000 0.1107 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2214</size></box></geometry></collision>
+      <visual name="rock_317_vis"><pose>3.3000 24.5000 0.1107 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2214</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_318_col"><pose>3.3000 25.1000 0.0621 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1242</size></box></geometry></collision>
+      <visual name="rock_318_vis"><pose>3.3000 25.1000 0.0621 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1242</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_319_col"><pose>3.3000 25.7000 0.1436 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2872</size></box></geometry></collision>
+      <visual name="rock_319_vis"><pose>3.3000 25.7000 0.1436 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2872</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_320_col"><pose>3.9000 14.3000 0.1395 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2791</size></box></geometry></collision>
+      <visual name="rock_320_vis"><pose>3.9000 14.3000 0.1395 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2791</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_321_col"><pose>3.9000 14.9000 0.0851 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1702</size></box></geometry></collision>
+      <visual name="rock_321_vis"><pose>3.9000 14.9000 0.0851 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1702</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_322_col"><pose>3.9000 15.5000 0.0660 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1321</size></box></geometry></collision>
+      <visual name="rock_322_vis"><pose>3.9000 15.5000 0.0660 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1321</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_323_col"><pose>3.9000 16.1000 0.0919 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1839</size></box></geometry></collision>
+      <visual name="rock_323_vis"><pose>3.9000 16.1000 0.0919 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1839</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_324_col"><pose>3.9000 16.7000 0.1311 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2621</size></box></geometry></collision>
+      <visual name="rock_324_vis"><pose>3.9000 16.7000 0.1311 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2621</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_325_col"><pose>3.9000 17.3000 0.1066 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2131</size></box></geometry></collision>
+      <visual name="rock_325_vis"><pose>3.9000 17.3000 0.1066 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2131</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_326_col"><pose>3.9000 17.9000 0.1255 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2511</size></box></geometry></collision>
+      <visual name="rock_326_vis"><pose>3.9000 17.9000 0.1255 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2511</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_327_col"><pose>3.9000 18.5000 0.0916 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1832</size></box></geometry></collision>
+      <visual name="rock_327_vis"><pose>3.9000 18.5000 0.0916 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1832</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_328_col"><pose>3.9000 19.1000 0.1041 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2082</size></box></geometry></collision>
+      <visual name="rock_328_vis"><pose>3.9000 19.1000 0.1041 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2082</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_329_col"><pose>3.9000 19.7000 0.0610 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1220</size></box></geometry></collision>
+      <visual name="rock_329_vis"><pose>3.9000 19.7000 0.0610 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1220</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_330_col"><pose>3.9000 20.3000 0.1169 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2337</size></box></geometry></collision>
+      <visual name="rock_330_vis"><pose>3.9000 20.3000 0.1169 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2337</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_331_col"><pose>3.9000 20.9000 0.0503 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1006</size></box></geometry></collision>
+      <visual name="rock_331_vis"><pose>3.9000 20.9000 0.0503 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1006</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_332_col"><pose>3.9000 21.5000 0.1118 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2237</size></box></geometry></collision>
+      <visual name="rock_332_vis"><pose>3.9000 21.5000 0.1118 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2237</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_333_col"><pose>3.9000 22.1000 0.1326 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2652</size></box></geometry></collision>
+      <visual name="rock_333_vis"><pose>3.9000 22.1000 0.1326 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2652</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_334_col"><pose>3.9000 22.7000 0.0415 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0830</size></box></geometry></collision>
+      <visual name="rock_334_vis"><pose>3.9000 22.7000 0.0415 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0830</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_335_col"><pose>3.9000 23.3000 0.1018 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2036</size></box></geometry></collision>
+      <visual name="rock_335_vis"><pose>3.9000 23.3000 0.1018 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2036</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_336_col"><pose>3.9000 23.9000 0.0369 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0738</size></box></geometry></collision>
+      <visual name="rock_336_vis"><pose>3.9000 23.9000 0.0369 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0738</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_337_col"><pose>3.9000 24.5000 0.1157 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2314</size></box></geometry></collision>
+      <visual name="rock_337_vis"><pose>3.9000 24.5000 0.1157 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2314</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_338_col"><pose>3.9000 25.1000 0.0356 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0711</size></box></geometry></collision>
+      <visual name="rock_338_vis"><pose>3.9000 25.1000 0.0356 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0711</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_339_col"><pose>3.9000 25.7000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry></collision>
+      <visual name="rock_339_vis"><pose>3.9000 25.7000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_340_col"><pose>4.5000 14.3000 0.0422 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0844</size></box></geometry></collision>
+      <visual name="rock_340_vis"><pose>4.5000 14.3000 0.0422 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0844</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_341_col"><pose>4.5000 14.9000 0.1449 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2897</size></box></geometry></collision>
+      <visual name="rock_341_vis"><pose>4.5000 14.9000 0.1449 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2897</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_342_col"><pose>4.5000 15.5000 0.1251 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2502</size></box></geometry></collision>
+      <visual name="rock_342_vis"><pose>4.5000 15.5000 0.1251 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2502</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_343_col"><pose>4.5000 16.1000 0.0992 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1984</size></box></geometry></collision>
+      <visual name="rock_343_vis"><pose>4.5000 16.1000 0.0992 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1984</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_344_col"><pose>4.5000 16.7000 0.1228 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2457</size></box></geometry></collision>
+      <visual name="rock_344_vis"><pose>4.5000 16.7000 0.1228 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2457</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_345_col"><pose>4.5000 17.3000 0.1244 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2488</size></box></geometry></collision>
+      <visual name="rock_345_vis"><pose>4.5000 17.3000 0.1244 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2488</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_346_col"><pose>4.5000 17.9000 0.1433 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2865</size></box></geometry></collision>
+      <visual name="rock_346_vis"><pose>4.5000 17.9000 0.1433 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2865</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_347_col"><pose>4.5000 18.5000 0.0567 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1133</size></box></geometry></collision>
+      <visual name="rock_347_vis"><pose>4.5000 18.5000 0.0567 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1133</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_348_col"><pose>4.5000 19.1000 0.0988 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1975</size></box></geometry></collision>
+      <visual name="rock_348_vis"><pose>4.5000 19.1000 0.0988 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1975</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_349_col"><pose>4.5000 19.7000 0.0369 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0738</size></box></geometry></collision>
+      <visual name="rock_349_vis"><pose>4.5000 19.7000 0.0369 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0738</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_350_col"><pose>4.5000 20.3000 0.1020 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2040</size></box></geometry></collision>
+      <visual name="rock_350_vis"><pose>4.5000 20.3000 0.1020 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2040</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_351_col"><pose>4.5000 20.9000 0.0464 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0928</size></box></geometry></collision>
+      <visual name="rock_351_vis"><pose>4.5000 20.9000 0.0464 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0928</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_352_col"><pose>4.5000 21.5000 0.0956 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1912</size></box></geometry></collision>
+      <visual name="rock_352_vis"><pose>4.5000 21.5000 0.0956 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1912</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_353_col"><pose>4.5000 22.1000 0.0966 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1931</size></box></geometry></collision>
+      <visual name="rock_353_vis"><pose>4.5000 22.1000 0.0966 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1931</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_354_col"><pose>4.5000 22.7000 0.0832 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1665</size></box></geometry></collision>
+      <visual name="rock_354_vis"><pose>4.5000 22.7000 0.0832 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1665</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_355_col"><pose>4.5000 23.3000 0.0903 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1807</size></box></geometry></collision>
+      <visual name="rock_355_vis"><pose>4.5000 23.3000 0.0903 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1807</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_356_col"><pose>4.5000 23.9000 0.1205 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2410</size></box></geometry></collision>
+      <visual name="rock_356_vis"><pose>4.5000 23.9000 0.1205 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2410</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_357_col"><pose>4.5000 24.5000 0.1249 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2498</size></box></geometry></collision>
+      <visual name="rock_357_vis"><pose>4.5000 24.5000 0.1249 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2498</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_358_col"><pose>4.5000 25.1000 0.0865 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1730</size></box></geometry></collision>
+      <visual name="rock_358_vis"><pose>4.5000 25.1000 0.0865 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1730</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_359_col"><pose>4.5000 25.7000 0.0999 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1999</size></box></geometry></collision>
+      <visual name="rock_359_vis"><pose>4.5000 25.7000 0.0999 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1999</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_360_col"><pose>5.1000 14.3000 0.1414 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2828</size></box></geometry></collision>
+      <visual name="rock_360_vis"><pose>5.1000 14.3000 0.1414 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2828</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_361_col"><pose>5.1000 14.9000 0.0400 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0799</size></box></geometry></collision>
+      <visual name="rock_361_vis"><pose>5.1000 14.9000 0.0400 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0799</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_362_col"><pose>5.1000 15.5000 0.0396 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0793</size></box></geometry></collision>
+      <visual name="rock_362_vis"><pose>5.1000 15.5000 0.0396 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0793</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_363_col"><pose>5.1000 16.1000 0.0360 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0719</size></box></geometry></collision>
+      <visual name="rock_363_vis"><pose>5.1000 16.1000 0.0360 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0719</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_364_col"><pose>5.1000 16.7000 0.1072 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2145</size></box></geometry></collision>
+      <visual name="rock_364_vis"><pose>5.1000 16.7000 0.1072 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2145</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_365_col"><pose>5.1000 17.3000 0.0773 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1547</size></box></geometry></collision>
+      <visual name="rock_365_vis"><pose>5.1000 17.3000 0.0773 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1547</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_366_col"><pose>5.1000 17.9000 0.1218 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2436</size></box></geometry></collision>
+      <visual name="rock_366_vis"><pose>5.1000 17.9000 0.1218 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2436</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_367_col"><pose>5.1000 18.5000 0.1089 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2178</size></box></geometry></collision>
+      <visual name="rock_367_vis"><pose>5.1000 18.5000 0.1089 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2178</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_368_col"><pose>5.1000 19.1000 0.0667 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1334</size></box></geometry></collision>
+      <visual name="rock_368_vis"><pose>5.1000 19.1000 0.0667 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1334</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_369_col"><pose>5.1000 19.7000 0.1373 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2746</size></box></geometry></collision>
+      <visual name="rock_369_vis"><pose>5.1000 19.7000 0.1373 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2746</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_370_col"><pose>5.1000 20.3000 0.1203 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2406</size></box></geometry></collision>
+      <visual name="rock_370_vis"><pose>5.1000 20.3000 0.1203 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2406</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_371_col"><pose>5.1000 20.9000 0.0588 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1176</size></box></geometry></collision>
+      <visual name="rock_371_vis"><pose>5.1000 20.9000 0.0588 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1176</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_372_col"><pose>5.1000 21.5000 0.0705 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1410</size></box></geometry></collision>
+      <visual name="rock_372_vis"><pose>5.1000 21.5000 0.0705 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1410</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_373_col"><pose>5.1000 22.1000 0.0643 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1286</size></box></geometry></collision>
+      <visual name="rock_373_vis"><pose>5.1000 22.1000 0.0643 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1286</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_374_col"><pose>5.1000 22.7000 0.0447 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0894</size></box></geometry></collision>
+      <visual name="rock_374_vis"><pose>5.1000 22.7000 0.0447 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0894</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_375_col"><pose>5.1000 23.3000 0.0435 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0869</size></box></geometry></collision>
+      <visual name="rock_375_vis"><pose>5.1000 23.3000 0.0435 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0869</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_376_col"><pose>5.1000 23.9000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry></collision>
+      <visual name="rock_376_vis"><pose>5.1000 23.9000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_377_col"><pose>5.1000 24.5000 0.0797 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1595</size></box></geometry></collision>
+      <visual name="rock_377_vis"><pose>5.1000 24.5000 0.0797 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1595</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_378_col"><pose>5.1000 25.1000 0.0729 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1458</size></box></geometry></collision>
+      <visual name="rock_378_vis"><pose>5.1000 25.1000 0.0729 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1458</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_379_col"><pose>5.1000 25.7000 0.1162 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2324</size></box></geometry></collision>
+      <visual name="rock_379_vis"><pose>5.1000 25.7000 0.1162 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2324</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_380_col"><pose>5.7000 14.3000 0.0941 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1882</size></box></geometry></collision>
+      <visual name="rock_380_vis"><pose>5.7000 14.3000 0.0941 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1882</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_381_col"><pose>5.7000 14.9000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry></collision>
+      <visual name="rock_381_vis"><pose>5.7000 14.9000 0.1420 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2840</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_382_col"><pose>5.7000 15.5000 0.1225 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2451</size></box></geometry></collision>
+      <visual name="rock_382_vis"><pose>5.7000 15.5000 0.1225 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2451</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_383_col"><pose>5.7000 16.1000 0.0849 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1698</size></box></geometry></collision>
+      <visual name="rock_383_vis"><pose>5.7000 16.1000 0.0849 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1698</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_384_col"><pose>5.7000 16.7000 0.0720 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1441</size></box></geometry></collision>
+      <visual name="rock_384_vis"><pose>5.7000 16.7000 0.0720 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1441</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_385_col"><pose>5.7000 17.3000 0.1483 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2967</size></box></geometry></collision>
+      <visual name="rock_385_vis"><pose>5.7000 17.3000 0.1483 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2967</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_386_col"><pose>5.7000 17.9000 0.1147 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2294</size></box></geometry></collision>
+      <visual name="rock_386_vis"><pose>5.7000 17.9000 0.1147 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2294</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_387_col"><pose>5.7000 18.5000 0.1439 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2878</size></box></geometry></collision>
+      <visual name="rock_387_vis"><pose>5.7000 18.5000 0.1439 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2878</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_388_col"><pose>5.7000 19.1000 0.0398 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0796</size></box></geometry></collision>
+      <visual name="rock_388_vis"><pose>5.7000 19.1000 0.0398 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0796</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_389_col"><pose>5.7000 19.7000 0.1313 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2626</size></box></geometry></collision>
+      <visual name="rock_389_vis"><pose>5.7000 19.7000 0.1313 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2626</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_390_col"><pose>5.7000 20.3000 0.1046 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2093</size></box></geometry></collision>
+      <visual name="rock_390_vis"><pose>5.7000 20.3000 0.1046 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2093</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_391_col"><pose>5.7000 20.9000 0.0402 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0805</size></box></geometry></collision>
+      <visual name="rock_391_vis"><pose>5.7000 20.9000 0.0402 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0805</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_392_col"><pose>5.7000 21.5000 0.0985 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1971</size></box></geometry></collision>
+      <visual name="rock_392_vis"><pose>5.7000 21.5000 0.0985 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1971</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_393_col"><pose>5.7000 22.1000 0.1108 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2215</size></box></geometry></collision>
+      <visual name="rock_393_vis"><pose>5.7000 22.1000 0.1108 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2215</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_394_col"><pose>5.7000 22.7000 0.0265 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0531</size></box></geometry></collision>
+      <visual name="rock_394_vis"><pose>5.7000 22.7000 0.0265 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.0531</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_395_col"><pose>5.7000 23.3000 0.0818 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1636</size></box></geometry></collision>
+      <visual name="rock_395_vis"><pose>5.7000 23.3000 0.0818 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1636</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_396_col"><pose>5.7000 23.9000 0.1282 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2563</size></box></geometry></collision>
+      <visual name="rock_396_vis"><pose>5.7000 23.9000 0.1282 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.2563</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_397_col"><pose>5.7000 24.5000 0.0619 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1238</size></box></geometry></collision>
+      <visual name="rock_397_vis"><pose>5.7000 24.5000 0.0619 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1238</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_398_col"><pose>5.7000 25.1000 0.0823 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1646</size></box></geometry></collision>
+      <visual name="rock_398_vis"><pose>5.7000 25.1000 0.0823 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1646</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="rock_399_col"><pose>5.7000 25.7000 0.0803 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1606</size></box></geometry></collision>
+      <visual name="rock_399_vis"><pose>5.7000 25.7000 0.0803 0 0 0</pose><geometry><box><size>0.4500 0.4500 0.1606</size></box></geometry><material><ambient>0.45 0.42 0.40 1</ambient><diffuse>0.45 0.42 0.40 1</diffuse></material></visual>
+      <collision name="obstacle_col"><pose>0.0000 -20.0000 1.5000 0 0 0</pose><geometry><box><size>4.0000 4.0000 3.0000</size></box></geometry></collision>
+      <visual name="obstacle_vis"><pose>0.0000 -20.0000 1.5000 0 0 0</pose><geometry><box><size>4.0000 4.0000 3.0000</size></box></geometry><material><ambient>0.30 0.30 0.35 1</ambient><diffuse>0.30 0.30 0.35 1</diffuse></material></visual>
+      </link>
+    </model>
+</world>
+</sdf>

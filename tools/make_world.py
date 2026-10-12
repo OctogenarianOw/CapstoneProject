@@ -1,251 +1,270 @@
-"""Generate a validation world for elevation mapping, plus its exact
-ground truth. Both come from the same analytic height function, so the
-SDF geometry and the truth grid cannot drift apart.
+#!/usr/bin/env python3
+"""Generate the validation world and its exact ground truth.
 
-Layout, in Gazebo world coordinates (x east, y north, z up), drone
-spawns at the origin:
+Both outputs come from the same height function, so the geometry handed to
+Gazebo and the truth used for validation cannot drift apart.
 
-    flat        around (0, 0)     reference, noise floor
-    ramp 10 deg at (20, 0)        just at a typical landing threshold
-    ramp 25 deg at (-20, 0)       clearly unlandable
-    rough       at (0, 20)        scattered blocks, roughness not slope
-    obstacle    at (0, -20)       3 m vertical block
+Outputs
+    worlds/validation.sdf        PX4 default world with the terrain injected
+    worlds/validation_truth.npz  per cell ground truth
+
+Design rules
+    1. Nothing floats. Every structure is solid from its top surface down to
+       below the ground plane, so no LiDAR ray can enter a cavity from the
+       side and report ground where the truth says terrain.
+    2. Every footprint is aligned on the truth grid, so no cell is half
+       inside and half outside a zone.
+    3. The rough zone is quantised to the truth resolution: one cell is one
+       flat tile, so the truth of that cell is exact instead of being an
+       average over structure the grid cannot represent.
+
+Run from the workspace root:
+    python3 tools/make_world.py
 """
 
-import os
+from pathlib import Path
+
 import numpy as np
 
-# ----------------------------------------------------------------- config
+# ----------------------------------------------------------------- locations
 
-PX4_DIR = os.path.expanduser('~/PX4-Autopilot')
-BASE_WORLD = os.path.join(PX4_DIR, 'Tools/simulation/gz/worlds/default.sdf')
+PX4_WORLDS = Path.home() / 'PX4-Autopilot' / 'Tools' / 'simulation' / 'gz' / 'worlds'
+ROOT = Path(__file__).resolve().parents[1]
+OUT_SDF = ROOT / 'worlds' / 'validation.sdf'
+OUT_TRUTH = ROOT / 'worlds' / 'validation_truth.npz'
 
-OUT_DIR = os.path.expanduser('~/ros2_ws/droneAfter/worlds')
-OUT_SDF = os.path.join(OUT_DIR, 'validation.sdf')
-OUT_TRUTH = os.path.join(OUT_DIR, 'validation_truth.npz')
+# ---------------------------------------------------------------- parameters
 
 WORLD_NAME = 'validation'
+WORLD_SIZE = 60.0          # square side, metres, centred on the origin
+RESOLUTION = 1.0           # truth cell size, metres
+SUBSAMPLES = 10            # height samples per cell and per axis
+SEED = 42
 
-GRID_SIZE = 60.0        # metres, square, centred on the origin
-GRID_RES = 1.0          # metres per truth cell
-SUBSAMPLE = 10          # truth samples per cell edge
-
-RAMP_LEN = 15.0         # along-slope length
-RAMP_WIDTH = 15.0
-RAMP_THICK = 0.2
-
-ROUGH_SIZE = 12.0       # square side of the rough patch
-ROUGH_PITCH = 0.6       # spacing between blocks
-ROUGH_BLOCK = 0.45      # block footprint
-ROUGH_MIN_H = 0.05
-ROUGH_MAX_H = 0.30
-
-OBSTACLE_SIZE = 4.0
-OBSTACLE_HEIGHT = 3.0
-
+# Ramps. Footprint 16 m so that both edges land on cell borders.
+# Each ramp rises towards +x, from z = 0 at its west edge.
+RAMP_LEN = 16.0
+RAMP_WIDTH = 16.0
+RAMP_THICK = 8.0           # see ramp geometry below: thick enough to bury
 RAMPS = [
-    {'name': 'ramp_10', 'cx': 20.0, 'cy': 0.0, 'deg': 10.0},
-    {'name': 'ramp_25', 'cx': -20.0, 'cy': 0.0, 'deg': 25.0},
+    # zone id, name, centre x, centre y, slope in degrees
+    (1, 'ramp_ok', -20.0, 0.0, 3.0),
+    (2, 'ramp_bad', 20.0, 0.0, 10.0),
 ]
+
+# Rough zone: one flat tile per truth cell, random heights.
+ROUGH_ID = 3
 ROUGH_CX, ROUGH_CY = 0.0, 20.0
-OBST_CX, OBST_CY = 0.0, -20.0
+ROUGH_SIZE = 12.0
+ROUGH_MIN, ROUGH_MAX = 0.10, 0.80
 
-rng = np.random.default_rng(42)   # fixed seed: SDF and truth must match
+# Solid cube.
+CUBE_ID = 4
+CUBE_CX, CUBE_CY = 0.0, -20.0
+CUBE_SIDE = 4.0
 
-# ------------------------------------------------------------ rough patch
+ZONE_NAMES = ['flat', 'ramp_ok', 'ramp_bad', 'rough', 'obstacle']
 
-def build_rough_blocks():
-    """Return a list of (x, y, height) for the scattered blocks."""
-    n = int(ROUGH_SIZE / ROUGH_PITCH)
-    start = -ROUGH_SIZE / 2.0 + ROUGH_PITCH / 2.0
-    blocks = []
-    for i in range(n):
-        for j in range(n):
-            x = ROUGH_CX + start + i * ROUGH_PITCH
-            y = ROUGH_CY + start + j * ROUGH_PITCH
-            h = rng.uniform(ROUGH_MIN_H, ROUGH_MAX_H)
-            blocks.append((x, y, h))
-    return blocks
+COLOUR = {
+    'ramp': '0.55 0.47 0.37 1',
+    'rough': '0.45 0.45 0.45 1',
+    'cube': '0.70 0.25 0.20 1',
+}
+
+# ------------------------------------------------------------- height field
 
 
-ROUGH_BLOCKS = build_rough_blocks()
+def rough_tiles():
+    """Tile heights of the rough zone, indexed [ix, iy]."""
+    k = int(round(ROUGH_SIZE / RESOLUTION))
+    rng = np.random.default_rng(SEED)
+    return rng.uniform(ROUGH_MIN, ROUGH_MAX, size=(k, k))
 
-# -------------------------------------------------------- height function
 
-def ramp_top(x, ramp):
-    """Top surface height of a ramp at world x.
+def height_field(x, y, tiles):
+    """Top surface height and zone id at points (x, y), Gazebo ENU.
 
-    A box of length L tilted by theta about the y axis, placed so its
-    low edge sits on the ground, has a top surface at
-        z(x) = (L/2) sin(theta) + (x - cx) tan(theta)
-    which is 0 at the low edge and L sin(theta) at the high edge.
+    x and y are arrays of the same shape. Zones never overlap, so the blocks
+    below can assign rather than take a maximum.
     """
-    th = np.radians(ramp['deg'])
-    return RAMP_LEN / 2.0 * np.sin(th) + (x - ramp['cx']) * np.tan(th)
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+    h = np.zeros(x.shape, dtype=float)
+    zone = np.zeros(x.shape, dtype=int)
+
+    for zid, _name, cx, cy, deg in RAMPS:
+        inside = ((np.abs(x - cx) <= RAMP_LEN / 2.0)
+                  & (np.abs(y - cy) <= RAMP_WIDTH / 2.0))
+        rise = (x - (cx - RAMP_LEN / 2.0)) * np.tan(np.radians(deg))
+        h = np.where(inside, rise, h)
+        zone = np.where(inside, zid, zone)
+
+    k = tiles.shape[0]
+    rx0 = ROUGH_CX - ROUGH_SIZE / 2.0
+    ry0 = ROUGH_CY - ROUGH_SIZE / 2.0
+    inside = ((np.abs(x - ROUGH_CX) <= ROUGH_SIZE / 2.0)
+              & (np.abs(y - ROUGH_CY) <= ROUGH_SIZE / 2.0))
+    ix = np.clip(((x - rx0) / RESOLUTION).astype(int), 0, k - 1)
+    iy = np.clip(((y - ry0) / RESOLUTION).astype(int), 0, k - 1)
+    h = np.where(inside, tiles[ix, iy], h)
+    zone = np.where(inside, ROUGH_ID, zone)
+
+    inside = ((np.abs(x - CUBE_CX) <= CUBE_SIDE / 2.0)
+              & (np.abs(y - CUBE_CY) <= CUBE_SIDE / 2.0))
+    h = np.where(inside, CUBE_SIDE, h)
+    zone = np.where(inside, CUBE_ID, zone)
+
+    return h, zone
 
 
-def height_at(x, y):
-    """Exact terrain height at a world point. Scalars or arrays."""
-    x = np.asarray(x, dtype=np.float64)
-    y = np.asarray(y, dtype=np.float64)
-    z = np.zeros_like(x)
-
-    for ramp in RAMPS:
-        th = np.radians(ramp['deg'])
-        half_x = RAMP_LEN * np.cos(th) / 2.0
-        inside = ((np.abs(x - ramp['cx']) <= half_x)
-                  & (np.abs(y - ramp['cy']) <= RAMP_WIDTH / 2.0))
-        z = np.where(inside, np.maximum(z, ramp_top(x, ramp)), z)
-
-    half = ROUGH_BLOCK / 2.0
-    for bx, by, bh in ROUGH_BLOCKS:
-        inside = (np.abs(x - bx) <= half) & (np.abs(y - by) <= half)
-        z = np.where(inside, np.maximum(z, bh), z)
-
-    inside = ((np.abs(x - OBST_CX) <= OBSTACLE_SIZE / 2.0)
-              & (np.abs(y - OBST_CY) <= OBSTACLE_SIZE / 2.0))
-    z = np.where(inside, np.maximum(z, OBSTACLE_HEIGHT), z)
-
-    return z
-
-# ------------------------------------------------------------- truth grid
-
-def build_truth():
-    """Mean terrain height per cell, sampled on a finer subgrid.
-
-    Averaging matters for the rough patch: a 1 m cell holds several
-    blocks and gaps, and the map can only ever represent their mean.
-    """
-    n = int(GRID_SIZE / GRID_RES)
-    half = GRID_SIZE / 2.0
-    centres = -half + GRID_RES / 2.0 + np.arange(n) * GRID_RES
-
-    step = GRID_RES / SUBSAMPLE
-    offs = -GRID_RES / 2.0 + step / 2.0 + np.arange(SUBSAMPLE) * step
-
-    fine_x = (centres[:, None] + offs[None, :]).ravel()
-    fine_y = (centres[:, None] + offs[None, :]).ravel()
-    gx, gy = np.meshgrid(fine_x, fine_y, indexing='ij')
-
-    fine_z = height_at(gx, gy)
-
-    truth = fine_z.reshape(n, SUBSAMPLE, n, SUBSAMPLE).mean(axis=(1, 3))
-
-    # Zone labels, same indexing as the truth grid.
-    cx, cy = np.meshgrid(centres, centres, indexing='ij')
-    zone = np.zeros_like(truth, dtype=np.int8)      # 0 = flat reference
-
-    for code, ramp in zip((1, 2), RAMPS):
-        th = np.radians(ramp['deg'])
-        half_x = RAMP_LEN * np.cos(th) / 2.0
-        zone[(np.abs(cx - ramp['cx']) <= half_x)
-             & (np.abs(cy - ramp['cy']) <= RAMP_WIDTH / 2.0)] = code
-
-    zone[(np.abs(cx - ROUGH_CX) <= ROUGH_SIZE / 2.0)
-         & (np.abs(cy - ROUGH_CY) <= ROUGH_SIZE / 2.0)] = 3
-    zone[(np.abs(cx - OBST_CX) <= OBSTACLE_SIZE / 2.0)
-         & (np.abs(cy - OBST_CY) <= OBSTACLE_SIZE / 2.0)] = 4
-
-    return centres, truth, zone
-
-# -------------------------------------------------------------- sdf parts
-
-def box_geometry(sx, sy, sz):
-    return (f'<geometry><box><size>{sx:.4f} {sy:.4f} {sz:.4f}'
-            f'</size></box></geometry>')
+# ---------------------------------------------------------------------- SDF
 
 
-def box_pair(name, px, py, pz, sx, sy, sz, rot='0 0 0', rgba='0.6 0.6 0.6 1'):
-    """One collision and one visual, both inside the same link."""
-    pose = f'<pose>{px:.4f} {py:.4f} {pz:.4f} {rot}</pose>'
-    geom = box_geometry(sx, sy, sz)
+def box_pair(name, pose, size, rgba):
+    """One collision and one visual sharing the same box."""
+    px, py, pz, roll, pitch, yaw = pose
+    sx, sy, sz = size
+    p = f'{px:.4f} {py:.4f} {pz:.4f} {roll:.5f} {pitch:.5f} {yaw:.5f}'
+    s = f'{sx:.4f} {sy:.4f} {sz:.4f}'
     return (
-        f'      <collision name="{name}_col">{pose}{geom}</collision>\n'
-        f'      <visual name="{name}_vis">{pose}{geom}'
-        f'<material><ambient>{rgba}</ambient>'
-        f'<diffuse>{rgba}</diffuse></material></visual>\n'
-    )
+        f'        <collision name="{name}_collision">\n'
+        f'          <pose>{p}</pose>\n'
+        f'          <geometry><box><size>{s}</size></box></geometry>\n'
+        f'        </collision>\n'
+        f'        <visual name="{name}_visual">\n'
+        f'          <pose>{p}</pose>\n'
+        f'          <geometry><box><size>{s}</size></box></geometry>\n'
+        f'          <material>\n'
+        f'            <ambient>{rgba}</ambient>\n'
+        f'            <diffuse>{rgba}</diffuse>\n'
+        f'            <specular>0.1 0.1 0.1 1</specular>\n'
+        f'          </material>\n'
+        f'        </visual>\n')
 
 
-def build_model():
-    """Everything in a single static link: one body, many shapes.
-
-    Separate models would mean hundreds of links for the physics engine
-    to track. Collisions inside one static link cost far less.
-    """
+def build_parts(tiles):
+    """Every box of the terrain, as SDF fragments."""
     parts = []
 
-    for ramp in RAMPS:
-        th = np.radians(ramp['deg'])
-        # Centre height so the low edge rests on the ground.
-        cz = RAMP_LEN / 2.0 * np.sin(th) - RAMP_THICK / 2.0 * np.cos(th)
-        # Negative pitch about y lifts the +x end.
+    for _zid, name, cx, cy, deg in RAMPS:
+        th = np.radians(deg)
+        top = RAMP_LEN * np.tan(th)
+        # The ramp is one box pitched by -th, so its +x axis rises. Its upper
+        # face is the ramp surface: centred on (cx, cy) at z = top / 2, with a
+        # horizontal extent of exactly RAMP_LEN. The box centre sits
+        # RAMP_THICK / 2 below that face along the surface normal
+        # (-sin th, 0, cos th). With RAMP_THICK > top / cos th the underside
+        # stays below z = 0 over the whole footprint, so there is no cavity.
         parts.append(box_pair(
-            ramp['name'], ramp['cx'], ramp['cy'], cz,
-            RAMP_LEN, RAMP_WIDTH, RAMP_THICK,
-            rot=f'0 {-th:.6f} 0', rgba='0.55 0.45 0.35 1'))
+            name,
+            (cx + RAMP_THICK / 2.0 * np.sin(th),
+             cy,
+             top / 2.0 - RAMP_THICK / 2.0 * np.cos(th),
+             0.0, -th, 0.0),
+            (RAMP_LEN / np.cos(th), RAMP_WIDTH, RAMP_THICK),
+            COLOUR['ramp']))
 
-    for k, (bx, by, bh) in enumerate(ROUGH_BLOCKS):
-        parts.append(box_pair(
-            f'rock_{k}', bx, by, bh / 2.0,
-            ROUGH_BLOCK, ROUGH_BLOCK, bh, rgba='0.45 0.42 0.40 1'))
+    k = tiles.shape[0]
+    rx0 = ROUGH_CX - ROUGH_SIZE / 2.0
+    ry0 = ROUGH_CY - ROUGH_SIZE / 2.0
+    for i in range(k):
+        for j in range(k):
+            h = float(tiles[i, j])
+            # Each tile is solid from the ground up and abuts its neighbours,
+            # so the gaps between rocks of the previous world are gone.
+            parts.append(box_pair(
+                f'rough_{i:02d}_{j:02d}',
+                (rx0 + (i + 0.5) * RESOLUTION,
+                 ry0 + (j + 0.5) * RESOLUTION,
+                 h / 2.0, 0.0, 0.0, 0.0),
+                (RESOLUTION, RESOLUTION, h),
+                COLOUR['rough']))
 
     parts.append(box_pair(
-        'obstacle', OBST_CX, OBST_CY, OBSTACLE_HEIGHT / 2.0,
-        OBSTACLE_SIZE, OBSTACLE_SIZE, OBSTACLE_HEIGHT,
-        rgba='0.30 0.30 0.35 1'))
+        'obstacle',
+        (CUBE_CX, CUBE_CY, CUBE_SIDE / 2.0, 0.0, 0.0, 0.0),
+        (CUBE_SIDE, CUBE_SIDE, CUBE_SIDE),
+        COLOUR['cube']))
 
-    return (
-        '    <model name="validation_terrain">\n'
-        '      <static>true</static>\n'
-        '      <link name="terrain_link">\n'
-        + ''.join(parts) +
-        '      </link>\n'
-        '    </model>\n'
-    )
+    return parts
 
-# ------------------------------------------------------------------- main
+
+def build_sdf(parts):
+    """PX4's default world with the terrain injected before </world>."""
+    src = (PX4_WORLDS / 'default.sdf').read_text()
+    tag = '<world name="default">'
+    if tag not in src:
+        raise SystemExit(f'world tag not found in {PX4_WORLDS / "default.sdf"}')
+    src = src.replace(tag, f'<world name="{WORLD_NAME}">', 1)
+
+    block = ('    <model name="validation_terrain">\n'
+             '      <static>true</static>\n'
+             '      <link name="terrain">\n'
+             + ''.join(parts) +
+             '      </link>\n'
+             '    </model>\n')
+
+    cut = src.rindex('</world>')
+    return src[:cut] + block + src[cut:]
+
+
+# -------------------------------------------------------------------- truth
+
+
+def build_truth(tiles):
+    """Per cell ground truth, axis 0 east, axis 1 north, Gazebo ENU."""
+    n = int(round(WORLD_SIZE / RESOLUTION))
+    m = SUBSAMPLES
+    edge = -WORLD_SIZE / 2.0
+
+    s = edge + (np.arange(n * m) + 0.5) * (RESOLUTION / m)
+    sx, sy = np.meshgrid(s, s, indexing='ij')
+    h, _ = height_field(sx, sy, tiles)
+    h = h.reshape(n, m, n, m)
+
+    # Mean is what a cell averaging estimator can reach, max is what matters
+    # for safety at a discontinuity. Both are stored, neither is guessed.
+    truth_mean = h.mean(axis=(1, 3))
+    truth_max = h.max(axis=(1, 3))
+
+    centres = edge + (np.arange(n) + 0.5) * RESOLUTION
+    cx, cy = np.meshgrid(centres, centres, indexing='ij')
+    _, zone = height_field(cx, cy, tiles)
+
+    return centres, truth_mean, truth_max, zone.astype(np.int8)
+
+
+# --------------------------------------------------------------------- main
+
 
 def main():
-    with open(BASE_WORLD, 'r') as f:
-        base = f.read()
+    tiles = rough_tiles()
 
-    # PX4 waits for a world whose name matches PX4_GZ_WORLD, so the
-    # name inside the SDF has to match the file name.
-    base = base.replace('<world name="default">',
-                        f'<world name="{WORLD_NAME}">', 1)
+    OUT_SDF.parent.mkdir(parents=True, exist_ok=True)
+    parts = build_parts(tiles)
+    OUT_SDF.write_text(build_sdf(parts))
 
-    cut = base.rfind('</world>')
-    if cut < 0:
-        raise SystemExit(f'no </world> tag found in {BASE_WORLD}')
+    centres, truth_mean, truth_max, zone = build_truth(tiles)
+    np.savez(OUT_TRUTH,
+             centres=centres,
+             truth=truth_mean,
+             truth_mean=truth_mean,
+             truth_max=truth_max,
+             zone=zone,
+             resolution=RESOLUTION,
+             zone_names=np.array(ZONE_NAMES))
 
-    world = base[:cut] + build_model() + base[cut:]
-
-    os.makedirs(OUT_DIR, exist_ok=True)
-    with open(OUT_SDF, 'w') as f:
-        f.write(world)
-
-    centres, truth, zone = build_truth()
-    np.savez(
-        OUT_TRUTH,
-        centres=centres,
-        truth=truth,
-        zone=zone,
-        resolution=GRID_RES,
-        zone_names=np.array(
-            ['flat', 'ramp_10', 'ramp_25', 'rough', 'obstacle']),
-    )
-
-    print(f'wrote {OUT_SDF}')
-    print(f'wrote {OUT_TRUTH}')
-    print(f'{len(ROUGH_BLOCKS)} rough blocks, '
-          f'truth grid {truth.shape[0]}x{truth.shape[1]} '
-          f'at {GRID_RES} m')
-    for code, name in enumerate(
-            ['flat', 'ramp_10', 'ramp_25', 'rough', 'obstacle']):
-        sel = zone == code
-        print(f'  {name:<10} {sel.sum():5d} cells | '
-              f'mean height {truth[sel].mean():+.3f} m')
+    print(f'{OUT_SDF}  ({len(parts)} boxes)')
+    print(f'{OUT_TRUTH}  ({zone.shape[0]} x {zone.shape[1]} cells)')
+    print()
+    print(f'{"zone":10s} {"cells":>6s} {"h min":>8s} {"h max":>8s}')
+    for zid, name in enumerate(ZONE_NAMES):
+        mask = zone == zid
+        if not mask.any():
+            print(f'{name:10s} {0:6d}')
+            continue
+        print(f'{name:10s} {int(mask.sum()):6d} '
+              f'{truth_mean[mask].min():8.3f} {truth_max[mask].max():8.3f}')
 
 
 if __name__ == '__main__':
