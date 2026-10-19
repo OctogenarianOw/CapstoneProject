@@ -1,0 +1,7 @@
+# Raw measurement data is stored byte for byte, so the SHA-256 in each
+# campaign MANIFEST.tsv still holds on a fresh clone. The root rule
+# "text=auto eol=lf" would otherwise rewrite the CRLF line ends that
+# Python's csv module writes by default. Scripts and READMEs stay text.
+*.csv -text
+*.log -text
+*.txt -text

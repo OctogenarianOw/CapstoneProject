@@ -1,0 +1,30 @@
+[INFO] [1792198444.487027066] [survey_mission]: 9 waypoints planned
+[INFO] [1792198447.597517255] [survey_mission]: Offboard active, starting survey
+[INFO] [1792198456.197779166] [survey_mission]: waypoint 1/8 -> N +25 E -22 | at N -23.9 E -21.8 D -7.7
+[INFO] [1792198461.497865335] [survey_mission]: waypoint 2/8 -> N +25 E -8 | at N +23.6 E -22.1 D -8.1
+[INFO] [1792198464.297794267] [survey_mission]: waypoint 3/8 -> N -25 E -8 | at N +25.9 E -8.4 D -8.2
+[INFO] [1792198469.797766306] [survey_mission]: waypoint 4/8 -> N -25 E +8 | at N -24.0 E -7.5 D -8.1
+[INFO] [1792198472.497701267] [survey_mission]: waypoint 5/8 -> N +25 E +8 | at N -25.6 E +6.3 D -8.1
+[INFO] [1792198477.198223380] [survey_mission]: waypoint 6/8 -> N +25 E +22 | at N +23.7 E +7.3 D -8.1
+[INFO] [1792198479.897711430] [survey_mission]: waypoint 7/8 -> N -25 E +22 | at N +25.8 E +21.3 D -8.1
+[INFO] [1792198485.297677321] [survey_mission]: waypoint 8/8 -> N +0 E +0 | at N -24.0 E +22.2 D -8.1
+[INFO] [1792198489.697660495] [survey_mission]: Survey complete, landing
+Traceback (most recent call last):
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/uav_core/survey_mission", line 33, in <module>
+    sys.exit(load_entry_point('uav-core==0.0.0', 'console_scripts', 'survey_mission')())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/python3.12/site-packages/uav_core/survey_mission.py", line 204, in main
+    rclpy.spin(node)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/__init__.py", line 247, in spin
+    executor.spin_once()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 926, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 907, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 877, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 785, in _wait_for_ready_callbacks
+    raise ExternalShutdownException()
+rclpy.executors.ExternalShutdownException
