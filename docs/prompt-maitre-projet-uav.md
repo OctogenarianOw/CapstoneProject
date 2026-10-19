@@ -639,6 +639,7 @@ pour chaque frontiere candidate f :
 - La réévaluation de l'invariant doit être **périodique** et pas seulement à la sélection : à chaque mise à jour du registre, à chaque mise à jour significative de `B_current`, et au minimum à 1 Hz.
 - Si l'invariant devient faux pendant un transit, cela ne doit **jamais** être silencieux : journalisation explicite avec la cause, l'énergie restante, et la zone visée.
 - Le cas où **aucune** frontière n'est admissible est un état légitime de la mission, pas une erreur : il signifie que l'exploration est terminée pour raison énergétique, et doit conduire au poser.
+- **Le `t_overhead` de S10 est une latence de décision, à mesurer et non à supposer**, ajouté le 19 octobre 2026. C1 doit couvrir tout le temps hors plan entre la lecture de `B_current` et la commande suivante : le calcul avant le départ du chemin, la stabilisation, l'attente et le calcul à la frontière. Une constante de 2 s a suffi tant que les décisions duraient moins d'une seconde ; sur une zone de 190 m, la décision a crû avec la carte jusqu'à 21.5 s, 301 s de stationnaire n'ont jamais été comptées et I1 a été violé 7 fois avec C1 actif. Depuis a4ac769, la machine à états mesure ce temps à chaque visite et facture le maximum des cinq dernières plus la plus forte hausse récente (`experiments/2026-10-19_decision_latency`). La première visite reste facturée à la constante, faute de mesure.
 
 **Critère d'acceptation.** Sur un ensemble de missions, **zéro violation de I1** avec C1 actif. Et pour que la mesure veuille dire quelque chose, les mêmes missions sans C1 doivent produire des violations : si la configuration de référence n'échoue jamais, l'expérience ne prouve rien et le budget énergétique doit être resserré jusqu'à ce que le problème existe.
 
@@ -935,6 +936,9 @@ Tous silencieux, aucun ne produit de message d'erreur. Cette liste évite de les
 16. L'agent XRCE-DDS n'est pas un node ROS : les topics `/fmu/` apparaissent sans source dans `rqt_graph`. À annoter sur toute figure présentée.
 17. Comparaison carte contre vérité : vérifier le décalage de grille avec `check_alignment.py` avant de conclure qu'un résidu est réel.
 18. Ne jamais lancer `colcon build` depuis `~/ros2_ws`, uniquement depuis l'intérieur d'un des deux workspaces.
+19. PX4 SITL sauvegarde dans `~/PX4-Autopilot/build/px4_sitl_default/rootfs/parameters.bson` ce qu'il apprend en vol, dont les offsets du magnétomètre, et les recharge au lancement suivant. Ils dérivent de vol en vol, de [0.053, -0.029, 0.212] à [0.081, 0.035, 0.286] G le 19 octobre ; au delà, `Preflight Fail: heading estimate invalid` et PX4 n'est jamais prêt. Toute mission dépendait aussi des vols d'avant. Supprimer ce fichier avant chaque lancement, voir A.3.
+20. Le test de fumée du gestionnaire crée un vrai node, qui publie décollage, chemin et atterrissage sur `/executor/*`. Lancé sur le domaine ROS par défaut pendant une simulation, il commanderait son exécuteur. Il tourne dans le domaine 99 depuis le 19 octobre ; tout autre script hors ligne qui instancie `ExplorationManager` (`profile_cycle.py`) ne se lance que simulation arrêtée.
+21. Le journal ne mesurait que le modèle du monde dans `timings_ms` : une décision de 21 s y apparaissait comme 179 ms. Un chronométrage partiel est pire qu'aucun, il rassure.
 
 ---
 
@@ -970,6 +974,17 @@ Tous silencieux, aucun ne produit de message d'erreur. Cette liste évite de les
 **Note de méthode sur P5.** Un décalage de grille est **invisible sur terrain plat**, où toute translation laisse l'erreur inchangée. Le test d'alignement doit donc toujours être restreint aux zones à gradient non nul, les rampes et les bords de structure. Le test antérieur, mené sur l'ensemble du monde, avait dilué le signal et conclu à tort à l'absence de minimum franc.
 
 **Ajouts du 19 octobre 2026.** Modèle d'énergie calibré et validé (C), voir S10. Piège 14 aggravé : le serveur Gazebo apparaît comme `gz sim ...` et échappe aux motifs `ruby` et `gz-sim-server` ; il survit, et PX4 réutilise alors le monde (`gazebo already running world` dans `px4.log`). Les scripts de session tuent désormais `gz[ ]sim` et refusent tout vol sur un monde réutilisé. Le stationnaire de référence de 285.9 W du 17 octobre avait tourné sur un monde réutilisé ; les 24 stationnaires de la calibration, sur monde neuf, donnent 285.8 W.
+
+**Ajouts du 19 octobre 2026, soir.** Premier vol sur une zone de 190 m sous 200 kJ : **7 violations de I1 avec C1 actif**, causées par une latence de décision croissante que C1 facturait à 2 s constantes (`experiments/2026-10-19_big_area`). Correctifs mesurés un par un : couverture rapportée sur la vraie zone, chronométrage complet du cycle, renvois de commandes datés de leur publication (20 renvois, puis 0), latence mesurée dans C1 (avec 5 s de latence injectée sur W1 : violations 2, 2, 1, puis 0, 0, 0 ; `experiments/2026-10-19_decision_latency`), paramètres PX4 remis à zéro avant chaque session (piège 19).
+
+Ouvert, mesuré, non corrigé :
+
+| Problème | Mesure |
+|---|---|
+| I1 et le retour ne facturent pas la latence des deux dernières décisions, retour et atterrissage | 5 s chacune avec latence injectée, 1.5 kJ pris sur la réserve ; 0.1 à 0.4 s sans |
+| `E_land` optimiste en boucle fermée | 3.30 à 4.14 kJ mesurés par mission autonome, contre 3.20 kJ calibrés sur les descentes du script de calibration ; à recalibrer sur les atterrissages de l'exécuteur, avec l'expérience P4 |
+| première visite facturée à `dwell_s`, rien n'étant encore mesuré | 15 s réelles pour 2 s facturées avec latence injectée |
+| zone confirmée qui oscille entre `CONFIRMED` et `CANDIDATE`, motif « 1 pass, 2 needed » | 5 rétrogradations entre 34 et 88 s sur la démo à 200 kJ ; le nombre de passages d'une zone appariée ne devrait pas décroître |
 
 **À construire.** Registre SLZ dynamique (B), frontières sur la carte (D), C1 (E), C2 (F), exploration autonome (G), campagne d'évaluation (H).
 
@@ -1039,11 +1054,13 @@ pkill -9 -f MicroXRCEAgent
 pkill -9 -f parameter_bridge
 pkill -9 -f rviz2
 pkill -9 -f rqt
+rm -f ~/PX4-Autopilot/build/px4_sitl_default/rootfs/parameters.bson \
+      ~/PX4-Autopilot/build/px4_sitl_default/rootfs/parameters_backup.bson
 sleep 3
 ps aux | grep -E "px4|gz sim|ruby|XRCE|bridge|rviz|rqt" | grep -v grep
 ```
 
-`ruby` n'est pas une erreur : Gazebo Harmonic lance son serveur par un script Ruby, et c'est typiquement ce processus qui survit.
+`ruby` n'est pas une erreur : Gazebo Harmonic lance son serveur par un script Ruby, et c'est typiquement ce processus qui survit. La suppression de `parameters.bson` fait partir PX4 des valeurs de l'airframe à chaque lancement, voir piège 19 ; aucun paramètre de ce fichier n'est réglé à la main.
 
 **Compilation**, après toute modification dans `src/` :
 
