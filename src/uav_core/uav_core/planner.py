@@ -188,6 +188,14 @@ def cells_to_ne(cells, resolution, origin_ne):
              origin_ne[1] + (j + 0.5) * resolution) for i, j in cells]
 
 
+def _make_plan(raw, traversable, resolution, origin_ne):
+    cells = simplify(raw, traversable)
+    ne = cells_to_ne(cells, resolution, origin_ne)
+    length = sum(math.hypot(b[0] - a[0], b[1] - a[1])
+                 for a, b in zip(ne[:-1], ne[1:]))
+    return Plan(cells=cells, waypoints_ne=ne, length_m=length)
+
+
 def plan_path(traversable, dist_from_source, goal, resolution, origin_ne):
     """
     Simplified path from the source of a field to a goal cell, or None.
@@ -198,8 +206,18 @@ def plan_path(traversable, dist_from_source, goal, resolution, origin_ne):
     raw = extract_path(dist_from_source, goal)
     if not raw:
         return None
-    cells = simplify(raw[::-1], traversable)
-    ne = cells_to_ne(cells, resolution, origin_ne)
-    length = sum(math.hypot(b[0] - a[0], b[1] - a[1])
-                 for a, b in zip(ne[:-1], ne[1:]))
-    return Plan(cells=cells, waypoints_ne=ne, length_m=length)
+    return _make_plan(raw[::-1], traversable, resolution, origin_ne)
+
+
+def descend_plan(traversable, dist_to_sources, start, resolution, origin_ne):
+    """
+    Simplified path from a start cell to the nearest source, or None.
+
+    The field is seeded at the destinations, the landing zones for a
+    return; walking it downhill from the start already runs in flight
+    order, start to destination.
+    """
+    raw = extract_path(dist_to_sources, start)
+    if not raw:
+        return None
+    return _make_plan(raw, traversable, resolution, origin_ne)
