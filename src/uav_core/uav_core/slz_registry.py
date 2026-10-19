@@ -49,6 +49,7 @@ from dataclasses import dataclass, field
 import math
 
 import numpy as np
+from scipy.ndimage import distance_transform_edt
 
 from uav_core.observation import N_MIN, VAR_MAX
 
@@ -89,31 +90,34 @@ class Event:
     reason: str
 
 
-def inscribed_radius(zone_cells, refused, resolution, window=12):
+def refused_distance(refused):
+    """
+    Euclidean distance, in cells, from every cell centre to refused ground.
+
+    One exact distance transform of the whole grid per cycle (scipy,
+    compiled). It replaced a pairwise distance between each zone cell and
+    each refused cell nearby, quadratic in zone size: on the 200 m grid
+    of 19 Oct, with zones of thousands of cells, that took up to 6.3 s
+    per cycle and stretched the decision period to 20 s
+    (experiments/2026-10-19_big_area). No refused cell: infinity.
+    """
+    if not refused.any():
+        return np.full(refused.shape, np.inf)
+    return distance_transform_edt(~refused)
+
+
+def inscribed_radius(zone_cells, distance, resolution, window=12):
     """
     Largest distance from a zone cell centre to refused ground.
 
+    distance : refused_distance() of the cycle
     Returns the radius in metres, from the cell centre to the nearest
-    edge of a refused cell, and the cell where it is reached. Exact
-    Euclidean distance over refused cells within window cells of the
-    zone; beyond the window the radius is capped at window cells.
+    edge of a refused cell, capped at window cells, and the cell where
+    the uncapped distance is largest, the touchdown point.
     """
-    i0, j0 = zone_cells.min(axis=0) - window
-    i1, j1 = zone_cells.max(axis=0) + window + 1
-    h, w = refused.shape
-    sub = refused[max(0, i0):min(h, i1), max(0, j0):min(w, j1)]
-    ri, rj = np.nonzero(sub)
-    ri = ri + max(0, i0)
-    rj = rj + max(0, j0)
-    if ri.size == 0:
-        best = 0
-        radius = window
-    else:
-        d2 = ((zone_cells[:, 0, None] - ri[None, :]) ** 2
-              + (zone_cells[:, 1, None] - rj[None, :]) ** 2)
-        nearest = np.sqrt(d2.min(axis=1))
-        best = int(np.argmax(nearest))
-        radius = min(float(nearest[best]), float(window))
+    d = distance[zone_cells[:, 0], zone_cells[:, 1]]
+    best = int(np.argmax(d))
+    radius = min(float(d[best]), float(window))
     return max(0.0, (radius - 0.5) * resolution), tuple(
         int(v) for v in zone_cells[best])
 
@@ -202,7 +206,7 @@ class SlzRegistry:
         """
         self.track.append((float(vehicle_ne[0]), float(vehicle_ne[1])))
         labels = landing['labels']
-        refused = ~landing['cell_ok']
+        distance = refused_distance(~landing['cell_ok'])
         new_cells = [np.argwhere(labels == k)
                      for k in range(1, int(labels.max()) + 1)]
         new_cells = [c for c in new_cells if len(c)]
@@ -226,7 +230,7 @@ class SlzRegistry:
                                         'detected again'))
                     z.state, z.retired_at = CANDIDATE, None
             seen_ids.add(z.zone_id)
-            self._measure(z, cells, refused, variance, count, resolution,
+            self._measure(z, cells, distance, variance, count, resolution,
                           origin_ne, t)
 
         for z in self.zones.values():
@@ -252,7 +256,7 @@ class SlzRegistry:
             z.reason = missing
         return events
 
-    def _measure(self, z, cells, refused, variance, count, resolution,
+    def _measure(self, z, cells, distance, variance, count, resolution,
                  origin_ne, t):
         z.cells = cells
         z.area_m2 = len(cells) * resolution ** 2
@@ -260,7 +264,7 @@ class SlzRegistry:
         z.centroid_ne = (float(centres[:, 0].mean()),
                          float(centres[:, 1].mean()))
         z.inscribed_radius_m, z.touchdown_ij = inscribed_radius(
-            cells, refused, resolution)
+            cells, distance, resolution)
         z.touchdown_ne = (origin_ne[0] + (z.touchdown_ij[0] + 0.5)
                           * resolution,
                           origin_ne[1] + (z.touchdown_ij[1] + 0.5)

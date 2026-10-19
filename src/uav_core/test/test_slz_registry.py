@@ -8,8 +8,10 @@ its identity while it is detected, is retired at once when it vanishes
 """
 
 import numpy as np
+import pytest
 from uav_core.slz_detection import label_zones
 from uav_core.slz_registry import (CANDIDATE, CONFIRMED, inscribed_radius,
+                                   refused_distance,
                                    RETIRED, SlzRegistry)
 
 N = 60
@@ -141,10 +143,55 @@ def test_take_off_point_is_a_provisional_confirmed_zone():
 
 
 def test_inscribed_radius_and_touchdown_point():
-    """A 7 x 7 free square: centre cell, 3.0 m to the refused edge."""
+    """A 7 x 7 free square: centre cell, 3.5 m to the refused edge."""
     refused = np.ones((20, 20), dtype=bool)
     refused[5:12, 5:12] = False
     cells = np.argwhere(~refused)
-    radius, ij = inscribed_radius(cells, refused, 1.0)
+    radius, ij = inscribed_radius(cells, refused_distance(refused), 1.0)
     assert ij == (8, 8)
     assert radius == 3.5
+
+
+def pairwise_reference(zone_cells, refused, resolution, window=12):
+    """Return the previous pairwise implementation, the reference."""
+    i0, j0 = zone_cells.min(axis=0) - window
+    i1, j1 = zone_cells.max(axis=0) + window + 1
+    h, w = refused.shape
+    sub = refused[max(0, i0):min(h, i1), max(0, j0):min(w, j1)]
+    ri, rj = np.nonzero(sub)
+    ri, rj = ri + max(0, i0), rj + max(0, j0)
+    if ri.size == 0:
+        return (window - 0.5) * resolution, None, np.inf
+    d2 = ((zone_cells[:, 0, None] - ri[None, :]) ** 2
+          + (zone_cells[:, 1, None] - rj[None, :]) ** 2)
+    nearest = np.sqrt(d2.min(axis=1))
+    best = int(np.argmax(nearest))
+    radius = min(float(nearest[best]), float(window))
+    return (max(0.0, (radius - 0.5) * resolution),
+            tuple(int(v) for v in zone_cells[best]), float(nearest[best]))
+
+
+def test_distance_transform_matches_the_pairwise_reference():
+    """
+    Same radius on 200 random masks, same touchdown below the cap.
+
+    Above the 12-cell cap the reference only saw refused cells within
+    the window, so its touchdown among far-from-refused cells could
+    differ; the radius, capped, is equal in every case.
+    """
+    rng = np.random.default_rng(1)
+    for _ in range(200):
+        refused = rng.random((40, 40)) < rng.uniform(0.02, 0.4)
+        free = np.argwhere(~refused)
+        if free.size == 0:
+            continue
+        zone_cells = free[rng.random(len(free)) < 0.5]
+        if zone_cells.size == 0:
+            continue
+        r_new, ij_new = inscribed_radius(zone_cells,
+                                         refused_distance(refused), 1.0)
+        r_ref, ij_ref, uncapped = pairwise_reference(zone_cells, refused,
+                                                     1.0)
+        assert r_new == pytest.approx(r_ref)
+        if uncapped <= 12:
+            assert ij_new == ij_ref
