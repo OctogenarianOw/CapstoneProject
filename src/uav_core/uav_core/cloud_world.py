@@ -3,7 +3,11 @@ Lidar ingestion: frame change and fusion into the elevation grid (S5).
 
 Role: take each downward lidar scan, put its points in the NED world
 frame with the attitude and position of the aircraft, and fuse them
-into the elevation grid, saved atomically every 5 s.
+into the elevation grid, saved atomically every 5 s and published on
+/map/elevation at 1 Hz for the exploration manager and the display.
+The publication is reliable and transient local, so a node started
+later receives the latest map at once; 1 Hz matches the decision rate
+of the manager (S13 asks the invariant to be checked at 1 Hz at least).
 
 Frame chain: sensor FLU to body FRD by (x, -y, -z), plus the sensor
 offset, then body FRD to NED by the attitude quaternion, then the NED
@@ -42,6 +46,8 @@ from sensor_msgs_py import point_cloud2
 from std_msgs.msg import Header
 
 from uav_core.elevation_grid import ElevationGrid
+from uav_core.map_msg import grid_to_msg
+from uav_interfaces.msg import ElevationMap
 
 
 def quat_to_matrix(q):
@@ -68,6 +74,7 @@ class CloudWorld(Node):
         self.declare_parameter('sigma_range_m', 0.02)
         self.declare_parameter('sigma_angular_rad', 0.009)
         self.declare_parameter('map_path', '/tmp/elevation_map.npz')
+        self.declare_parameter('map_publish_period_s', 1.0)
 
         self.min_range = self.get_parameter('min_range').value
         self.max_range = self.get_parameter('max_usable_range').value
@@ -104,9 +111,20 @@ class CloudWorld(Node):
 
         self.world_pub = self.create_publisher(
             PointCloud2, '/cloud_world', 10)
+        map_qos = QoSProfile(
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=1,
+        )
+        self.map_pub = self.create_publisher(
+            ElevationMap, '/map/elevation', map_qos)
 
         self.log_counter = 0
         self.save_timer = self.create_timer(5.0, self.save_map)
+        self.map_timer = self.create_timer(
+            self.get_parameter('map_publish_period_s').value,
+            self.publish_map)
 
     def on_position(self, msg):
         """Keep the latest NED position."""
@@ -171,6 +189,16 @@ class CloudWorld(Node):
                 f'{pts_ned.shape[0]} pts | {known} cells | '
                 f'mean map z {valid.mean():+.3f} '
                 f'| sd {valid.std():.3f}')
+
+    def publish_map(self):
+        """Publish the whole grid with its geometry."""
+        header = Header()
+        header.stamp = self.get_clock().now().to_msg()
+        header.frame_id = 'map_ned'
+        self.map_pub.publish(grid_to_msg(
+            self.grid.elevation, self.grid.variance, self.grid.count,
+            self.grid.resolution, (self.grid.origin_x, self.grid.origin_y),
+            header))
 
     def save_map(self):
         """Write the grid to map_path atomically, temp file then rename."""

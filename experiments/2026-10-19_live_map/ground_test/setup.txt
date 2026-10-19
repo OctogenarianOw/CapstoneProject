@@ -1,0 +1,14 @@
+date 2026-10-19T15:24:52+11:00
+duration 40
+run map=ros2 run uav_core cloud_world
+run hz=sleep 10; timeout 20 ros2 topic hz /map/elevation
+run bw=sleep 10; timeout 20 ros2 topic bw /map/elevation
+run one=sleep 25; ros2 topic echo --once --field rows /map/elevation; ros2 topic info -v /map/elevation
+git 6e3edb9a0354de374c02605d6ca0fc3d4521b76a
+ M src/uav_core/package.xml
+ M src/uav_core/uav_core/cloud_world.py
+?? experiments/2026-10-19_live_map/
+?? experiments/sim_session.sh
+?? src/uav_core/test/test_map_msg.py
+?? src/uav_core/uav_core/map_msg.py
+?? src/uav_interfaces/
