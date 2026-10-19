@@ -16,8 +16,14 @@ C1, energy feasibility invariant (S13): a frontier f is admissible iff
            nearest CONFIRMED zone, the take-off point included (S15.3)
   E_land   calibrated descent and touchdown, energy_model.e_land_j
   slz* is the zone nearest along the return field, seeded on every
-  confirmed touchdown point: one pass for all frontiers. With the
-  per-leg term, the nearest zone by distance may differ from the
+  landable cell of every confirmed zone: one pass for all frontiers.
+  Every candidate cell of a zone passed the footprint test of S8, so
+  the aircraft may land on any of them; the return goes to the nearest
+  one, not to the zone's interior touchdown point, which in a large
+  flat zone can lie tens of metres away while the aircraft flies over
+  landable ground (measured in experiments/2026-10-19_big_area). The
+  take-off point, which has no cells, seeds its own point. With the
+  per-leg term, the nearest cell by distance may differ from the
   cheapest by the cost of a leg or two (65 J each); accepted, as it
   needs one return field instead of one per zone.
   The return is planned on the current map, which is optimistic: the
@@ -100,13 +106,23 @@ class ReturnField:
 
 def return_field(traversable, zones, resolution, origin_ne):
     """
-    Seed the return field on every confirmed touchdown point.
+    Seed the return field on every landable cell of the confirmed zones.
 
-    A touchdown point inside the inflation is moved onto the nearest
-    free cell within 2 m.
+    A zone without cells, the take-off point, seeds its touchdown point,
+    moved onto the nearest free cell within 2 m if it falls in the
+    inflation. Zone cells are flat by construction; those inside the
+    inflation of a neighbouring obstacle are left out.
     """
     sources, owner = [], {}
     for z in zones:
+        cells = getattr(z, 'cells', None)
+        if cells is not None and len(cells):
+            free = traversable[cells[:, 0], cells[:, 1]]
+            for i, j in cells[free]:
+                cell = (int(i), int(j))
+                sources.append(cell)
+                owner[cell] = z.zone_id
+            continue
         i = int((z.touchdown_ne[0] - origin_ne[0]) / resolution)
         j = int((z.touchdown_ne[1] - origin_ne[1]) / resolution)
         cell = nearest_traversable(traversable, (i, j),
