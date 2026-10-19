@@ -1,0 +1,8 @@
+date 2026-10-19T22:36:37+11:00
+duration 180
+px4 parameters reset to the airframe defaults
+run mon=ros2 run uav_core energy_monitor
+run exe=ros2 run uav_core trajectory_executor
+run drv=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_landing_p4/land_drive.py landing.json; touch stop
+git 1b3df103c888616eb0a5a80ff3c51ec19f483e36
+?? experiments/2026-10-19_landing_p4/

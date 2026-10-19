@@ -884,8 +884,8 @@ Lettres fixées, utilisées pour référence dans toutes les conversations.
 | B | classification et registre SLZ | registre avec cycle de vie et appariement, scénario d'invalidation passant | **registre fait** (`slz_registry.py`), scénario d'invalidation passant en test scripté ; scénario en vol sur W3 à faire. Constat : I4 à deux passages ne confirme presque aucune grande zone en exploration par frontières |
 | C | modèle d'énergie | erreur de prédiction inférieure à 10 % sur trajectoires non calibrées | **fait le 19 octobre**, au plus 1.0 % depuis le plan à deux termes, 0.26 % avec le terme par segment |
 | D | détection de frontières sur la carte | catalogue non vide tant qu'il reste de l'inconnu, vide à couverture complète | **fait** (`frontier_detection.py`), vide à couverture complète mesuré en mission |
-| E | C1, invariant | zéro violation de I1 sur 10 missions, et violations présentes sans C1 | C1 fait ; **démonstration sur un vol par politique à 20 kJ : 0 violation avec C1, 12 pour B1, 25 pour B0**. Les 10 missions restent à voler |
-| F | C2, utilité | effet de `alpha` monotone et interprétable sur au moins une métrique | C2 fait, effet de `alpha` non mesuré |
+| E | C1, invariant | zéro violation de I1 sur 10 missions, et violations présentes sans C1 | **non passée au 19 octobre au soir.** Campagne W1 de 80 missions (`experiments/2026-10-19_campaign_w1`) : violations dans 10/10 missions B0 et B1, mais aussi dans 31 des 60 missions C1. Chacune suit à moins de 3 s la rétrogradation, sur le compte de passages, de la zone sur laquelle reposait C1 : artefact du registre, corrigé en c7fc2aa (sauts du point de poser de plus de 5 m : 5 et 12, puis 0 et 0). La même campagne avec ce seul correctif est la mesure à faire |
+| F | C2, utilité | effet de `alpha` monotone et interprétable sur au moins une métrique | **effet mesuré sur la même campagne** : marge minimale de I1 et énergie restante décroissent avec `alpha` (Spearman -0.49 et -0.50, p < 0.001) ; la couverture plafonne à 95 % dès `alpha` 0.25, limite fixée par W1. Les violations sont confondues avec l'artefact du registre ; l'arbitrage sur la couverture demande W2 |
 | G | exploration autonome de bout en bout | mission complète sans intervention, du décollage au poser sur zone confirmée | **fait le 19 octobre** : couverture 100 % de W1 en 97 s, poser sur la zone de décollage à 0.7 m |
 | H | évaluation contre référence | les 240 missions, scriptées, dépouillées, figures générées | à faire |
 
@@ -965,7 +965,7 @@ Tous silencieux, aucun ne produit de message d'erreur. Cette liste évite de les
 | Code | Problème | Statut |
 |---|---|---|
 | P2 | la carte rétrécit les surfaces surélevées, une gaussienne par cellule ne peut représenter deux surfaces | mesuré, correctif par porte de Mahalanobis tenté et rejeté, à reprendre avec deux hypothèses de surface |
-| P4 | précision d'atterrissage non mesurée, l'empreinte de 1.5 m est estimée | expérience spécifiée en S16, non exécutée |
+| P4 | précision d'atterrissage non mesurée, l'empreinte de 1.5 m est estimée | **mesuré le 19 octobre** sur 15 atterrissages (`experiments/2026-10-19_landing_p4`) : erreur radiale moyenne 0.124 m, p95 0.180 m ; rayon de l'airframe 0.386 m lu dans le modèle x500 ; empreinte selon S16 2 x (0.386 + 0.180) = 1.13 m, arrondie à 1.2 m. L'empreinte en service (1.5 m) n'est pas changée : décision de Dorian, qui demande de remesurer v6 |
 | **P5** | **décalage d'une cellule vers le nord entre carte et vérité sur les rampes**, RMS 0.255 m contre 0.342 m après recalage, soit 25 % d'amélioration, donc un minimum franc et non plus un résidu | **nouveau, 17 octobre.** L'élément couvrant absorbe ce décalage, ce qui veut dire que le zéro dangereux repose en partie sur une compensation d'erreur. Cause à isoler avant de présenter le résultat |
 | n/a | arcs concentriques d'erreur liés aux angles d'élévation des faisceaux, hypothèse d'un effet d'angle d'incidence non modélisé | observé, hypothèse non testée |
 | n/a | `offboard_demo.py` et `square_mission.py` recopient l'horodatage brut de `timesync_status`, piège 3 | **corrigé le 19 octobre**, failsafes 177 → 0 et 17 → 0 sur monde neuf (`experiments/2026-10-19_offboard_timestamp`) |
@@ -982,9 +982,9 @@ Ouvert, mesuré, non corrigé :
 | Problème | Mesure |
 |---|---|
 | I1 et le retour ne facturent pas la latence des deux dernières décisions, retour et atterrissage | 5 s chacune avec latence injectée, 1.5 kJ pris sur la réserve ; 0.1 à 0.4 s sans |
-| `E_land` optimiste en boucle fermée | 3.30 à 4.14 kJ mesurés par mission autonome, contre 3.20 kJ calibrés sur les descentes du script de calibration ; à recalibrer sur les atterrissages de l'exécuteur, avec l'expérience P4 |
+| `E_land` optimiste dans les missions | atterrissage seul, commandé comme le fait le gestionnaire : 3194 J, à 0.2 % de `E_land` ; le même dans les missions : +3.0 % en moyenne et +5.6 % au p95 sur 70 atterrissages headless, +12.6 % en sessions chargées. Cause supposée, non mesurée : le délai entre la commande LAND et le début de la descente, croissant avec la charge ; candidat, `E_land` au p95 des atterrissages en conditions d'expérience |
 | première visite facturée à `dwell_s`, rien n'étant encore mesuré | 15 s réelles pour 2 s facturées avec latence injectée |
-| zone confirmée qui oscille entre `CONFIRMED` et `CANDIDATE`, motif « 1 pass, 2 needed » | 5 rétrogradations entre 34 et 88 s sur la démo à 200 kJ ; le nombre de passages d'une zone appariée ne devrait pas décroître |
+| zone confirmée qui oscille entre `CONFIRMED` et `CANDIDATE`, motif « 1 pass, 2 needed » | **cause trouvée et corrigée** (c7fc2aa) : le point de poser d'une grande zone sautait avec le bord de la carte, jusqu'à 160 m, et les passages comptés autour de lui avec ; 2 vols avant, 2 après : sauts de plus de 5 m 5 et 12, puis 0 et 0, rétrogradations 2 et 3, puis 1 et 0. Reste un cas de zone en croissance : ce qu'est un passage pour une zone qui change de forme est une définition de I4, à trancher par Dorian |
 
 **À construire.** Registre SLZ dynamique (B), frontières sur la carte (D), C1 (E), C2 (F), exploration autonome (G), campagne d'évaluation (H).
 

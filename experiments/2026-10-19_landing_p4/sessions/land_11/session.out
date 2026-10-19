@@ -1,0 +1,11 @@
+[22:42:13] starting PX4
+[22:42:27] PX4 ready after 15s, fresh Gazebo world
+[22:42:35] start mon: ros2 run uav_core energy_monitor
+[22:42:35] start exe: ros2 run uav_core trajectory_executor
+[22:42:35] start drv: python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_landing_p4/land_drive.py landing.json; touch stop
+failsafe activations: 0
+[22:43:16] session end
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 30: 145066 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 30: 145068 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 30: 144987 Killed                  ros2 run ros_gz_bridge parameter_bridge '/lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked' '/x500_slz_0/command/motor_speed@actuator_msgs/msg/Actuators[gz.msgs.Actuators' > "$OUT/bridge.log" 2>&1  (wd: ~/PX4-Autopilot)
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 30: 144986 Killed                  MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1  (wd: ~/PX4-Autopilot)

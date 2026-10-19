@@ -81,12 +81,15 @@ Two things I1 does not count, both measured, neither fixed here:
    land command each leave one decision after the energy was read: 5 s
    of hover each here, 0.1 to 0.4 s on a fast machine. C1 charges the
    measured latency per frontier visit; I1 and the return do not yet.
-2. **The landing in closed loop costs more than E_land.** 3.30 to
-   3.74 kJ in every autonomous mission logged but one, 4.14 kJ in the
-   first 190 m flight, against 3.20 kJ calibrated from 12 descents
-   (sd 15 J). The model is optimistic by 3 to 29 % on that term, the
-   wrong direction (spec 5.3). Calibrated on the calibration script's
-   descents, not on the executor's landing.
+2. **The landing inside a mission costs more than E_land.** 3.30 to
+   4.14 kJ in the sessions of this table, against 3.20 kJ calibrated
+   from 12 descents (sd 15 J), the wrong direction (spec 5.3).
+   *Corrected the same evening* (`2026-10-19_landing_p4`): the first
+   version said "every autonomous mission", but these sessions were
+   mostly loaded ones (RViz and Gazebo window, slow decisions). Over
+   the 70 committed landings of the headless W1 campaign the excess is
+   +3.0 % mean, +5.6 % p95; loaded sessions +12.6 % mean; 15 landings
+   flown alone by the executor match E_land within 0.2 %.
 
 Without injected latency, every C1 mission flown since the cycle fixes
 stayed within its reserve (at most 0.49 kJ of 2 kJ used, live demo);
