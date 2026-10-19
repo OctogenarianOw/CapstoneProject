@@ -40,7 +40,12 @@ idle after a take-off, echoing the path id, landing), and is resent
 every command_retry_s otherwise. Measured need: in the budget demo of
 19 Oct the manager had a valid pose before the executor, which refused
 the take-off ("no pose yet"); sent once, the command was lost and the
-aircraft never left the ground.
+aircraft never left the ground. The retry delay runs from the moment
+the node published the command (sent()), not from the start of the
+decision that produced it: in the first 190 m flight of 19 Oct
+decisions took up to 21.5 s, every command looked overdue the moment
+it left, and the next step resent it before the executor's status could
+confirm it, 20 resends, one restarting a path in flight.
 """
 
 from dataclasses import dataclass, field
@@ -188,6 +193,11 @@ class MissionFSM:
             self.pending = (actions[-1], inp.t)
             return actions
         return self._retry(inp)
+
+    def sent(self, t):
+        """Restamp the pending command with the time it was published."""
+        if self.pending is not None:
+            self.pending = (self.pending[0], t)
 
     def _step(self, inp):
         """Advance the state machine, return new actions."""

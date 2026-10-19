@@ -262,13 +262,20 @@ class ExplorationManager(Node):
             self.log.event(self.now_s(), 'action', action=a.kind,
                            path_id=a.path_id, waypoints=a.waypoints_ne)
 
+    def decide(self, inp):
+        """Step the state machine, send its actions, stamp them sent."""
+        actions = self.fsm.step(inp)
+        self.act(actions)
+        if actions:
+            self.fsm.sent(self.now_s())
+
     def on_timer(self):
         """Run the steps that need no map, refresh the vehicle marker."""
         if self.vehicle is not None:
             self.pub_vehicle.publish(viz.vehicle_marker(*self.vehicle,
                                                         self.header()))
         if self.mode == 'explore':
-            self.act(self.fsm.step(self.inputs()))
+            self.decide(self.inputs())
 
     def on_map(self, msg):
         """
@@ -291,7 +298,7 @@ class ExplorationManager(Node):
             inp = self.inputs(world, res, origin)
             if self.inject_delay_s > 0.0:
                 time.sleep(self.inject_delay_s)
-            self.act(self.fsm.step(inp))
+            self.decide(inp)
         t3 = time.perf_counter()
         self.display(world, elev, res, origin)
         t4 = time.perf_counter()

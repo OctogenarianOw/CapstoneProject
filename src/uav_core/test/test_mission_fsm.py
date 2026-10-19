@@ -88,6 +88,16 @@ def test_unacknowledged_path_is_resent_with_its_id():
     assert m.step(inputs(8.0, path_id=1)) == []
 
 
+def test_slow_decision_is_not_resent_as_it_leaves():
+    """A path published 10 s after its decision started waits 2 s."""
+    m = fsm()
+    first = airborne(m)[0]
+    m.sent(13.0)
+    assert m.step(inputs(13.1, path_id=0)) == []
+    again = m.step(inputs(15.5, path_id=0))
+    assert len(again) == 1 and again[0].path_id == first.path_id
+
+
 def test_first_selection_sends_a_path_and_navigates():
     """After the bootstrap cycles, a frontier path is sent."""
     m = fsm()
