@@ -877,15 +877,15 @@ Trois, déjà obtenus, chacun avec son explication. Ils renforcent le mémoire a
 
 Lettres fixées, utilisées pour référence dans toutes les conversations.
 
-| | Étape | Porte de sortie, mesurable | État au 17 octobre 2026 |
+| | Étape | Porte de sortie, mesurable | État au 19 octobre 2026 |
 |---|---|---|---|
 | A | analyse de terrain, pente, rugosité, marche | pente et rugosité séparées contre vérité | **fait** |
-| B | classification et registre SLZ | registre avec cycle de vie et appariement, scénario d'invalidation passant | classification faite, registre à faire |
+| B | classification et registre SLZ | registre avec cycle de vie et appariement, scénario d'invalidation passant | **registre fait** (`slz_registry.py`), scénario d'invalidation passant en test scripté ; scénario en vol sur W3 à faire. Constat : I4 à deux passages ne confirme presque aucune grande zone en exploration par frontières |
 | C | modèle d'énergie | erreur de prédiction inférieure à 10 % sur trajectoires non calibrées | **fait le 19 octobre**, au plus 1.0 % depuis le plan à deux termes, 0.26 % avec le terme par segment |
-| D | détection de frontières sur la carte | catalogue non vide tant qu'il reste de l'inconnu, vide à couverture complète | à faire |
-| E | C1, invariant | zéro violation de I1 sur 10 missions, et violations présentes sans C1 | à faire |
-| F | C2, utilité | effet de `alpha` monotone et interprétable sur au moins une métrique | à faire |
-| G | exploration autonome de bout en bout | mission complète sans intervention, du décollage au poser sur zone confirmée | à faire |
+| D | détection de frontières sur la carte | catalogue non vide tant qu'il reste de l'inconnu, vide à couverture complète | **fait** (`frontier_detection.py`), vide à couverture complète mesuré en mission |
+| E | C1, invariant | zéro violation de I1 sur 10 missions, et violations présentes sans C1 | C1 fait ; **démonstration sur un vol par politique à 20 kJ : 0 violation avec C1, 12 pour B1, 25 pour B0**. Les 10 missions restent à voler |
+| F | C2, utilité | effet de `alpha` monotone et interprétable sur au moins une métrique | C2 fait, effet de `alpha` non mesuré |
+| G | exploration autonome de bout en bout | mission complète sans intervention, du décollage au poser sur zone confirmée | **fait le 19 octobre** : couverture 100 % de W1 en 97 s, poser sur la zone de décollage à 0.7 m |
 | H | évaluation contre référence | les 240 missions, scriptées, dépouillées, figures générées | à faire |
 
 A, B et D sont de l'infrastructure. E et F sont la contribution. G rend l'ensemble démontrable. H le rend publiable.
