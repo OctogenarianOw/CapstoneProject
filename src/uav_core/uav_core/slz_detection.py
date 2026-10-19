@@ -12,6 +12,14 @@ not one grid cell. That distinction is what makes an isolated bad
 cell harmless: it fails its own test and also disqualifies every
 footprint containing it.
 
+Footprint element: a disc of diameter footprint_m centred on the cell
+centre, covering every cell the disc overlaps. Two alternatives were
+measured on map v6 and rejected (tools/compare_footprints.py). The
+largest odd square fitting inside the disc checks a single cell for a
+1.5 m footprint and let 25 severe false accepts through. Keeping only
+offsets whose centre lies inside a circle drops cells the aircraft does
+overlap and added 2 severe false accepts at 3 m.
+
 Thresholds are measured, not assumed. See tools/validate_terrain.py
 for where each default comes from.
 """
@@ -43,26 +51,54 @@ def classify_cells(layers, max_slope_deg=6.0, max_roughness_m=0.05,
     return ok
 
 
-def footprint_ok(cell_ok, radius):
+def footprint_offsets(footprint_m, resolution):
+    """Cell offsets the aircraft footprint overlaps.
+
+    The footprint is a disc of diameter footprint_m centred on the
+    centre of the candidate cell. A neighbour belongs to it as soon as
+    the disc reaches inside that neighbour, so the test measures the
+    distance to the nearest point of the neighbour, not to its centre.
+    A centre test would leave out cells the aircraft actually covers.
+
+    At 1 m resolution this gives a 3x3 square for 1.5 m and 3 m, a 5x5
+    square for 5 m, and drops the corners from 7 m upwards, where they
+    really are out of reach. A disc that only touches a cell edge does
+    not include it.
+    """
+    r_m = footprint_m / 2.0
+    n = int(np.ceil(r_m / resolution + 0.5))
+    offsets = []
+    for di in range(-n, n + 1):
+        for dj in range(-n, n + 1):
+            near_i = max(0.0, abs(di) - 0.5) * resolution
+            near_j = max(0.0, abs(dj) - 0.5) * resolution
+            inside = near_i * near_i + near_j * near_j < r_m * r_m - 1e-9
+            if (di == 0 and dj == 0) or inside:
+                offsets.append((di, dj))
+    return offsets
+
+
+def footprint_ok(cell_ok, offsets):
     """Cells whose entire footprint passes the cell test.
+
+    offsets : list of (di, dj) from footprint_offsets
 
     Shifting the pass mask by every footprint offset and taking the
     logical AND leaves exactly the cells with no failure anywhere in
-    their footprint.
+    their footprint. Cells outside the grid count as failures.
     """
     out = cell_ok.copy()
     h, w = cell_ok.shape
-    for di in range(-radius, radius + 1):
-        for dj in range(-radius, radius + 1):
-            if di == 0 and dj == 0:
-                continue
-            shifted = np.zeros_like(cell_ok)
-            src_i = slice(max(0, -di), h - max(0, di))
-            src_j = slice(max(0, -dj), w - max(0, dj))
-            dst_i = slice(max(0, di), h - max(0, -di))
-            dst_j = slice(max(0, dj), w - max(0, -dj))
-            shifted[dst_i, dst_j] = cell_ok[src_i, src_j]
-            out &= shifted
+    for di, dj in offsets:
+        if di == 0 and dj == 0:
+            continue
+        shifted = np.zeros_like(cell_ok)
+        src_i = slice(max(0, -di), h - max(0, di))
+        src_j = slice(max(0, -dj), w - max(0, dj))
+        dst_i = slice(max(0, di), h - max(0, -di))
+        dst_j = slice(max(0, dj), w - max(0, -dj))
+        shifted[dst_i, dst_j] = cell_ok[src_i, src_j]
+        out &= shifted
     return out
 
 
@@ -151,12 +187,7 @@ def detect(layers, elevation, resolution, origin_xy,
     safety_margin_m grows the refused region before the footprint test,
     so candidates keep their distance from anything that failed.
     """
-    # Cells spanned by the footprint, as an odd count centred on the
-    # cell: 2*radius+1 <= footprint_m / resolution. A radius of 0 is
-    # legitimate when the footprint fits in one cell, because the cell
-    # test already checks the 3x3 analysis window around it.
-    radius = int(max(0.0, (footprint_m / resolution - 1.0) / 2.0))
-    
+    offsets = footprint_offsets(footprint_m, resolution)
     margin = int(round(safety_margin_m / resolution))
 
     cell_ok = classify_cells(layers, **thresholds)
@@ -168,7 +199,7 @@ def detect(layers, elevation, resolution, origin_xy,
         refused = dilate(~cell_ok, margin)
         cell_ok = cell_ok & ~refused
 
-    candidate = footprint_ok(cell_ok, radius)
+    candidate = footprint_ok(cell_ok, offsets)
     labels, n = label_zones(candidate)
     zones = zone_summary(labels, n, elevation, resolution, origin_xy)
 
@@ -177,6 +208,10 @@ def detect(layers, elevation, resolution, origin_xy,
         'candidate': candidate,
         'labels': labels,
         'zones': zones,
-        'footprint_radius': radius,
+        'footprint_offsets': offsets,
+        'footprint_cells': len(offsets),
+        # Largest offset along one axis: the rf of the minimum zone
+        # width W >= 2 * (analysis radius + margin + rf) + 1.
+        'footprint_radius': max(abs(di) for di, _ in offsets),
         'margin_cells': margin,
     }

@@ -173,8 +173,8 @@ def sweep(d, args):
                                        args.hazard_factor)
             real = r['real'].sum()
             recall = 100.0 * r['correct'].sum() / real if real else 0.0
-            side = 2 * r['map_res']['footprint_radius'] + 1
-            print(f'{footprint:>7.1f} {margin:>7.1f} {side:>6} {real:>9} '
+            cells = r['map_res']['footprint_cells']
+            print(f'{footprint:>7.1f} {margin:>7.1f} {cells:>6} {real:>9} '
                   f'{r["mapped"].sum():>8} {recall:>6.1f}% '
                   f'{r["false_accept"].sum():>7} {marg.sum():>9} '
                   f'{sev.sum():>7}')
@@ -209,7 +209,7 @@ def report(d, args):
           f'roughness<={THRESHOLDS["max_roughness_m"]}m '
           f'step<={THRESHOLDS["max_step_m"]}m')
     print(f'footprint  {args.footprint} m '
-          f'({2 * r["map_res"]["footprint_radius"] + 1} cells square)')
+          f'({r["map_res"]["footprint_cells"]} cells, disc cover)')
     print(f'margin     {args.margin} m ({r["map_res"]["margin_cells"]} cells)')
     print()
 
