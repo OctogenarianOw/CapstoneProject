@@ -9,7 +9,7 @@ the message holds exactly one 16-byte point per seen cell.
 
 import numpy as np
 from std_msgs.msg import Header
-from uav_core.viz import CLASS_RGB, classification_cloud
+from uav_core.viz import CLASS_RGB, classification_cloud, ratio_colour
 from uav_core.world_model import build_world, WorldParams
 
 
@@ -48,3 +48,11 @@ def test_every_seen_cell_gets_its_class_colour():
     assert colour[(20, 30)] == rgb('refused')
     assert colour[(5, 5)] == rgb('uncertain')
     assert (0, 10) not in colour
+
+
+def test_score_colours_green_yellow_red_around_the_threshold():
+    """Half the threshold green, the threshold yellow, twice red."""
+    green, yellow, red = (int(c) for c in ratio_colour([0.2, 1.0, 3.0]))
+    assert green == (0 << 16) | (210 << 8) | 40
+    assert (yellow >> 16) & 255 == 230 and (yellow >> 8) & 255 == 210
+    assert (red >> 16) & 255 == 230 and (red >> 8) & 255 == 0

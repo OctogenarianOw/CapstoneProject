@@ -20,6 +20,12 @@ Layers, each its own topic so it can be toggled:
                      elevation layer were read as a safety map
   /viz/elevation     PointCloud2, one point per seen cell, intensity =
                      height, colour by height in RViz (off by default)
+  /viz/score/slope, /viz/score/roughness, /viz/score/step
+                     PointCloud2 at terrain height, each analysed cell
+                     coloured by its value over the acceptance threshold:
+                     green at half the threshold or less, yellow at the
+                     threshold, red at twice and more. Shows which
+                     criterion refuses a cell (off by default)
   /viz/observation   OccupancyGrid: OBSERVED 0, SPARSE 50, UNKNOWN -1;
                      the grid layout [i north, j east] row-major is the
                      OccupancyGrid layout (rows along y), no reshuffle
@@ -127,6 +133,28 @@ def classification_cloud(elevation, state, layers, landing, resolution,
     east = origin_ne[1] + (j + 0.5) * resolution
     up = np.nan_to_num(-elevation[i, j])
     return _packed_cloud(header, east, north, up, rgb[i, j])
+
+
+def ratio_colour(ratio):
+    """Pack green -> yellow -> red for value / threshold in [0.5, 2]."""
+    x = np.clip((np.asarray(ratio, dtype=np.float64) - 0.5) / 1.5, 0.0, 1.0)
+    # 0 green (0.5 x threshold), 1/3 yellow (threshold), 1 red (2 x).
+    r = np.where(x < 1 / 3, x * 3, 1.0)
+    g = np.where(x < 1 / 3, 1.0, 1.0 - (x - 1 / 3) * 1.5)
+    r8 = (r * 230).astype(np.uint32)
+    g8 = (g * 210).astype(np.uint32)
+    return (r8 << 16) | (g8 << 8) | np.uint32(40)
+
+
+def score_cloud(values, threshold, valid, elevation, resolution, origin_ne,
+                header):
+    """One box per analysed cell, coloured by value over threshold."""
+    i, j = np.nonzero(valid & np.isfinite(values))
+    north = origin_ne[0] + (i + 0.5) * resolution
+    east = origin_ne[1] + (j + 0.5) * resolution
+    up = np.nan_to_num(-elevation[i, j])
+    return _packed_cloud(header, east, north, up,
+                         ratio_colour(values[i, j] / threshold))
 
 
 def observation_grid(state, resolution, origin_ne, header):

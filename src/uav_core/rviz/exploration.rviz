@@ -46,6 +46,48 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
+    - Class: rviz_default_plugins/PointCloud2
+      Name: Score slope (green ok, yellow 6 deg, red 12 deg)
+      Enabled: false
+      Style: Boxes
+      Size (m): 0.9
+      Alpha: 1
+      Color Transformer: RGB8
+      Decay Time: 0
+      Topic:
+        Value: /viz/score/slope
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+    - Class: rviz_default_plugins/PointCloud2
+      Name: Score roughness (yellow 0.05 m, red 0.10 m)
+      Enabled: false
+      Style: Boxes
+      Size (m): 0.9
+      Alpha: 1
+      Color Transformer: RGB8
+      Decay Time: 0
+      Topic:
+        Value: /viz/score/roughness
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+    - Class: rviz_default_plugins/PointCloud2
+      Name: Score step (yellow 0.24 m, red 0.48 m)
+      Enabled: false
+      Style: Boxes
+      Size (m): 0.9
+      Alpha: 1
+      Color Transformer: RGB8
+      Decay Time: 0
+      Topic:
+        Value: /viz/score/step
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
     - Class: rviz_default_plugins/Map
       Name: Observation states
       Enabled: false

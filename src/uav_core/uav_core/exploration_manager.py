@@ -46,7 +46,7 @@ from uav_core.map_msg import msg_to_layers
 from uav_core.mission_fsm import Inputs, MissionFSM, MissionParams
 from uav_core.mission_log import MissionLog
 from uav_core.slz_registry import SlzRegistry
-from uav_core.world_model import build_world, WorldParams
+from uav_core.world_model import build_world, THRESHOLDS, WorldParams
 from uav_interfaces.msg import (ElevationMap, EnergyState, ExecutorCommand,
                                 ExecutorStatus, PathCommand)
 from visualization_msgs.msg import Marker, MarkerArray
@@ -130,6 +130,13 @@ class ExplorationManager(Node):
                                                '/viz/elevation', 1)
         self.pub_class = self.create_publisher(PointCloud2,
                                                '/viz/classification', 1)
+        self.pub_scores = {
+            name: (self.create_publisher(PointCloud2, f'/viz/score/{name}',
+                                         1), layer, THRESHOLDS[key])
+            for name, layer, key in (
+                ('slope', 'slope', 'max_slope_deg'),
+                ('roughness', 'roughness', 'max_roughness_m'),
+                ('step', 'step', 'max_step_m'))}
         self.pub_grid = self.create_publisher(OccupancyGrid,
                                               '/viz/observation', LATCHED)
         self.pub_landing = self.create_publisher(MarkerArray,
@@ -263,6 +270,10 @@ class ExplorationManager(Node):
                                                    origin, h))
         self.pub_class.publish(viz.classification_cloud(
             elev, world.state, world.layers, world.landing, res, origin, h))
+        for pub, layer, threshold in self.pub_scores.values():
+            pub.publish(viz.score_cloud(
+                world.layers[layer], threshold, world.layers['valid'], elev,
+                res, origin, h))
         self.pub_grid.publish(viz.observation_grid(world.state, res, origin,
                                                    h))
         self.pub_landing.publish(viz.landing_markers(
