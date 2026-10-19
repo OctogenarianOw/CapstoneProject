@@ -1,4 +1,5 @@
-"""Geometric layers derived from an elevation map.
+"""
+Geometric layers derived from an elevation map.
 
 Three quantities per cell, each computed over a square window:
 
@@ -23,7 +24,8 @@ import numpy as np
 
 
 def _window_stack(grid, radius):
-    """Stack of shifted copies, one per cell in the window.
+    """
+    Stack of shifted copies, one per cell in the window.
 
     Returns an array of shape (n_offsets, H, W) where entry k holds
     the grid shifted by offset k, NaN-padded at the borders. Working
@@ -47,7 +49,8 @@ def _window_stack(grid, radius):
 
 
 def analyse(elevation, count, resolution, radius=1):
-    """Compute slope, roughness and step from an elevation grid.
+    """
+    Compute slope, roughness and step from an elevation grid.
 
     elevation : (H, W) height per cell, NED so z points down
     count     : (H, W) observations per cell, 0 means unobserved

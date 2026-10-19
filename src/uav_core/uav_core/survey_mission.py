@@ -1,4 +1,5 @@
-"""Boustrophedon survey over the validation world.
+"""
+Boustrophedon survey over the validation world.
 
 Flies parallel lines at a fixed altitude, alternating direction, so the
 lidar sweeps every test zone. Line spacing is set so neighbouring
@@ -8,22 +9,23 @@ from two different angles, which is what actually reduces map error.
 
 import math
 
-import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-
 from px4_msgs.msg import (
     OffboardControlMode,
+    TimesyncStatus,
     TrajectorySetpoint,
     VehicleCommand,
-    VehicleStatus,
     VehicleLocalPosition,
-    TimesyncStatus,
+    VehicleStatus,
 )
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import (DurabilityPolicy, HistoryPolicy, QoSProfile,
+                       ReliabilityPolicy)
 
 
 def build_survey(length, spacing, n_lines, altitude):
-    """Lawnmower pattern centred on the origin, lines along north.
+    """
+    Lawnmower pattern centred on the origin, lines along north.
 
     Returns NED waypoints: x north, y east, z down (negative up).
     """

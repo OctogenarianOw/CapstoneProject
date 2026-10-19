@@ -1,4 +1,5 @@
-"""Safe landing zone detection from terrain layers.
+"""
+Safe landing zone detection from terrain layers.
 
 Two stages, deliberately separate:
 
@@ -29,7 +30,8 @@ import numpy as np
 
 def classify_cells(layers, max_slope_deg=6.0, max_roughness_m=0.05,
                    max_step_m=0.24, variance=None, max_variance=None):
-    """Per-cell pass/fail against the geometric thresholds.
+    """
+    Per-cell pass/fail against the geometric thresholds.
 
     layers     : dict from terrain_analysis.analyse
     variance   : optional (H, W) map variance, used as a confidence gate
@@ -52,7 +54,8 @@ def classify_cells(layers, max_slope_deg=6.0, max_roughness_m=0.05,
 
 
 def footprint_offsets(footprint_m, resolution):
-    """Cell offsets the aircraft footprint overlaps.
+    """
+    Cell offsets the aircraft footprint overlaps.
 
     The footprint is a disc of diameter footprint_m centred on the
     centre of the candidate cell. A neighbour belongs to it as soon as
@@ -79,7 +82,8 @@ def footprint_offsets(footprint_m, resolution):
 
 
 def footprint_ok(cell_ok, offsets):
-    """Cells whose entire footprint passes the cell test.
+    """
+    Cells whose entire footprint passes the cell test.
 
     offsets : list of (di, dj) from footprint_offsets
 
@@ -103,7 +107,8 @@ def footprint_ok(cell_ok, offsets):
 
 
 def dilate(mask, radius):
-    """Grow a mask by radius cells in every direction.
+    """
+    Grow a mask by radius cells in every direction.
 
     Used to push candidate zones away from refused ground. The map
     smooths the foot of a slope, so a footprint that only just clears
@@ -127,8 +132,10 @@ def dilate(mask, radius):
             out |= shifted
     return out
 
+
 def label_zones(candidate):
-    """Group adjacent candidate cells into connected zones.
+    """
+    Group adjacent candidate cells into connected zones.
 
     Returns a label array (0 = no zone) and the number of zones.
     Flood fill with 8-connectivity, written out rather than pulled
@@ -182,7 +189,8 @@ def zone_summary(labels, n_zones, elevation, resolution, origin_xy):
 
 def detect(layers, elevation, resolution, origin_xy,
            footprint_m=3.0, safety_margin_m=0.0, **thresholds):
-    """Full pipeline: cell test, safety margin, footprint test, labelling.
+    """
+    Full pipeline: cell test, safety margin, footprint test, labelling.
 
     safety_margin_m grows the refused region before the footprint test,
     so candidates keep their distance from anything that failed.

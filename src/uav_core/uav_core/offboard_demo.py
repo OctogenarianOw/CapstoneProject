@@ -1,4 +1,5 @@
-"""Minimal test of the offboard control chain: arm, offboard, hold 5 m.
+"""
+Minimal test of the offboard control chain: arm, offboard, hold 5 m.
 
 Kept as the reference for the PX4 interface (spec S3): if this node
 cannot hold offboard, nothing built on top of it can.
@@ -13,16 +14,16 @@ flipping to RTL about once per second
 (experiments/2026-10-17_energy_signal, run1).
 """
 
-import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-
 from px4_msgs.msg import (
     OffboardControlMode,
+    TimesyncStatus,
     TrajectorySetpoint,
     VehicleCommand,
-    TimesyncStatus,
 )
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import (DurabilityPolicy, HistoryPolicy, QoSProfile,
+                       ReliabilityPolicy)
 
 
 class OffboardDemo(Node):

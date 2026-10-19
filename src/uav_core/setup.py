@@ -35,6 +35,6 @@ setup(
                             'energy_monitor = uav_core.energy_monitor:main',
                             'trajectory_executor = '
                             'uav_core.trajectory_executor:main',
-        ],
+                            ],
     },
 )

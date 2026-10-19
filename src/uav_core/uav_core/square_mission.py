@@ -1,4 +1,5 @@
-"""Square waypoint mission at fixed altitude, then auto-land.
+"""
+Square waypoint mission at fixed altitude, then auto-land.
 
 Kept as the simplest geometric trajectory (spec 3.3). Arrival uses
 separate horizontal and vertical radii (spec S4), because PX4 holds
@@ -15,18 +16,18 @@ as stale, the bug measured on offboard_demo on 17 Oct 2026.
 
 import math
 
-import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-
 from px4_msgs.msg import (
     OffboardControlMode,
+    TimesyncStatus,
     TrajectorySetpoint,
     VehicleCommand,
-    VehicleStatus,
     VehicleLocalPosition,
-    TimesyncStatus,
+    VehicleStatus,
 )
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import (DurabilityPolicy, HistoryPolicy, QoSProfile,
+                       ReliabilityPolicy)
 
 
 class SquareMission(Node):

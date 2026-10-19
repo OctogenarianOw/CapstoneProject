@@ -1,4 +1,5 @@
-"""Unit tests for the footprint element of slz_detection.
+"""
+Unit tests for the footprint element of slz_detection.
 
 Two properties, both checked without ROS or simulation. The element must
 be exactly the set of cells the footprint disc overlaps, found here by
