@@ -1,25 +1,51 @@
+"""
+Lidar ingestion: frame change and fusion into the elevation grid (S5).
+
+Role: take each downward lidar scan, put its points in the NED world
+frame with the attitude and position of the aircraft, and fuse them
+into the elevation grid, saved atomically every 5 s.
+
+Frame chain: sensor FLU to body FRD by (x, -y, -z), plus the sensor
+offset, then body FRD to NED by the attitude quaternion, then the NED
+position. Rejected: skipping the rotation. A point 15 m ahead then lands
+at the wrong height as soon as the aircraft tilts; in the old stack this
+turned the whole terrain red.
+
+Filtering on the norm of each point, between min_range and
+max_usable_range: Gazebo encodes rays without return as zeros, not
+infinities, so a finiteness test lets them through (spec trap 8).
+
+Per-point variance sigma = sigma_range + sigma_angular * distance, as
+S5 prescribes. Spec 6.3 records this model as a negative result (map
+error 0.1209 to 0.1433 m); the contradiction is open, to settle by a
+measurement on one map.
+
+Analysis runs on this map, never on the raw cloud, which is mostly
+noise: that was the supervisor's explicit request.
+
+Pose is the latest message received, not interpolated to the scan time:
+a candidate cause for the one-cell offset P5, untested.
+"""
+
 import os
 
 import numpy as np
-
+from px4_msgs.msg import VehicleAttitude, VehicleLocalPosition
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import (
-    QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy,
-    qos_profile_sensor_data,
+    DurabilityPolicy, HistoryPolicy, qos_profile_sensor_data, QoSProfile,
+    ReliabilityPolicy,
 )
-
-from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2
-
-from px4_msgs.msg import VehicleLocalPosition, VehicleAttitude
+from std_msgs.msg import Header
 
 from uav_core.elevation_grid import ElevationGrid
 
 
 def quat_to_matrix(q):
-    """Rotation FRD corps vers NED terre. q est [w, x, y, z]."""
+    """Rotation from body FRD to NED earth, q is [w, x, y, z]."""
     w, x, y, z = q
     return np.array([
         [1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],
@@ -29,6 +55,8 @@ def quat_to_matrix(q):
 
 
 class CloudWorld(Node):
+    """Lidar scans in, elevation grid out."""
+
     def __init__(self):
         super().__init__('cloud_world')
 
@@ -81,22 +109,28 @@ class CloudWorld(Node):
         self.save_timer = self.create_timer(5.0, self.save_map)
 
     def on_position(self, msg):
+        """Keep the latest NED position."""
         self.position = np.array([msg.x, msg.y, msg.z])
 
     def on_attitude(self, msg):
+        """Keep the latest attitude quaternion, [w, x, y, z]."""
         self.attitude = np.array(msg.q)
 
     def extract_xyz(self, msg):
+        """Decode x, y, z from a PointCloud2, offsets read from its fields."""
         offsets = {f.name: f.offset for f in msg.fields}
-        buf = np.frombuffer(msg.data, dtype=np.uint8).reshape(-1, msg.point_step)
+        buf = np.frombuffer(msg.data, dtype=np.uint8).reshape(
+            -1, msg.point_step)
 
         def column(name):
             o = offsets[name]
+            # A slice is not contiguous: copy before the float view.
             return buf[:, o:o + 4].copy().view(np.float32).ravel()
 
         return np.stack([column('x'), column('y'), column('z')], axis=1)
 
     def on_cloud(self, msg):
+        """Transform one scan to NED and fuse it into the grid."""
         if self.position is None or self.attitude is None:
             return
 
@@ -109,15 +143,15 @@ class CloudWorld(Node):
         if pts.shape[0] == 0:
             return
 
-        # FLU capteur vers FRD corps : y et z changent de signe
+        # Sensor FLU to body FRD: y and z change sign.
         pts_frd = pts * np.array([1.0, -1.0, -1.0])
         pts_frd = pts_frd + self.sensor_offset
 
         rot = quat_to_matrix(self.attitude)
         pts_ned = pts_frd @ rot.T + self.position
 
-        # Incertitude verticale : bruit du capteur plus erreur angulaire,
-        # qui croit avec la distance d'observation.
+        # Vertical uncertainty: sensor noise plus angular error, which
+        # grows with the observation distance.
         sigma = self.sigma_range + self.sigma_angular * dist
         variances = (sigma ** 2).astype(np.float32)
 
@@ -134,11 +168,12 @@ class CloudWorld(Node):
             known = self.grid.known_cells()
             valid = self.grid.elevation[self.grid.count > 0]
             self.get_logger().info(
-                f'{pts_ned.shape[0]} pts | {known} cellules | '
-                f'z carte moyen {valid.mean():+.3f} '
-                f'| ecart-type {valid.std():.3f}')
+                f'{pts_ned.shape[0]} pts | {known} cells | '
+                f'mean map z {valid.mean():+.3f} '
+                f'| sd {valid.std():.3f}')
 
     def save_map(self):
+        """Write the grid to map_path atomically, temp file then rename."""
         if self.grid.known_cells() == 0:
             return
         tmp = self.map_path + '.tmp'
@@ -155,6 +190,7 @@ class CloudWorld(Node):
 
 
 def main(args=None):
+    """Run the node until interrupted."""
     rclpy.init(args=args)
     node = CloudWorld()
     try:

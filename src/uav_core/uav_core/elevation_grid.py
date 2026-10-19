@@ -1,15 +1,36 @@
+"""
+2.5D elevation grid fused cell by cell (spec S5), the map everything uses.
+
+Role: turn a stream of noisy lidar points, already in NED, into one
+elevation estimate per cell with its variance and observation count.
+
+Choice: a scalar Kalman filter per cell, k = p / (p + r), with a floor
+on the variance. Without the floor the variance decays as 1/n without
+limit: after a few hundred observations the gain falls under 0.002 and
+the cell is frozen on its value, right or wrong. A cell under the landed
+aircraft had gathered 120 000 observations with an absurd confidence,
+and frozen cells drew 4 m deep ghost trenches at ramp edges. No later
+observation, even close and from a better angle, could correct them.
+
+Rejected: a Mahalanobis gate on outliers at discontinuities, written
+then removed (spec 6.3): severe false accepts went from 26 to 138, as
+the gate locked a cell onto the first surface it saw. One Gaussian per
+cell cannot hold two surfaces (P2); a fix needs two hypotheses per cell.
+
+Pending (S5): a process noise term, growing the variance with time
+since the last observation, is the principled form of the floor and is
+to be compared against it.
+"""
+
 import numpy as np
 
 
 class ElevationGrid:
-    """Carte d'élévation 2.5D. Une cellule porte une altitude, sa
-    variance et un compteur d'observations. Repère NED : z vers le bas.
+    """
+    Elevation, variance and count per cell, NED frame, z down.
 
-    La variance ne descend jamais sous `min_sigma_m` au carré. Sans ce
-    plancher, elle décroît en 1/n sans limite : après quelques centaines
-    d'observations le gain tombe sous 0,002 et la cellule est figée sur
-    sa valeur, qu'elle soit juste ou fausse. Aucune observation ultérieure,
-    même prise de près et sous un meilleur angle, ne peut plus la corriger.
+    Cell (i, j) covers north [origin_x + i res, origin_x + (i + 1) res)
+    and east [origin_y + j res, origin_y + (j + 1) res).
     """
 
     def __init__(self, size_m=100.0, resolution=1.0, origin_xy=(0.0, 0.0),
@@ -19,7 +40,7 @@ class ElevationGrid:
         self.origin_x = origin_xy[0] - size_m / 2.0
         self.origin_y = origin_xy[1] - size_m / 2.0
 
-        # Incertitude minimale que la carte s'autorise à revendiquer.
+        # Smallest uncertainty the map allows itself to claim.
         self.min_variance = float(min_sigma_m) ** 2
 
         self.elevation = np.full((self.n, self.n), np.nan, dtype=np.float32)
@@ -27,14 +48,18 @@ class ElevationGrid:
         self.count = np.zeros((self.n, self.n), dtype=np.int32)
 
     def to_index(self, x, y):
-        """Coordonnées monde vers indices de cellule. Tableaux numpy."""
+        """Map NED north and east, numpy arrays, to cell indices."""
         ix = ((x - self.origin_x) / self.resolution).astype(np.int32)
         iy = ((y - self.origin_y) / self.resolution).astype(np.int32)
         return ix, iy
 
     def update(self, points, variances):
-        """points : tableau (N, 3) en NED.
-        variances : tableau (N,) ou scalaire, en m^2."""
+        """
+        Fuse points into the grid, return how many fell inside it.
+
+        points    : (N, 3) array in NED
+        variances : (N,) array or scalar, in m^2
+        """
         if points.shape[0] == 0:
             return 0
 
@@ -68,4 +93,5 @@ class ElevationGrid:
         return z.size
 
     def known_cells(self):
+        """Return the number of cells observed at least once."""
         return int(np.count_nonzero(self.count))
