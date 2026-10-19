@@ -1,0 +1,62 @@
+mission 2026-10-19_20-21-55: mode explore, policy gain, alpha 0.5, reserve 0.1, git 2a81ab7
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.8 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (12.5, -11.5)
+   18.9 s  NAVIGATING      -> SELECTING       arrived
+   18.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, 11.5)
+   27.9 s  NAVIGATING      -> SELECTING       arrived
+   27.9 s  SELECTING       -> NAVIGATING      frontier at (-11.5, -12.5)
+   34.9 s  NAVIGATING      -> SELECTING       arrived
+   34.9 s  SELECTING       -> NAVIGATING      frontier at (11.5, 12.5)
+   43.9 s  NAVIGATING      -> SELECTING       arrived
+   43.9 s  SELECTING       -> NAVIGATING      frontier at (26.5, 17.5)
+   49.9 s  NAVIGATING      -> SELECTING       arrived
+   49.9 s  SELECTING       -> NAVIGATING      frontier at (18.5, -26.5)
+   53.9 s  NAVIGATING      -> RETURNING       B1 battery threshold
+   60.9 s  RETURNING       -> COMMIT_LANDING  over zone 1, budget
+   75.8 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   12.9 s  path   1: 1 legs,  17.0 m, to N  +12.5 E  -11.5
+   18.9 s  path   2: 1 legs,  34.0 m, to N  -12.5 E  +11.5
+   27.9 s  path   3: 1 legs,  24.0 m, to N  -11.5 E  -12.5
+   34.9 s  path   4: 1 legs,  34.0 m, to N  +11.5 E  +12.5
+   43.9 s  path   5: 1 legs,  15.8 m, to N  +26.5 E  +17.5
+   49.9 s  path   6: 1 legs,  44.7 m, to N  +18.5 E  -26.5
+   53.9 s  path   7: 1 legs,  23.1 m, to N   +0.5 E   +0.5
+
+== return: 1
+   53.9 s  {'zone_id': 1, 'reason': 'B1 battery threshold', 'length_m': 23.08679276123039, 'energy_j': 1867.4989983248688}
+
+== invariant: 16
+   27.9 s  {'margin_j': 6646.812036518266, 'zone_id': 1, 'remaining_j': 13370.191330775446, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   33.9 s  {'margin_j': 4850.851407529579, 'zone_id': 1, 'remaining_j': 11611.80791358763, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   47.9 s  {'margin_j': 43.93518634991233, 'zone_id': 1, 'remaining_j': 7516.28634284325, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   48.9 s  {'margin_j': -307.7529841590531, 'zone_id': 1, 'remaining_j': 7211.796122756221, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   49.9 s  {'margin_j': -593.7813511066561, 'zone_id': 1, 'remaining_j': 6925.767755808618, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   50.9 s  {'margin_j': -865.2549723506036, 'zone_id': 1, 'remaining_j': 6623.901170659143, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   51.9 s  {'margin_j': -1006.6051286674901, 'zone_id': 1, 'remaining_j': 6323.838190778004, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   52.9 s  {'margin_j': -366.73606351009676, 'zone_id': 6, 'remaining_j': 6037.403418236741, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.9 TAKEOFF            3600      0         0     20.0     nan         0
+   16.9 NAVIGATING         1891   1709        16     16.6    10.0         1
+   32.9 NAVIGATING          855   2745        17     11.9     6.7         2
+   47.9 NAVIGATING          181   3419        12      7.5     0.0         1
+   63.9 COMMIT_LANDING      178   3422        11      2.8    -1.6         2
+   78.9 LANDED              178   3422        11      0.3    -1.6         2
+   80.9 LANDED              178   3422        11      0.3    -1.6         2
+
+== result
+duration 80 s, coverage 95.1 % of the area, unknown left 178 cells
+energy consumed 19.7 kJ, left 0.3 kJ
+I1 margin min -1.69 kJ, violations 13
+end: COMMIT_LANDING, over zone 1, budget
+final position N +0.7 E +0.5 D -0.0
+  confirmed zone 1: touchdown (0.0, 0.0), home, 0.8 m from the final position
+  confirmed zone 7: touchdown (17.5, -0.5), 2 m2, 16.9 m from the final position
+cycle time median 26 ms, max 39 ms over 81 cycles

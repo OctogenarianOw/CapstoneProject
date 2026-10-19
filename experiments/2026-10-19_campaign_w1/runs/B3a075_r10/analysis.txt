@@ -1,0 +1,58 @@
+mission 2026-10-19_22-08-08: mode explore, policy c1_c2, alpha 0.75, reserve 0.1, git 2a81ab7
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.8 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (12.5, -11.5)
+   18.9 s  NAVIGATING      -> SELECTING       arrived
+   18.9 s  SELECTING       -> NAVIGATING      frontier at (-11.5, 12.5)
+   27.9 s  NAVIGATING      -> SELECTING       arrived
+   27.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, -11.5)
+   34.9 s  NAVIGATING      -> SELECTING       arrived
+   34.9 s  SELECTING       -> NAVIGATING      frontier at (11.5, 12.5)
+   43.9 s  NAVIGATING      -> SELECTING       arrived
+   43.9 s  SELECTING       -> NAVIGATING      frontier at (26.5, 17.5)
+   47.9 s  NAVIGATING      -> RETURNING       I1 violated
+   56.9 s  RETURNING       -> COMMIT_LANDING  over zone 1, invariant
+   71.6 s  COMMIT_LANDING  -> LANDED          invariant
+
+== paths sent
+   12.9 s  path   1: 1 legs,  16.3 m, to N  +12.5 E  -11.5
+   18.9 s  path   2: 1 legs,  33.9 m, to N  -11.5 E  +12.5
+   27.9 s  path   3: 1 legs,  24.0 m, to N  -12.5 E  -11.5
+   34.9 s  path   4: 1 legs,  33.9 m, to N  +11.5 E  +12.5
+   43.9 s  path   5: 1 legs,  15.8 m, to N  +26.5 E  +17.5
+   47.9 s  path   6: 1 legs,  31.6 m, to N   -0.5 E   -0.5
+
+== return: 1
+   47.9 s  {'zone_id': 1, 'reason': 'I1 violated', 'length_m': 31.622776601683793, 'energy_j': 2351.7214608390373}
+
+== invariant: 13
+   24.9 s  {'margin_j': 7999.4623550474425, 'zone_id': 1, 'remaining_j': 14244.798068936023, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   27.9 s  {'margin_j': 6634.566538426065, 'zone_id': 1, 'remaining_j': 13357.945832683245, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   33.9 s  {'margin_j': 4917.781316933248, 'zone_id': 1, 'remaining_j': 11598.583116652315, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   47.9 s  {'margin_j': -38.95334340638692, 'zone_id': 1, 'remaining_j': 7512.26811743265, 'reserve_j': 2000.0, 'violated': True, 'retired': [2]}
+   48.9 s  {'margin_j': -349.61076839859743, 'zone_id': 1, 'remaining_j': 7169.938338516677, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   49.9 s  {'margin_j': -406.75174007638634, 'zone_id': 1, 'remaining_j': 6861.076360565743, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   50.9 s  {'margin_j': -407.2760563435986, 'zone_id': 1, 'remaining_j': 6577.270801537406, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   51.9 s  {'margin_j': -189.81776006577365, 'zone_id': 7, 'remaining_j': 6293.9947464176275, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.9 TAKEOFF            3600      0         0     20.0     nan         0
+   15.9 NAVIGATING         2075   1525        16     16.9    10.5         1
+   31.9 NAVIGATING         1001   2599        17     12.2     7.0         2
+   46.9 NAVIGATING          191   3409        11      7.8     2.6         2
+   61.9 COMMIT_LANDING      188   3412        10      3.4    -0.4         2
+   76.9 LANDED              188   3412        10      1.5    -0.4         2
+
+== result
+duration 76 s, coverage 94.8 % of the area, unknown left 188 cells
+energy consumed 18.5 kJ, left 1.5 kJ
+I1 margin min -0.41 kJ, violations 10
+end: COMMIT_LANDING, over zone 1, invariant
+final position N -0.7 E -0.7 D -0.1
+  confirmed zone 1: touchdown (-0.0, -0.0), home, 0.9 m from the final position
+  confirmed zone 7: touchdown (20.5, -1.5), 3 m2, 21.2 m from the final position
+cycle time median 25 ms, max 42 ms over 77 cycles

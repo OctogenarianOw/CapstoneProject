@@ -1,0 +1,52 @@
+mission 2026-10-19_20-27-03: mode explore, policy c1_c2, alpha 0.25, reserve 0.1, git 2a81ab7
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.8 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (12.5, -11.5)
+   18.9 s  NAVIGATING      -> SELECTING       arrived
+   18.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, -11.5)
+   25.9 s  NAVIGATING      -> SELECTING       arrived
+   25.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, 11.5)
+   32.9 s  NAVIGATING      -> SELECTING       arrived
+   32.9 s  SELECTING       -> NAVIGATING      frontier at (11.5, 12.5)
+   39.9 s  NAVIGATING      -> SELECTING       arrived
+   39.9 s  SELECTING       -> NAVIGATING      frontier at (26.5, 16.5)
+   44.9 s  NAVIGATING      -> SELECTING       arrived
+   44.9 s  SELECTING       -> RETURNING       none_admissible
+   52.9 s  RETURNING       -> COMMIT_LANDING  over zone 1, budget
+   67.2 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   12.9 s  path   1: 1 legs,  16.3 m, to N  +12.5 E  -11.5
+   18.9 s  path   2: 1 legs,  25.0 m, to N  -12.5 E  -11.5
+   25.9 s  path   3: 1 legs,  23.0 m, to N  -12.5 E  +11.5
+   32.9 s  path   4: 1 legs,  24.0 m, to N  +11.5 E  +12.5
+   39.9 s  path   5: 1 legs,  15.5 m, to N  +26.5 E  +16.5
+   44.9 s  path   6: 1 legs,  31.1 m, to N   +0.5 E   -0.5
+
+== return: 1
+   44.9 s  {'zone_id': 1, 'reason': 'none_admissible', 'length_m': 31.064449134018133, 'energy_j': 2320.0491069152736}
+
+== invariant: 2
+   43.9 s  {'margin_j': 1230.786114423523, 'zone_id': 1, 'remaining_j': 8703.13727091686, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   48.9 s  {'margin_j': 535.1958786685082, 'zone_id': 1, 'remaining_j': 7236.674537491472, 'reserve_j': 2000.0, 'violated': False, 'retired': [7, 8]}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF            3600      0         0     20.0     nan         0
+   15.8 NAVIGATING         2092   1508        16     16.9    10.6         1
+   30.8 NAVIGATING          815   2785        15     12.5     7.3         2
+   45.8 RETURNING           156   3444         8      8.1     0.6         1
+   60.8 COMMIT_LANDING      156   3444         8      3.8     0.9         1
+   72.8 LANDED              156   3444         8      2.8     0.9         1
+
+== result
+duration 72 s, coverage 95.7 % of the area, unknown left 156 cells
+energy consumed 17.2 kJ, left 2.8 kJ
+I1 margin min 0.54 kJ, violations 0
+end: COMMIT_LANDING, over zone 1, budget
+final position N +0.4 E -0.7 D +0.0
+  confirmed zone 1: touchdown (0.1, -0.0), home, 0.7 m from the final position
+cycle time median 24 ms, max 37 ms over 73 cycles

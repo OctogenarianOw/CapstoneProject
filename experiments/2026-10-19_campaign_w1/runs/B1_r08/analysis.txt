@@ -1,0 +1,63 @@
+mission 2026-10-19_21-31-42: mode explore, policy gain, alpha 0.5, reserve 0.1, git 2a81ab7
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.8 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, -11.5)
+   18.9 s  NAVIGATING      -> SELECTING       arrived
+   18.9 s  SELECTING       -> NAVIGATING      frontier at (13.5, 11.5)
+   27.9 s  NAVIGATING      -> SELECTING       arrived
+   27.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, 11.5)
+   34.9 s  NAVIGATING      -> SELECTING       arrived
+   34.9 s  SELECTING       -> NAVIGATING      frontier at (11.5, -11.5)
+   43.9 s  NAVIGATING      -> SELECTING       arrived
+   43.9 s  SELECTING       -> NAVIGATING      frontier at (26.5, -16.5)
+   48.9 s  NAVIGATING      -> SELECTING       arrived
+   48.9 s  SELECTING       -> NAVIGATING      frontier at (-17.5, 26.5)
+   53.9 s  NAVIGATING      -> RETURNING       B1 battery threshold
+   59.9 s  RETURNING       -> COMMIT_LANDING  over zone 1, budget
+   74.9 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   12.9 s  path   1: 1 legs,  17.0 m, to N  -12.5 E  -11.5
+   18.9 s  path   2: 1 legs,  34.7 m, to N  +13.5 E  +11.5
+   27.9 s  path   3: 1 legs,  26.0 m, to N  -12.5 E  +11.5
+   34.9 s  path   4: 1 legs,  33.2 m, to N  +11.5 E  -11.5
+   43.9 s  path   5: 1 legs,  15.8 m, to N  +26.5 E  -16.5
+   48.9 s  path   6: 1 legs,  61.5 m, to N  -17.5 E  +26.5
+   53.9 s  path   7: 1 legs,   4.5 m, to N  +16.5 E   -0.5
+   54.9 s  path   8: 1 legs,  11.0 m, to N   -0.5 E   +0.5
+
+== return: 2
+   53.9 s  {'zone_id': 7, 'reason': 'B1 battery threshold', 'length_m': 4.47213595499958, 'energy_j': 777.4939636967239}
+   54.9 s  {'zone_id': 1, 'reason': 'zone 7 retired en route', 'length_m': 11.0, 'energy_j': 1181.849088}
+
+== invariant: 11
+   27.9 s  {'margin_j': 6634.160495536861, 'zone_id': 1, 'remaining_j': 13401.50946506579, 'reserve_j': 2000.0, 'violated': False, 'retired': [2]}
+   47.9 s  {'margin_j': 45.14433582046877, 'zone_id': 1, 'remaining_j': 7564.693442735743, 'reserve_j': 2000.0, 'violated': False, 'retired': [6, 2]}
+   48.9 s  {'margin_j': -304.9982514286585, 'zone_id': 1, 'remaining_j': 7262.296048368875, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   52.9 s  {'margin_j': -651.7962743441221, 'zone_id': 1, 'remaining_j': 6096.251570679713, 'reserve_j': 2000.0, 'violated': True, 'retired': [6]}
+   53.9 s  {'margin_j': -166.15710607289566, 'zone_id': 7, 'remaining_j': 5810.836857623828, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   54.9 s  {'margin_j': -940.684673387751, 'zone_id': 1, 'remaining_j': 5440.664414612249, 'reserve_j': 2000.0, 'violated': True, 'retired': [7]}
+   55.9 s  {'margin_j': -1415.2134387099213, 'zone_id': 1, 'remaining_j': 5081.768646650902, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+   56.9 s  {'margin_j': -1461.0181309394056, 'zone_id': 5, 'remaining_j': 4753.553039337163, 'reserve_j': 2000.0, 'violated': True, 'retired': []}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF            3600      0         0     20.0     nan         0
+   15.8 NAVIGATING         2107   1493        16     16.9    10.6         1
+   30.8 NAVIGATING         1120   2480        17     12.5     6.9         2
+   45.8 NAVIGATING          207   3393        13      8.1     2.9         3
+   61.8 COMMIT_LANDING      192   3408        11      3.3    -1.3         1
+   77.8 LANDED              192   3408        11      0.5    -1.3         1
+   78.8 LANDED              192   3408        11      0.5    -1.3         1
+
+== result
+duration 78 s, coverage 94.7 % of the area, unknown left 192 cells
+energy consumed 19.5 kJ, left 0.5 kJ
+I1 margin min -1.46 kJ, violations 9
+end: COMMIT_LANDING, over zone 1, budget
+final position N -0.4 E +0.6 D -0.0
+  confirmed zone 1: touchdown (-0.0, 0.0), home, 0.6 m from the final position
+cycle time median 26 ms, max 40 ms over 79 cycles
