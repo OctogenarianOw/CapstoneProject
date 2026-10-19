@@ -19,11 +19,17 @@ from uav_core.exploration_manager import ExplorationManager
 from uav_core.map_msg import grid_to_msg
 from uav_core.mission_fsm import Action
 
+ISOLATED_DOMAIN = 99
+
 
 def test_manager_acts_and_runs_a_map_cycle(tmp_path):
     """Every action is sent and logged; one map cycle is logged."""
+    # The node really publishes take-off, path and land commands. On the
+    # default domain they would reach the executor of a simulation
+    # running at the same time, as happened on 19 Oct (no flight was in
+    # the air then); a domain of its own keeps the test from flying one.
     rclpy.init(args=['--ros-args', '-p', f'log_root:={tmp_path}', '-p',
-                     'mode:=explore'])
+                     'mode:=explore'], domain_id=ISOLATED_DOMAIN)
     try:
         node = ExplorationManager()
         node.act([Action('takeoff'),
