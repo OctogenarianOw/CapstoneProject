@@ -8,6 +8,9 @@ find_package(std_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ElevationMap.msg"
   "msg/EnergyState.msg"
+  "msg/ExecutorCommand.msg"
+  "msg/ExecutorStatus.msg"
+  "msg/PathCommand.msg"
   DEPENDENCIES std_msgs
 )
 

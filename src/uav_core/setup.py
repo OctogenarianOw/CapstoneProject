@@ -33,6 +33,8 @@ setup(
                             'exploration_manager = '
                             'uav_core.exploration_manager:main',
                             'energy_monitor = uav_core.energy_monitor:main',
+                            'trajectory_executor = '
+                            'uav_core.trajectory_executor:main',
         ],
     },
 )

@@ -1,0 +1,16 @@
+date 2026-10-19T16:00:09+11:00
+duration 200
+run mon=ros2 run uav_core energy_monitor
+run exe=ros2 run uav_core trajectory_executor
+run probe=GZ_IP=127.0.0.1 python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_energy_calibration/scripts/energy_probe_v2.py . /x500_slz_0/command/motor_speed 220
+run drive=sleep 6; python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_executor/drive.py; sleep 3; touch stop
+git 7e208b06ef53b23640c6f03d2104ef895e66e416
+ M src/uav_core/setup.py
+ M src/uav_interfaces/CMakeLists.txt
+?? experiments/2026-10-19_executor/
+?? src/uav_core/test/test_trajectory_profile.py
+?? src/uav_core/uav_core/trajectory_executor.py
+?? src/uav_core/uav_core/trajectory_profile.py
+?? src/uav_interfaces/msg/ExecutorCommand.msg
+?? src/uav_interfaces/msg/ExecutorStatus.msg
+?? src/uav_interfaces/msg/PathCommand.msg
