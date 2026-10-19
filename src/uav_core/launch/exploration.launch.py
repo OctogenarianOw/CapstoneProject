@@ -40,6 +40,13 @@ def generate_launch_description():
         DeclareLaunchArgument('slider', default_value='true'),
         DeclareLaunchArgument('bridge', default_value='true'),
         DeclareLaunchArgument('capacity_j', default_value='200000.0'),
+        # Exploration area, a square of half side area_half_m around the
+        # take-off point, inside a map grid of grid_size_m. Defaults: the
+        # 60 x 60 m validation world in the 100 m grid. A larger area,
+        # e.g. grid_size_m:=200.0 area_half_m:=95.0, makes the battery
+        # rather than the world the limit of the exploration.
+        DeclareLaunchArgument('area_half_m', default_value='30.0'),
+        DeclareLaunchArgument('grid_size_m', default_value='100.0'),
         DeclareLaunchArgument('log_root',
                               default_value='~/ros2_ws/droneAfter/missions'),
         Node(package='ros_gz_bridge', executable='parameter_bridge',
@@ -57,7 +64,10 @@ def generate_launch_description():
              arguments=['--qx', '0.70710678', '--qy', '0.70710678',
                         '--qz', '0', '--qw', '0',
                         '--frame-id', 'map', '--child-frame-id', 'map_ned']),
-        Node(package='uav_core', executable='cloud_world', output='screen'),
+        Node(package='uav_core', executable='cloud_world',
+             parameters=[{'grid_size': ParameterValue(
+                 LaunchConfiguration('grid_size_m'), value_type=float)}],
+             output='screen'),
         Node(package='uav_core', executable='trajectory_executor',
              output='screen'),
         Node(package='uav_core', executable='exploration_manager',
@@ -65,6 +75,9 @@ def generate_launch_description():
                           'policy': LaunchConfiguration('policy'),
                           'alpha': ParameterValue(
                               LaunchConfiguration('alpha'), value_type=float),
+                          'area_half_m': ParameterValue(
+                              LaunchConfiguration('area_half_m'),
+                              value_type=float),
                           'log_root': LaunchConfiguration('log_root')}],
              output='screen'),
         Node(package='rviz2', executable='rviz2',
