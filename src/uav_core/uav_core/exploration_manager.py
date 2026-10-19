@@ -128,6 +128,8 @@ class ExplorationManager(Node):
                                               '/executor/path', 10)
         self.pub_cloud = self.create_publisher(PointCloud2,
                                                '/viz/elevation', 1)
+        self.pub_class = self.create_publisher(PointCloud2,
+                                               '/viz/classification', 1)
         self.pub_grid = self.create_publisher(OccupancyGrid,
                                               '/viz/observation', LATCHED)
         self.pub_landing = self.create_publisher(MarkerArray,
@@ -259,6 +261,8 @@ class ExplorationManager(Node):
                   and self.fsm.state == 'NAVIGATING' else None)
         self.pub_cloud.publish(viz.elevation_cloud(elev, world.state, res,
                                                    origin, h))
+        self.pub_class.publish(viz.classification_cloud(
+            elev, world.state, world.layers, world.landing, res, origin, h))
         self.pub_grid.publish(viz.observation_grid(world.state, res, origin,
                                                    h))
         self.pub_landing.publish(viz.landing_markers(
@@ -279,6 +283,8 @@ class ExplorationManager(Node):
             lines.append(f'I1 margin {margin / 1000:.1f} kJ')
         lines.append(f'confirmed zones {len(self.fsm.registry.confirmed())}'
                      f' | violations {self.fsm.violations}')
+        lines.append('green landing | light green margin | red refused '
+                     '| grey uncertain')
         self.pub_status.publish(viz.status_marker(lines, *self.vehicle[:2],
                                                   h))
 

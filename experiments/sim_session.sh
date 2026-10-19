@@ -8,7 +8,10 @@
 # Same guarantees as the campaign scripts of 19 Oct: cleanup before launch
 # (spec trap 14) including the "gz sim" server, refusal to run on a
 # surviving server or on a reused world, git HEAD in OUT_DIR/setup.txt.
-# Launch from a command line that contains none of the cleanup patterns.
+# Launch from a command line that contains none of the cleanup patterns,
+# and pass no command containing one either (rviz2, "gz sim", bin/px4...):
+# they sit in this script's own arguments, and its first cleanup would
+# kill it. Wrap such commands in a small script instead.
 #
 #   bash sim_session.sh OUT_DIR DURATION_S NAME=COMMAND [NAME=COMMAND ...]
 #   bash sim_session.sh /tmp/x 60 map="ros2 run uav_core cloud_world"

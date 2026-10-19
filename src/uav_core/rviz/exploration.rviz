@@ -14,21 +14,23 @@ Visualization Manager:
       Plane Cell Count: 10
       Color: 90; 90; 90
       Reference Frame: <Fixed Frame>
-    - Class: rviz_default_plugins/Map
-      Name: Observation states
+    - Class: rviz_default_plugins/PointCloud2
+      Name: Landing classification
       Enabled: true
-      Alpha: 0.35
-      Color Scheme: map
-      Draw Behind: true
+      Style: Boxes
+      Size (m): 0.9
+      Alpha: 1
+      Color Transformer: RGB8
+      Decay Time: 0
       Topic:
-        Value: /viz/observation
+        Value: /viz/classification
         Depth: 1
-        Durability Policy: Transient Local
+        Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
     - Class: rviz_default_plugins/PointCloud2
-      Name: Elevation map
-      Enabled: true
+      Name: Elevation map (height colours)
+      Enabled: false
       Style: Boxes
       Size (m): 0.9
       Alpha: 1
@@ -44,11 +46,23 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
+    - Class: rviz_default_plugins/Map
+      Name: Observation states
+      Enabled: false
+      Alpha: 0.35
+      Color Scheme: map
+      Draw Behind: true
+      Topic:
+        Value: /viz/observation
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
     - Class: rviz_default_plugins/MarkerArray
-      Name: Landing cells
+      Name: Registry zones
       Enabled: true
       Topic:
-        Value: /viz/landing
+        Value: /viz/zones
         Depth: 1
         Durability Policy: Volatile
         History Policy: Keep Last
@@ -62,11 +76,41 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
+    - Class: rviz_default_plugins/Path
+      Name: Planned path
+      Enabled: true
+      Color: 60; 110; 255
+      Line Style: Billboards
+      Line Width: 0.3
+      Topic:
+        Value: /viz/path
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
     - Class: rviz_default_plugins/Marker
       Name: Vehicle
       Enabled: true
       Topic:
         Value: /viz/vehicle
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+    - Class: rviz_default_plugins/Marker
+      Name: Status
+      Enabled: true
+      Topic:
+        Value: /viz/status
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Landing cells (old layer)
+      Enabled: false
+      Topic:
+        Value: /viz/landing
         Depth: 1
         Durability Policy: Volatile
         History Policy: Keep Last

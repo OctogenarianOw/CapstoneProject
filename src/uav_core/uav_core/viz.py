@@ -11,8 +11,15 @@ static transform map -> map_ned, so NED topics like /cloud_world display
 in the same scene.
 
 Layers, each its own topic so it can be toggled:
+  /viz/classification PointCloud2 at terrain height, one coloured box per
+                     seen cell: green landing candidate, light green
+                     sound cell too close to a refused one for the
+                     footprint, red refused by slope, roughness or step,
+                     grey not observed well enough to judge. Shown by
+                     default: on 19 Oct the height colours of the
+                     elevation layer were read as a safety map
   /viz/elevation     PointCloud2, one point per seen cell, intensity =
-                     height, colour by height in RViz
+                     height, colour by height in RViz (off by default)
   /viz/observation   OccupancyGrid: OBSERVED 0, SPARSE 50, UNKNOWN -1;
                      the grid layout [i north, j east] row-major is the
                      OccupancyGrid layout (rows along y), no reshuffle
@@ -34,7 +41,7 @@ import array
 from geometry_msgs.msg import Point, PoseStamped
 from nav_msgs.msg import OccupancyGrid, Path
 import numpy as np
-from sensor_msgs.msg import PointField
+from sensor_msgs.msg import PointCloud2, PointField
 from sensor_msgs_py import point_cloud2
 from std_msgs.msg import ColorRGBA
 from uav_core.observation import OBSERVED, SPARSE, UNKNOWN
@@ -71,6 +78,55 @@ def elevation_cloud(elevation, state, resolution, origin_ne, header):
     points = np.stack([east, north, height, height], axis=1).astype(
         np.float32)
     return point_cloud2.create_cloud(header, fields, points.tolist())
+
+
+CLASS_RGB = {
+    'candidate': (25, 200, 50),
+    'margin': (170, 230, 110),
+    'refused': (215, 50, 50),
+    'uncertain': (140, 140, 140),
+}
+
+
+def _packed_cloud(header, east, north, up, rgb):
+    """PointCloud2 with x, y, z and a packed rgb field, built in bulk."""
+    cloud = np.zeros(len(east), dtype=[('x', '<f4'), ('y', '<f4'),
+                                       ('z', '<f4'), ('rgb', '<u4')])
+    cloud['x'], cloud['y'], cloud['z'] = east, north, up
+    cloud['rgb'] = rgb
+    msg = PointCloud2()
+    msg.header = header
+    msg.height, msg.width = 1, len(east)
+    msg.fields = [PointField(name=n, offset=4 * k,
+                             datatype=PointField.FLOAT32, count=1)
+                  for k, n in enumerate(('x', 'y', 'z', 'rgb'))]
+    msg.is_bigendian = False
+    msg.point_step = 16
+    msg.row_step = 16 * len(east)
+    msg.is_dense = True
+    msg.data = cloud.tobytes()
+    return msg
+
+
+def classification_cloud(elevation, state, layers, landing, resolution,
+                         origin_ne, header):
+    """One box per seen cell, coloured by what the detector made of it."""
+    seen = state != UNKNOWN
+    uncertain = seen & ((state != OBSERVED) | ~layers['valid'])
+    cell_ok = landing['cell_ok']
+    candidate = landing['candidate']
+    refused = seen & ~uncertain & ~cell_ok
+    margin = cell_ok & ~candidate
+    rgb = np.zeros(state.shape, dtype=np.uint32)
+    for mask, name in ((uncertain, 'uncertain'), (refused, 'refused'),
+                       (margin, 'margin'), (candidate, 'candidate')):
+        r, g, b = CLASS_RGB[name]
+        rgb[mask] = (r << 16) | (g << 8) | b
+    i, j = np.nonzero(seen)
+    north = origin_ne[0] + (i + 0.5) * resolution
+    east = origin_ne[1] + (j + 0.5) * resolution
+    up = np.nan_to_num(-elevation[i, j])
+    return _packed_cloud(header, east, north, up, rgb[i, j])
 
 
 def observation_grid(state, resolution, origin_ne, header):
