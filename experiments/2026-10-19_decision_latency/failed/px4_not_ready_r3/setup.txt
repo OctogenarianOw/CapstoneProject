@@ -1,0 +1,15 @@
+date 2026-10-19T19:30:26+11:00
+duration 600
+run map=ros2 run uav_core cloud_world
+run mon=ros2 run uav_core energy_monitor --ros-args -p capacity_j:=20000.0
+run exe=ros2 run uav_core trajectory_executor
+run mgr=ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=0.5 -p inject_delay_s:=5.0 -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-19_decision_latency/before_d5_r3/missions
+run watch=sleep 20; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 4; touch stop
+git 6bdc1289a4dc99ff51ae67a5bf8eaf6bac4676f8
+ M experiments/2026-10-19_big_area/decision_latency.py
+ M src/uav_core/test/test_manager_smoke.py
+ M src/uav_core/test/test_mission_fsm.py
+ M src/uav_core/uav_core/exploration_manager.py
+ M src/uav_core/uav_core/mission_fsm.py
+ M src/uav_core/uav_core/mission_policy.py
+?? experiments/2026-10-19_decision_latency/
