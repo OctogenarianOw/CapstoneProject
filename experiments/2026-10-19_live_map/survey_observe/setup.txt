@@ -1,0 +1,20 @@
+date 2026-10-19T15:34:43+11:00
+duration 130
+run map=ros2 run uav_core cloud_world
+run mgr=ros2 run uav_core exploration_manager --ros-args -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-19_live_map/survey_observe/missions
+run fly=sleep 12; ros2 run uav_core survey_mission
+run hz=sleep 40; timeout 15 ros2 topic hz /viz/frontiers
+run hz2=sleep 40; timeout 15 ros2 topic hz /viz/elevation
+git 32f8653eacff71b42e32121b57f098804ce7174f
+ M .gitignore
+ M src/uav_core/package.xml
+ M src/uav_core/setup.py
+ M src/uav_interfaces/package.xml
+?? experiments/2026-10-19_live_map/survey_observe/
+?? src/uav_core/launch/
+?? src/uav_core/rviz/
+?? src/uav_core/test/test_world_model.py
+?? src/uav_core/uav_core/exploration_manager.py
+?? src/uav_core/uav_core/mission_log.py
+?? src/uav_core/uav_core/viz.py
+?? src/uav_core/uav_core/world_model.py
