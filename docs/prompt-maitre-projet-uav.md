@@ -290,7 +290,7 @@ def px4_now(self):
 
 | Paramètre | Défaut | Rôle |
 |---|---|---|
-| `altitude` | 8.0 m | au dessus de la pente acceptable, sous le sommet de la pente refusée |
+| `altitude` | 8.0 m | 4 m au dessus du relief le plus haut du monde de validation, le cube de 4 m (vérité terrain, maximum 4.0 m) |
 | `line_length` | 50.0 m | couvre les zones à ±20 m |
 | `line_spacing` | 15.0 m | avec 20 m de portée utile, les bandes se recouvrent largement |
 | `n_lines` | 4 | couvre 45 m |
@@ -553,6 +553,26 @@ Le signal retenu est la **puissance mécanique rotor**, calculée depuis les con
 **Validation, faisable dès maintenant sans frontières.** Prédire la consommation du survey existant, comparer à la mesure PX4, reporter l'erreur relative. Une trajectoire connue est un bien meilleur banc de test qu'une exploration autonome où tout varie à la fois.
 
 **Critère d'acceptation.** Erreur relative de prédiction inférieure à 10 % sur des trajectoires non utilisées pour la calibration. Si cette barre n'est pas tenue, le modèle doit être enrichi ou la réserve `R` augmentée en conséquence, et la décision documentée.
+
+**Calibration du 19 octobre 2026, porte C passée** (`experiments/2026-10-19_energy_calibration`). Seize vols sur PX4 et Gazebo neufs : carrés de 10, 20, 40 et 60 m répétés trois fois à 5 m/s, avec un stationnaire de 10, 20 ou 30 s avant chaque tour pour décorréler temps et distance, plus quatre vols de validation jamais ajustés. La vitesse est fixée par construction : chaque segment suit un profil trapézoïdal de repos à repos, 3 m/s² puis 5 m/s, envoyé en position, vitesse et accélération. Une consigne avançant à vitesse constante a été essayée puis rejetée : 56.3 m parcourus pour un carré de 40 m, vitesse entre 4.3 et 7.9 m/s.
+
+**Forme adoptée, révisée le 19 octobre 2026 : un terme par segment.**
+
+```
+E = P_hover * t  +  k_move * d  +  c_leg * n_segments
+```
+
+La forme à deux termes passe la barre des 10 % d'un facteur dix, mais son erreur est structurée et **optimiste** : -4.2 % sur les transits de 10 m, -1.00 % depuis le plan sur un zigzag de 8 segments. Chaque segment paie les mêmes deux rampes. Avec ce terme, les erreurs de transit tombent dans ±0.16 % et le zigzag, hors ajustement, à -0.14 % depuis le plan. Le zigzag, avec 8 segments contre 4 pour chaque carré, montre que le coût est bien par segment et non par transit. `n_segments` est connu dès le plan, donc C1 peut l'utiliser.
+
+| Paramètre | Valeur, IC 95 % |
+|---|---|
+| `P_hover` | 285.64 ± 0.12 W, contre 285.9 W en stationnaire pur |
+| `k_move` | -0.400 ± 0.042 J/m |
+| `c_leg` | 65.2 ± 1.3 J par segment |
+| `E_land` | 3199 J, écart type 15 J, 12 descentes depuis 8 m |
+| temps d'un segment | `L / v + v / a`, exact depuis le plan, plus 0.06 s de stabilisation à l'arrivée |
+
+Trois points à dire dans le mémoire. Les intervalles mesurent le défaut de forme du modèle et non un bruit : la simulation se répète à 0.02 % près, trois répétitions ne sont pas trois échantillons indépendants. Dans ce simulateur l'énergie est presque entièrement du temps, `k_move` négatif signifiant que la croisière à 5 m/s consomme 2 W de moins que le stationnaire, origine non établie. Le modèle ne vaut que pour le profil calibré : l'exécuteur de trajectoire doit voler ce profil, avec arrêt à chaque sommet, ou le modèle doit être recalibré. Implémentation : `uav_core/energy_model.py`.
 
 **Note sur `SIM_BAT_DRAIN` et `SIM_BAT_MIN_PCT`.** Ces deux paramètres de l'airframe allongent la batterie simulée bien au delà de toute mission. Ils ont été ajoutés en croyant corriger un failsafe, ce qui était un faux diagnostic, la vraie cause était le timestamp. Ils sont conservés, et ils expliquent entièrement la forme du signal `remaining` décrite plus haut, pente et blocage à 95 %. Les garder est cohérent avec un budget géré dans le code ; les retirer ne rendrait pas la télémétrie utilisable pour autant, puisqu'elle resterait fonction du seul temps armé.
 
@@ -861,7 +881,7 @@ Lettres fixées, utilisées pour référence dans toutes les conversations.
 |---|---|---|---|
 | A | analyse de terrain, pente, rugosité, marche | pente et rugosité séparées contre vérité | **fait** |
 | B | classification et registre SLZ | registre avec cycle de vie et appariement, scénario d'invalidation passant | classification faite, registre à faire |
-| C | modèle d'énergie | erreur de prédiction inférieure à 10 % sur trajectoires non calibrées | à faire |
+| C | modèle d'énergie | erreur de prédiction inférieure à 10 % sur trajectoires non calibrées | **fait le 19 octobre**, au plus 1.0 % depuis le plan à deux termes, 0.26 % avec le terme par segment |
 | D | détection de frontières sur la carte | catalogue non vide tant qu'il reste de l'inconnu, vide à couverture complète | à faire |
 | E | C1, invariant | zéro violation de I1 sur 10 missions, et violations présentes sans C1 | à faire |
 | F | C2, utilité | effet de `alpha` monotone et interprétable sur au moins une métrique | à faire |
@@ -944,11 +964,14 @@ Tous silencieux, aucun ne produit de message d'erreur. Cette liste évite de les
 | P4 | précision d'atterrissage non mesurée, l'empreinte de 1.5 m est estimée | expérience spécifiée en S16, non exécutée |
 | **P5** | **décalage d'une cellule vers le nord entre carte et vérité sur les rampes**, RMS 0.255 m contre 0.342 m après recalage, soit 25 % d'amélioration, donc un minimum franc et non plus un résidu | **nouveau, 17 octobre.** L'élément couvrant absorbe ce décalage, ce qui veut dire que le zéro dangereux repose en partie sur une compensation d'erreur. Cause à isoler avant de présenter le résultat |
 | n/a | arcs concentriques d'erreur liés aux angles d'élévation des faisceaux, hypothèse d'un effet d'angle d'incidence non modélisé | observé, hypothèse non testée |
-| n/a | `offboard_demo.py` et `square_mission.py` recopient l'horodatage brut de `timesync_status`, piège 3 | mesuré, 177 failsafes en 218 s de stationnaire, correctif connu et non appliqué |
+| n/a | `offboard_demo.py` et `square_mission.py` recopient l'horodatage brut de `timesync_status`, piège 3 | **corrigé le 19 octobre**, failsafes 177 → 0 et 17 → 0 sur monde neuf (`experiments/2026-10-19_offboard_timestamp`) |
+| n/a | contradiction de cette spécification : S5 prescrit une variance par point croissant avec la distance, 6.3 la classe comme résultat négatif (0.1209 → 0.1433 m). `cloud_world` l'applique avec `sigma_angular_rad = 0.009` | relevé le 19 octobre, à trancher par une mesure sur la même carte |
 
 **Note de méthode sur P5.** Un décalage de grille est **invisible sur terrain plat**, où toute translation laisse l'erreur inchangée. Le test d'alignement doit donc toujours être restreint aux zones à gradient non nul, les rampes et les bords de structure. Le test antérieur, mené sur l'ensemble du monde, avait dilué le signal et conclu à tort à l'absence de minimum franc.
 
-**À construire.** Registre SLZ dynamique (B), modèle d'énergie (C), frontières sur la carte (D), C1 (E), C2 (F), exploration autonome (G), campagne d'évaluation (H).
+**Ajouts du 19 octobre 2026.** Modèle d'énergie calibré et validé (C), voir S10. Piège 14 aggravé : le serveur Gazebo apparaît comme `gz sim ...` et échappe aux motifs `ruby` et `gz-sim-server` ; il survit, et PX4 réutilise alors le monde (`gazebo already running world` dans `px4.log`). Les scripts de session tuent désormais `gz[ ]sim` et refusent tout vol sur un monde réutilisé. Le stationnaire de référence de 285.9 W du 17 octobre avait tourné sur un monde réutilisé ; les 24 stationnaires de la calibration, sur monde neuf, donnent 285.8 W.
+
+**À construire.** Registre SLZ dynamique (B), frontières sur la carte (D), C1 (E), C2 (F), exploration autonome (G), campagne d'évaluation (H).
 
 ---
 
