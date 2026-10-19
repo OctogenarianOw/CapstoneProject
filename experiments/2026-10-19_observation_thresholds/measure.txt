@@ -1,0 +1,35 @@
+map ../../data_survey_v6.npz, zones ['flat', 'ramp_ok', 'ramp_bad', 'rough', 'obstacle'], flat zone = flat
+offset removed +0.368 m, flat cells 2928, observed 2913
+
+             count  cells   rms m   p95 m   max m
+            [1, 2)      2   2.915   2.958   2.963
+            [2, 3)      5   2.817   2.859   2.866
+            [3, 5)      3   2.317   2.864   2.870
+           [5, 10)      2   0.352   0.473   0.497
+          [10, 20)      2   0.066   0.089   0.094
+          [20, 50)      1   0.085   0.085   0.085
+         [50, 100)      3   0.240   0.367   0.396
+        [100, 200)     87   0.081   0.150   0.397
+        [200, 500)    575   0.206   0.256   2.097
+       [500, 1000)   1299   0.210   0.278   2.656
+     [1000, 1e+09)    934   0.117   0.192   1.175
+
+       variance m2  cells   rms m   p95 m   max m
+       [0, 0.0005)   2898   0.181   0.248   2.656
+   [0.0005, 0.001)      1   0.085   0.085   0.085
+    [0.001, 0.002)      1   0.094   0.094   0.094
+    [0.002, 0.005)      4   1.456   2.514   2.870
+     [0.005, 0.01)      3   2.834   2.862   2.866
+      [0.01, 0.02)      5   2.516   2.858   2.866
+      [0.02, 0.05)      1   2.963   2.963   2.963
+
+count quantiles over observed flat cells: [129.48000000000002, 234.6, 515.0, 759.0]
+variance against count, median per count bin:
+  count [1, 2): median variance 2.11e-02
+  count [2, 3): median variance 1.13e-02
+  count [3, 5): median variance 8.89e-03
+  count [5, 10): median variance 4.30e-03
+  count [10, 20): median variance 1.93e-03
+  count [20, 50): median variance 6.58e-04
+  count [50, 100): median variance 4.00e-04
+  count [100, 1e+09): median variance 4.00e-04
