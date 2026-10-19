@@ -1,0 +1,7 @@
+date 2026-10-19T17:32:51+11:00
+duration 1200
+run ros=ros2 launch uav_core exploration.launch.py bridge:=false rviz:=true slider:=true capacity_j:=200000.0 grid_size_m:=200.0 area_half_m:=95.0 log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-19_big_area/c1c2_200kJ_190m/missions
+run watch=sleep 30; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 60; touch stop
+git 39922aef8001d9e5b2f98b9dfcd315a1a3587123
+?? experiments/2026-10-19_big_area/
+?? experiments/2026-10-19_live_demo_200kJ/

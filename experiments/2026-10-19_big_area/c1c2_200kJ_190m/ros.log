@@ -1,0 +1,454 @@
+[INFO] [launch]: All log files can be found below /home/doria/.ros/log/2026-10-19-17-33-13-369094-PC-Dorian-79004
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [energy_monitor-1]: process started with pid [79011]
+[INFO] [static_transform_publisher-2]: process started with pid [79012]
+[INFO] [cloud_world-3]: process started with pid [79013]
+[INFO] [trajectory_executor-4]: process started with pid [79014]
+[INFO] [exploration_manager-5]: process started with pid [79015]
+[INFO] [rviz2-6]: process started with pid [79016]
+[INFO] [rqt_reconfigure-7]: process started with pid [79017]
+[static_transform_publisher-2] [INFO] [1792391593.467812335] [static_transform_publisher_lvIvLQNs803a0JMs]: Spinning until stopped - publishing transform
+[static_transform_publisher-2] translation: ('0.000000', '0.000000', '0.000000')
+[static_transform_publisher-2] rotation: ('0.707107', '0.707107', '0.000000', '0.000000')
+[static_transform_publisher-2] from 'map' to 'map_ned'
+[rviz2-6] [INFO] [1792391593.709011517] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-6] [INFO] [1792391593.709113741] [rviz2]: OpenGl version: 4.5 (GLSL 4.5)
+[rviz2-6] [INFO] [1792391593.765376789] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-6] [INFO] [1792391593.943109604] [rviz]: Subscribing to: /viz/classification
+[rviz2-6] 
+[energy_monitor-1] [INFO] [1792391593.992683904] [energy_monitor]: budget 200000 J
+[exploration_manager-5] [INFO] [1792391594.352294256] [exploration_manager]: mode explore, policy c1_c2, alpha 0.5, log in /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_big_area/c1c2_200kJ_190m/missions/2026-10-19_17-33-14
+[exploration_manager-5] /home/doria/ros2_ws/droneAfter/install/uav_core/lib/python3.12/site-packages/uav_core/terrain_analysis.py:84: RuntimeWarning: Mean of empty slice
+[exploration_manager-5]   z_mean = np.nanmean(stack, axis=0)
+[exploration_manager-5] [INFO] [1792391595.172333944] [exploration_manager]:    0.8 s TAKEOFF: 0 frontiers, 36100 unknown, margin None
+[exploration_manager-5] [INFO] [1792391601.153244276] [exploration_manager]:    6.8 s TAKEOFF: 0 frontiers, 36100 unknown, margin None
+[cloud_world-3] [INFO] [1792391603.957203771] [cloud_world]: 9142 pts | 1254 cells | mean map z -0.196 | sd 0.402
+[cloud_world-3] [INFO] [1792391605.945089089] [cloud_world]: 8712 pts | 1255 cells | mean map z -0.087 | sd 0.424
+[trajectory_executor-4] [INFO] [1792391606.052613887] [trajectory_executor]: holding at 8.0 m
+[exploration_manager-5] [INFO] [1792391606.236778340] [exploration_manager]:   11.8 s BOOTSTRAP: 12 frontiers, 34845 unknown, margin 174848.17883269032
+[trajectory_executor-4] [INFO] [1792391607.216947132] [trajectory_executor]: path 1: 1 legs, 17.4 m, 5.1 s
+[cloud_world-3] [INFO] [1792391607.949940458] [cloud_world]: 8454 pts | 1255 cells | mean map z -0.027 | sd 0.445
+[cloud_world-3] [INFO] [1792391609.954569842] [cloud_world]: 8449 pts | 1489 cells | mean map z +0.053 | sd 0.437
+[exploration_manager-5] [INFO] [1792391611.262682228] [exploration_manager]:   16.8 s NAVIGATING: 18 frontiers, 34380 unknown, margin 172065.47232624821
+[cloud_world-3] [INFO] [1792391612.002999263] [cloud_world]: 8293 pts | 1803 cells | mean map z +0.089 | sd 0.408
+[trajectory_executor-4] [INFO] [1792391613.265269390] [trajectory_executor]: path 2: 1 legs, 16.2 m, 4.9 s
+[cloud_world-3] [INFO] [1792391614.003625232] [cloud_world]: 8233 pts | 1859 cells | mean map z +0.116 | sd 0.417
+[cloud_world-3] [INFO] [1792391616.024025617] [cloud_world]: 8348 pts | 2119 cells | mean map z +0.146 | sd 0.394
+[exploration_manager-5] [INFO] [1792391616.345107824] [exploration_manager]:   21.8 s NAVIGATING: 20 frontiers, 33953 unknown, margin 169973.97414588215
+[cloud_world-3] [INFO] [1792391618.024200736] [cloud_world]: 8333 pts | 2401 cells | mean map z +0.161 | sd 0.371
+[trajectory_executor-4] [INFO] [1792391619.327563405] [trajectory_executor]: path 3: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391620.039056701] [cloud_world]: 8299 pts | 2454 cells | mean map z +0.166 | sd 0.372
+[exploration_manager-5] [INFO] [1792391621.382728365] [exploration_manager]:   26.8 s NAVIGATING: 21 frontiers, 33547 unknown, margin 167988.8680248904
+[cloud_world-3] [INFO] [1792391622.078396318] [cloud_world]: 8346 pts | 2713 cells | mean map z +0.180 | sd 0.357
+[cloud_world-3] [INFO] [1792391624.140079336] [cloud_world]: 8286 pts | 2991 cells | mean map z +0.179 | sd 0.338
+[trajectory_executor-4] [INFO] [1792391625.398489275] [trajectory_executor]: path 4: 1 legs, 15.8 m, 4.8 s
+[cloud_world-3] [INFO] [1792391626.146444808] [cloud_world]: 8231 pts | 3042 cells | mean map z +0.190 | sd 0.337
+[exploration_manager-5] [INFO] [1792391626.599067531] [exploration_manager]:   31.8 s NAVIGATING: 26 frontiers, 33058 unknown, margin 165880.83165622578
+[cloud_world-3] [INFO] [1792391628.203152847] [cloud_world]: 8393 pts | 3318 cells | mean map z +0.198 | sd 0.324
+[cloud_world-3] [INFO] [1792391630.292680675] [cloud_world]: 8318 pts | 3593 cells | mean map z +0.195 | sd 0.311
+[trajectory_executor-4] [INFO] [1792391631.606208011] [trajectory_executor]: path 5: 1 legs, 16.3 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391631.645508100] [exploration_manager]:   36.8 s NAVIGATING: 28 frontiers, 32479 unknown, margin 163564.9321067935
+[cloud_world-3] [INFO] [1792391632.520371328] [cloud_world]: 8268 pts | 3635 cells | mean map z +0.200 | sd 0.310
+[cloud_world-3] [INFO] [1792391634.922014540] [cloud_world]: 8331 pts | 3958 cells | mean map z +0.212 | sd 0.299
+[exploration_manager-5] [INFO] [1792391636.944533274] [exploration_manager]:   41.8 s NAVIGATING: 33 frontiers, 31932 unknown, margin 161251.19649587525
+[cloud_world-3] [INFO] [1792391637.506536218] [cloud_world]: 8336 pts | 4219 cells | mean map z +0.218 | sd 0.293
+[trajectory_executor-4] [INFO] [1792391638.960040594] [trajectory_executor]: path 6: 1 legs, 15.6 m, 4.8 s
+[cloud_world-3] [INFO] [1792391639.906228631] [cloud_world]: 8175 pts | 4243 cells | mean map z +0.217 | sd 0.293
+[exploration_manager-5] [INFO] [1792391641.946922364] [exploration_manager]:   46.8 s NAVIGATING: 32 frontiers, 31704 unknown, margin 159370.4020565147
+[cloud_world-3] [INFO] [1792391642.197269726] [cloud_world]: 8362 pts | 4548 cells | mean map z +0.221 | sd 0.280
+[cloud_world-3] [INFO] [1792391644.673606956] [cloud_world]: 8449 pts | 4809 cells | mean map z +0.215 | sd 0.273
+[trajectory_executor-4] [INFO] [1792391646.939758049] [trajectory_executor]: path 7: 1 legs, 16.3 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391646.985805405] [exploration_manager]:   51.8 s NAVIGATING: 34 frontiers, 31297 unknown, margin 157660.38774490298
+[cloud_world-3] [INFO] [1792391647.045602108] [cloud_world]: 8437 pts | 4812 cells | mean map z +0.210 | sd 0.272
+[cloud_world-3] [INFO] [1792391649.475832617] [cloud_world]: 8364 pts | 5019 cells | mean map z +0.201 | sd 0.279
+[cloud_world-3] [INFO] [1792391651.834162441] [cloud_world]: 8286 pts | 5377 cells | mean map z +0.215 | sd 0.266
+[exploration_manager-5] [INFO] [1792391652.331313236] [exploration_manager]:   56.8 s NAVIGATING: 35 frontiers, 30782 unknown, margin 155567.0957287913
+[cloud_world-3] [INFO] [1792391654.133676166] [cloud_world]: 8406 pts | 5418 cells | mean map z +0.226 | sd 0.261
+[trajectory_executor-4] [INFO] [1792391655.493448132] [trajectory_executor]: path 8: 1 legs, 15.8 m, 4.8 s
+[cloud_world-3] [INFO] [1792391656.462628856] [cloud_world]: 8215 pts | 5425 cells | mean map z +0.228 | sd 0.263
+[exploration_manager-5] [INFO] [1792391658.074594145] [exploration_manager]:   62.4 s NAVIGATING: 37 frontiers, 30691 unknown, margin 153465.1951246938
+[cloud_world-3] [INFO] [1792391658.831017314] [cloud_world]: 8341 pts | 5753 cells | mean map z +0.238 | sd 0.256
+[cloud_world-3] [INFO] [1792391661.186731890] [cloud_world]: 8344 pts | 5990 cells | mean map z +0.245 | sd 0.255
+[cloud_world-3] [INFO] [1792391663.529089326] [cloud_world]: 8343 pts | 6006 cells | mean map z +0.243 | sd 0.252
+[trajectory_executor-4] [INFO] [1792391663.570351289] [trajectory_executor]: path 9: 1 legs, 16.1 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391663.634615782] [exploration_manager]:   68.2 s NAVIGATING: 40 frontiers, 30115 unknown, margin 151156.98507374278
+[cloud_world-3] [INFO] [1792391665.875590922] [cloud_world]: 8299 pts | 6172 cells | mean map z +0.229 | sd 0.266
+[cloud_world-3] [INFO] [1792391668.141102769] [cloud_world]: 8244 pts | 6529 cells | mean map z +0.244 | sd 0.245
+[exploration_manager-5] [INFO] [1792391669.286064710] [exploration_manager]:   73.6 s NAVIGATING: 44 frontiers, 29718 unknown, margin 148715.07600829608
+[cloud_world-3] [INFO] [1792391670.476348821] [cloud_world]: 8380 pts | 6603 cells | mean map z +0.251 | sd 0.243
+[trajectory_executor-4] [INFO] [1792391671.920478732] [trajectory_executor]: path 10: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391672.871313165] [cloud_world]: 8213 pts | 6607 cells | mean map z +0.251 | sd 0.246
+[exploration_manager-5] [INFO] [1792391674.374888813] [exploration_manager]:   78.8 s NAVIGATING: 46 frontiers, 29503 unknown, margin 147151.97146812556
+[cloud_world-3] [INFO] [1792391675.189331999] [cloud_world]: 8309 pts | 6923 cells | mean map z +0.259 | sd 0.241
+[cloud_world-3] [INFO] [1792391677.499157398] [cloud_world]: 8331 pts | 7174 cells | mean map z +0.261 | sd 0.241
+[cloud_world-3] [INFO] [1792391679.881411603] [cloud_world]: 8380 pts | 7201 cells | mean map z +0.257 | sd 0.234
+[trajectory_executor-4] [INFO] [1792391680.450993744] [trajectory_executor]: path 11: 1 legs, 15.6 m, 4.8 s
+[exploration_manager-5] [INFO] [1792391680.532848245] [exploration_manager]:   84.7 s NAVIGATING: 47 frontiers, 28926 unknown, margin 144199.26203727938
+[cloud_world-3] [INFO] [1792391682.171478990] [cloud_world]: 8179 pts | 7269 cells | mean map z +0.253 | sd 0.233
+[cloud_world-3] [INFO] [1792391684.506621197] [cloud_world]: 8298 pts | 7680 cells | mean map z +0.243 | sd 0.237
+[exploration_manager-5] [INFO] [1792391685.576763791] [exploration_manager]:   89.9 s NAVIGATING: 52 frontiers, 28488 unknown, margin 142394.80319608346
+[cloud_world-3] [INFO] [1792391686.905862555] [cloud_world]: 8409 pts | 7773 cells | mean map z +0.254 | sd 0.226
+[trajectory_executor-4] [INFO] [1792391688.405157743] [trajectory_executor]: path 12: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792391689.345706631] [cloud_world]: 8236 pts | 7785 cells | mean map z +0.254 | sd 0.226
+[exploration_manager-5] [INFO] [1792391691.205938414] [exploration_manager]:   95.5 s NAVIGATING: 52 frontiers, 28330 unknown, margin 140199.05724898033
+[cloud_world-3] [INFO] [1792391691.678663212] [cloud_world]: 8338 pts | 8090 cells | mean map z +0.255 | sd 0.222
+[cloud_world-3] [INFO] [1792391694.065257833] [cloud_world]: 8369 pts | 8360 cells | mean map z +0.257 | sd 0.220
+[cloud_world-3] [INFO] [1792391696.358192871] [cloud_world]: 8386 pts | 8371 cells | mean map z +0.258 | sd 0.218
+[trajectory_executor-4] [INFO] [1792391696.551545310] [trajectory_executor]: path 13: 1 legs, 16.0 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391696.624547268] [exploration_manager]:  100.7 s NAVIGATING: 55 frontiers, 27751 unknown, margin 137783.20649004736
+[cloud_world-3] [INFO] [1792391698.687432738] [cloud_world]: 8262 pts | 8510 cells | mean map z +0.254 | sd 0.226
+[cloud_world-3] [INFO] [1792391700.979334330] [cloud_world]: 8245 pts | 8893 cells | mean map z +0.263 | sd 0.217
+[exploration_manager-5] [INFO] [1792391701.862234820] [exploration_manager]:  106.1 s NAVIGATING: 57 frontiers, 27343 unknown, margin 135802.0473492453
+[cloud_world-3] [INFO] [1792391703.251448444] [cloud_world]: 8387 pts | 8963 cells | mean map z +0.266 | sd 0.213
+[trajectory_executor-4] [INFO] [1792391705.111445339] [trajectory_executor]: path 14: 1 legs, 16.2 m, 4.9 s
+[cloud_world-3] [INFO] [1792391705.546486366] [cloud_world]: 8317 pts | 8972 cells | mean map z +0.264 | sd 0.215
+[exploration_manager-5] [INFO] [1792391706.997930032] [exploration_manager]:  110.8 s NAVIGATING: 60 frontiers, 27141 unknown, margin 133884.35229912118
+[cloud_world-3] [INFO] [1792391708.018234205] [cloud_world]: 8333 pts | 9200 cells | mean map z +0.266 | sd 0.215
+[cloud_world-3] [INFO] [1792391710.260989450] [cloud_world]: 8231 pts | 9528 cells | mean map z +0.268 | sd 0.209
+[cloud_world-3] [INFO] [1792391712.545673127] [cloud_world]: 8396 pts | 9563 cells | mean map z +0.268 | sd 0.207
+[exploration_manager-5] [INFO] [1792391712.682669953] [exploration_manager]:  116.3 s NAVIGATING: 62 frontiers, 26590 unknown, margin 131557.65436569272
+[trajectory_executor-4] [INFO] [1792391714.747287230] [trajectory_executor]: path 15: 1 legs, 16.5 m, 5.0 s
+[cloud_world-3] [INFO] [1792391714.785036643] [cloud_world]: 8280 pts | 9563 cells | mean map z +0.267 | sd 0.207
+[trajectory_executor-4] [INFO] [1792391716.886853791] [trajectory_executor]: path 15: 1 legs, 10.0 m, 3.7 s
+[cloud_world-3] [INFO] [1792391717.113668802] [cloud_world]: 8341 pts | 9755 cells | mean map z +0.257 | sd 0.222
+[exploration_manager-5] [INFO] [1792391718.529596004] [exploration_manager]:  122.6 s NAVIGATING: 62 frontiers, 26528 unknown, margin 129243.00113108716
+[cloud_world-3] [INFO] [1792391719.439521403] [cloud_world]: 8402 pts | 10050 cells | mean map z +0.248 | sd 0.239
+[cloud_world-3] [INFO] [1792391721.739809472] [cloud_world]: 8384 pts | 10164 cells | mean map z +0.261 | sd 0.202
+[cloud_world-3] [INFO] [1792391724.020151327] [cloud_world]: 8373 pts | 10182 cells | mean map z +0.264 | sd 0.202
+[trajectory_executor-4] [INFO] [1792391725.367729116] [trajectory_executor]: path 16: 1 legs, 16.0 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391725.478271014] [exploration_manager]:  128.3 s NAVIGATING: 68 frontiers, 25937 unknown, margin 126867.5789405052
+[trajectory_executor-4] [INFO] [1792391725.482820419] [trajectory_executor]: path 16: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792391726.284889763] [cloud_world]: 8260 pts | 10183 cells | mean map z +0.264 | sd 0.202
+[cloud_world-3] [INFO] [1792391728.659714195] [cloud_world]: 8342 pts | 10480 cells | mean map z +0.266 | sd 0.199
+[cloud_world-3] [INFO] [1792391730.891007732] [cloud_world]: 8364 pts | 10754 cells | mean map z +0.266 | sd 0.199
+[exploration_manager-5] [INFO] [1792391731.198623202] [exploration_manager]:  134.2 s NAVIGATING: 68 frontiers, 25693 unknown, margin 125141.36431607277
+[cloud_world-3] [INFO] [1792391733.211141272] [cloud_world]: 8404 pts | 10771 cells | mean map z +0.266 | sd 0.196
+[cloud_world-3] [INFO] [1792391735.525514850] [cloud_world]: 8283 pts | 10772 cells | mean map z +0.265 | sd 0.196
+[trajectory_executor-4] [INFO] [1792391736.599939835] [trajectory_executor]: path 17: 1 legs, 16.0 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391736.702859201] [exploration_manager]:  139.3 s NAVIGATING: 69 frontiers, 25342 unknown, margin 122737.78559280497
+[trajectory_executor-4] [INFO] [1792391736.705396943] [trajectory_executor]: path 17: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792391737.818968285] [cloud_world]: 8242 pts | 10782 cells | mean map z +0.264 | sd 0.196
+[cloud_world-3] [INFO] [1792391740.037221668] [cloud_world]: 8344 pts | 11138 cells | mean map z +0.270 | sd 0.194
+[exploration_manager-5] [INFO] [1792391741.715155822] [exploration_manager]:  144.9 s NAVIGATING: 72 frontiers, 25137 unknown, margin 121130.6235455849
+[cloud_world-3] [INFO] [1792391742.389564447] [cloud_world]: 8285 pts | 11356 cells | mean map z +0.272 | sd 0.194
+[cloud_world-3] [INFO] [1792391744.644266535] [cloud_world]: 8371 pts | 11377 cells | mean map z +0.273 | sd 0.193
+[cloud_world-3] [INFO] [1792391746.895876257] [cloud_world]: 8280 pts | 11377 cells | mean map z +0.273 | sd 0.193
+[trajectory_executor-4] [INFO] [1792391748.162659527] [trajectory_executor]: path 18: 5 legs, 231.4 m, 53.8 s
+[exploration_manager-5] [INFO] [1792391748.275263284] [exploration_manager]:  150.2 s NAVIGATING: 72 frontiers, 24754 unknown, margin 118638.94027937877
+[trajectory_executor-4] [INFO] [1792391748.277887662] [trajectory_executor]: path 18: 5 legs, 231.4 m, 53.7 s
+[cloud_world-3] [INFO] [1792391749.161708047] [cloud_world]: 8252 pts | 11382 cells | mean map z +0.271 | sd 0.194
+[cloud_world-3] [INFO] [1792391751.452554903] [cloud_world]: 8355 pts | 11387 cells | mean map z +0.272 | sd 0.193
+[cloud_world-3] [INFO] [1792391753.731072989] [cloud_world]: 8369 pts | 11409 cells | mean map z +0.272 | sd 0.192
+[exploration_manager-5] [INFO] [1792391754.614710483] [exploration_manager]:  157.2 s NAVIGATING: 72 frontiers, 24744 unknown, margin 116628.90041785121
+[cloud_world-3] [INFO] [1792391755.969207691] [cloud_world]: 8326 pts | 11432 cells | mean map z +0.271 | sd 0.191
+[cloud_world-3] [INFO] [1792391758.264025887] [cloud_world]: 8338 pts | 11447 cells | mean map z +0.272 | sd 0.191
+[cloud_world-3] [INFO] [1792391760.585740589] [cloud_world]: 8329 pts | 11451 cells | mean map z +0.274 | sd 0.191
+[exploration_manager-5] [INFO] [1792391761.143542965] [exploration_manager]:  163.5 s NAVIGATING: 72 frontiers, 24689 unknown, margin 129619.5996283467
+[cloud_world-3] [INFO] [1792391762.823908997] [cloud_world]: 8310 pts | 11461 cells | mean map z +0.276 | sd 0.191
+[cloud_world-3] [INFO] [1792391765.068618418] [cloud_world]: 8403 pts | 11463 cells | mean map z +0.271 | sd 0.190
+[cloud_world-3] [INFO] [1792391767.348461192] [cloud_world]: 8377 pts | 11490 cells | mean map z +0.269 | sd 0.189
+[exploration_manager-5] [INFO] [1792391767.424946003] [exploration_manager]:  170.3 s NAVIGATING: 72 frontiers, 24668 unknown, margin 126237.9591050549
+[cloud_world-3] [INFO] [1792391769.686058454] [cloud_world]: 8378 pts | 11614 cells | mean map z +0.267 | sd 0.188
+[cloud_world-3] [INFO] [1792391771.974356767] [cloud_world]: 8412 pts | 11749 cells | mean map z +0.263 | sd 0.186
+[exploration_manager-5] [INFO] [1792391773.030752615] [exploration_manager]:  175.9 s NAVIGATING: 71 frontiers, 24477 unknown, margin 125914.75905804081
+[cloud_world-3] [INFO] [1792391774.203557335] [cloud_world]: 8421 pts | 11766 cells | mean map z +0.260 | sd 0.186
+[cloud_world-3] [INFO] [1792391776.524376243] [cloud_world]: 8291 pts | 11766 cells | mean map z +0.259 | sd 0.186
+[cloud_world-3] [INFO] [1792391778.929236852] [cloud_world]: 8293 pts | 11766 cells | mean map z +0.260 | sd 0.193
+[exploration_manager-5] [INFO] [1792391780.434471304] [exploration_manager]:  182.1 s NAVIGATING: 67 frontiers, 24365 unknown, margin 123543.16507487601
+[cloud_world-3] [INFO] [1792391781.145718583] [cloud_world]: 8313 pts | 11766 cells | mean map z +0.260 | sd 0.196
+[cloud_world-3] [INFO] [1792391783.481896340] [cloud_world]: 8313 pts | 11766 cells | mean map z +0.257 | sd 0.193
+[cloud_world-3] [INFO] [1792391785.866977217] [cloud_world]: 8401 pts | 11766 cells | mean map z +0.254 | sd 0.186
+[exploration_manager-5] [INFO] [1792391786.593544307] [exploration_manager]:  189.2 s NAVIGATING: 67 frontiers, 24365 unknown, margin 121946.76127095702
+[cloud_world-3] [INFO] [1792391788.183856104] [cloud_world]: 8361 pts | 11779 cells | mean map z +0.253 | sd 0.185
+[cloud_world-3] [INFO] [1792391790.393005009] [cloud_world]: 8353 pts | 11813 cells | mean map z +0.254 | sd 0.185
+[cloud_world-3] [INFO] [1792391792.755111550] [cloud_world]: 8412 pts | 11894 cells | mean map z +0.253 | sd 0.183
+[exploration_manager-5] [INFO] [1792391793.649054125] [exploration_manager]:  195.8 s NAVIGATING: 64 frontiers, 24340 unknown, margin 118439.80215437534
+[cloud_world-3] [INFO] [1792391794.984196106] [cloud_world]: 8379 pts | 12046 cells | mean map z +0.254 | sd 0.184
+[cloud_world-3] [INFO] [1792391797.186348664] [cloud_world]: 8380 pts | 12166 cells | mean map z +0.254 | sd 0.181
+[cloud_world-3] [INFO] [1792391799.733659092] [cloud_world]: 8430 pts | 12382 cells | mean map z +0.250 | sd 0.203
+[exploration_manager-5] [INFO] [1792391800.596920353] [exploration_manager]:  202.9 s NAVIGATING: 61 frontiers, 23972 unknown, margin 117187.82467024866
+[cloud_world-3] [INFO] [1792391801.977476691] [cloud_world]: 8293 pts | 12606 cells | mean map z +0.233 | sd 0.297
+[cloud_world-3] [INFO] [1792391804.243577543] [cloud_world]: 8381 pts | 12631 cells | mean map z +0.232 | sd 0.300
+[trajectory_executor-4] [INFO] [1792391806.428047684] [trajectory_executor]: path 19: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391806.486554348] [cloud_world]: 8362 pts | 12632 cells | mean map z +0.231 | sd 0.301
+[exploration_manager-5] [INFO] [1792391806.534032544] [exploration_manager]:  209.0 s NAVIGATING: 66 frontiers, 23501 unknown, margin 115822.34528420548
+[trajectory_executor-4] [INFO] [1792391806.536568592] [trajectory_executor]: path 19: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391808.858604579] [cloud_world]: 8377 pts | 12797 cells | mean map z +0.227 | sd 0.295
+[cloud_world-3] [INFO] [1792391811.198207516] [cloud_world]: 8339 pts | 13213 cells | mean map z +0.235 | sd 0.272
+[exploration_manager-5] [INFO] [1792391812.955919989] [exploration_manager]:  215.4 s NAVIGATING: 67 frontiers, 23273 unknown, margin 113212.57345397478
+[cloud_world-3] [INFO] [1792391813.464575490] [cloud_world]: 8459 pts | 13262 cells | mean map z +0.242 | sd 0.268
+[cloud_world-3] [INFO] [1792391815.705571622] [cloud_world]: 8381 pts | 13262 cells | mean map z +0.243 | sd 0.266
+[cloud_world-3] [INFO] [1792391817.946912430] [cloud_world]: 8380 pts | 13262 cells | mean map z +0.241 | sd 0.267
+[trajectory_executor-4] [INFO] [1792391819.441021126] [trajectory_executor]: path 20: 1 legs, 16.1 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391819.563242660] [exploration_manager]:  221.9 s NAVIGATING: 70 frontiers, 22869 unknown, margin 110982.47566369557
+[trajectory_executor-4] [INFO] [1792391819.568363609] [trajectory_executor]: path 20: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391820.289155487] [cloud_world]: 8385 pts | 13263 cells | mean map z +0.237 | sd 0.274
+[cloud_world-3] [INFO] [1792391822.518598719] [cloud_world]: 8437 pts | 13540 cells | mean map z +0.236 | sd 0.274
+[cloud_world-3] [INFO] [1792391824.871566975] [cloud_world]: 8292 pts | 13841 cells | mean map z +0.239 | sd 0.271
+[exploration_manager-5] [INFO] [1792391826.896022860] [exploration_manager]:  228.9 s NAVIGATING: 72 frontiers, 22432 unknown, margin 108210.81816887039
+[cloud_world-3] [INFO] [1792391827.040511889] [cloud_world]: 8359 pts | 13864 cells | mean map z +0.241 | sd 0.271
+[cloud_world-3] [INFO] [1792391829.324753277] [cloud_world]: 8287 pts | 13867 cells | mean map z +0.238 | sd 0.270
+[trajectory_executor-4] [INFO] [1792391830.569523387] [trajectory_executor]: path 21: 1 legs, 16.0 m, 4.9 s
+[trajectory_executor-4] [INFO] [1792391830.711452611] [trajectory_executor]: path 21: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792391831.545859717] [cloud_world]: 8292 pts | 13869 cells | mean map z +0.235 | sd 0.270
+[cloud_world-3] [INFO] [1792391833.826659651] [cloud_world]: 8368 pts | 14157 cells | mean map z +0.234 | sd 0.267
+[exploration_manager-5] [INFO] [1792391834.061262364] [exploration_manager]:  236.4 s NAVIGATING: 74 frontiers, 22264 unknown, margin 105867.46157426512
+[cloud_world-3] [INFO] [1792391836.282626185] [cloud_world]: 8389 pts | 14443 cells | mean map z +0.235 | sd 0.267
+[cloud_world-3] [INFO] [1792391838.474744165] [cloud_world]: 8391 pts | 14452 cells | mean map z +0.236 | sd 0.264
+[exploration_manager-5] [INFO] [1792391840.408702745] [exploration_manager]:  242.9 s NAVIGATING: 75 frontiers, 21681 unknown, margin 103056.67063135125
+[cloud_world-3] [INFO] [1792391840.815741291] [cloud_world]: 8280 pts | 14452 cells | mean map z +0.238 | sd 0.265
+[cloud_world-3] [INFO] [1792391843.054581273] [cloud_world]: 8280 pts | 14452 cells | mean map z +0.239 | sd 0.265
+[trajectory_executor-4] [INFO] [1792391843.703083788] [trajectory_executor]: path 22: 1 legs, 16.1 m, 4.9 s
+[trajectory_executor-4] [INFO] [1792391843.828133743] [trajectory_executor]: path 22: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391845.356541625] [cloud_world]: 8206 pts | 14489 cells | mean map z +0.240 | sd 0.265
+[exploration_manager-5] [INFO] [1792391846.967973666] [exploration_manager]:  249.5 s NAVIGATING: 75 frontiers, 21679 unknown, margin 101168.04179355933
+[cloud_world-3] [INFO] [1792391847.586294187] [cloud_world]: 8348 pts | 14891 cells | mean map z +0.232 | sd 0.274
+[cloud_world-3] [INFO] [1792391849.854584747] [cloud_world]: 8311 pts | 15037 cells | mean map z +0.240 | sd 0.260
+[cloud_world-3] [INFO] [1792391852.080237855] [cloud_world]: 8321 pts | 15045 cells | mean map z +0.241 | sd 0.260
+[exploration_manager-5] [INFO] [1792391853.416497347] [exploration_manager]:  255.7 s NAVIGATING: 79 frontiers, 21108 unknown, margin 98652.81328728375
+[cloud_world-3] [INFO] [1792391854.372612125] [cloud_world]: 8280 pts | 15045 cells | mean map z +0.242 | sd 0.260
+[cloud_world-3] [INFO] [1792391856.634110592] [cloud_world]: 8280 pts | 15045 cells | mean map z +0.242 | sd 0.260
+[trajectory_executor-4] [INFO] [1792391857.157667321] [trajectory_executor]: path 23: 1 legs, 28.0 m, 7.3 s
+[trajectory_executor-4] [INFO] [1792391857.321125764] [trajectory_executor]: path 23: 1 legs, 28.0 m, 7.3 s
+[cloud_world-3] [INFO] [1792391858.936143095] [cloud_world]: 8170 pts | 15054 cells | mean map z +0.241 | sd 0.261
+[exploration_manager-5] [INFO] [1792391860.924255658] [exploration_manager]:  263.0 s NAVIGATING: 79 frontiers, 21086 unknown, margin 96561.32644275071
+[cloud_world-3] [INFO] [1792391861.506337836] [cloud_world]: 8325 pts | 15199 cells | mean map z +0.243 | sd 0.260
+[cloud_world-3] [INFO] [1792391863.605647438] [cloud_world]: 8243 pts | 15547 cells | mean map z +0.242 | sd 0.263
+[cloud_world-3] [INFO] [1792391865.890183172] [cloud_world]: 8280 pts | 15658 cells | mean map z +0.251 | sd 0.259
+[exploration_manager-5] [INFO] [1792391867.875011378] [exploration_manager]:  270.5 s NAVIGATING: 82 frontiers, 20515 unknown, margin 94666.88955755875
+[cloud_world-3] [INFO] [1792391868.126133618] [cloud_world]: 8280 pts | 15668 cells | mean map z +0.251 | sd 0.258
+[cloud_world-3] [INFO] [1792391870.427703479] [cloud_world]: 8280 pts | 15668 cells | mean map z +0.249 | sd 0.258
+[trajectory_executor-4] [INFO] [1792391871.171386412] [trajectory_executor]: path 24: 1 legs, 16.3 m, 4.9 s
+[trajectory_executor-4] [INFO] [1792391871.446348986] [trajectory_executor]: path 24: 1 legs, 16.2 m, 4.9 s
+[cloud_world-3] [INFO] [1792391872.855435705] [cloud_world]: 8189 pts | 15689 cells | mean map z +0.249 | sd 0.259
+[cloud_world-3] [INFO] [1792391875.184333472] [cloud_world]: 8303 pts | 16107 cells | mean map z +0.245 | sd 0.263
+[exploration_manager-5] [INFO] [1792391876.076562401] [exploration_manager]:  277.1 s NAVIGATING: 82 frontiers, 20463 unknown, margin 92784.80819123413
+[cloud_world-3] [INFO] [1792391877.467071981] [cloud_world]: 8382 pts | 16258 cells | mean map z +0.252 | sd 0.254
+[cloud_world-3] [INFO] [1792391879.653551466] [cloud_world]: 8375 pts | 16278 cells | mean map z +0.251 | sd 0.254
+[cloud_world-3] [INFO] [1792391881.893638597] [cloud_world]: 8280 pts | 16278 cells | mean map z +0.251 | sd 0.254
+[cloud_world-3] [INFO] [1792391884.110211974] [cloud_world]: 8280 pts | 16278 cells | mean map z +0.252 | sd 0.254
+[trajectory_executor-4] [INFO] [1792391884.972305675] [trajectory_executor]: path 25: 1 legs, 16.2 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391885.137541737] [exploration_manager]:  285.6 s NAVIGATING: 88 frontiers, 19857 unknown, margin 89290.82884292207
+[trajectory_executor-4] [INFO] [1792391885.141399959] [trajectory_executor]: path 25: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391886.417057683] [cloud_world]: 8198 pts | 16291 cells | mean map z +0.252 | sd 0.255
+[cloud_world-3] [INFO] [1792391888.795572529] [cloud_world]: 8280 pts | 16683 cells | mean map z +0.246 | sd 0.260
+[cloud_world-3] [INFO] [1792391891.275233188] [cloud_world]: 8333 pts | 16859 cells | mean map z +0.254 | sd 0.250
+[cloud_world-3] [INFO] [1792391893.487878496] [cloud_world]: 8326 pts | 16864 cells | mean map z +0.253 | sd 0.249
+[exploration_manager-5] [INFO] [1792391895.885351153] [exploration_manager]:  295.3 s NAVIGATING: 89 frontiers, 19386 unknown, margin 85580.86424373473
+[cloud_world-3] [INFO] [1792391896.014971012] [cloud_world]: 8286 pts | 16864 cells | mean map z +0.251 | sd 0.249
+[cloud_world-3] [INFO] [1792391898.393707313] [cloud_world]: 8280 pts | 16864 cells | mean map z +0.251 | sd 0.249
+[cloud_world-3] [INFO] [1792391900.601381176] [cloud_world]: 8280 pts | 16864 cells | mean map z +0.251 | sd 0.249
+[cloud_world-3] [INFO] [1792391902.812368486] [cloud_world]: 8280 pts | 16864 cells | mean map z +0.252 | sd 0.249
+[trajectory_executor-4] [INFO] [1792391903.492278524] [trajectory_executor]: path 26: 1 legs, 16.3 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391903.783618074] [exploration_manager]:  301.5 s NAVIGATING: 92 frontiers, 19267 unknown, margin 83739.59308098661
+[trajectory_executor-4] [INFO] [1792391903.789112253] [trajectory_executor]: path 26: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391905.256266911] [cloud_world]: 8217 pts | 16895 cells | mean map z +0.251 | sd 0.251
+[cloud_world-3] [INFO] [1792391907.564592319] [cloud_world]: 8286 pts | 17310 cells | mean map z +0.249 | sd 0.248
+[cloud_world-3] [INFO] [1792391909.813540768] [cloud_world]: 8393 pts | 17467 cells | mean map z +0.250 | sd 0.247
+[cloud_world-3] [INFO] [1792391912.108166375] [cloud_world]: 8393 pts | 17469 cells | mean map z +0.248 | sd 0.245
+[cloud_world-3] [INFO] [1792391914.375780320] [cloud_world]: 8297 pts | 17473 cells | mean map z +0.247 | sd 0.245
+[cloud_world-3] [INFO] [1792391916.670956622] [cloud_world]: 8280 pts | 17473 cells | mean map z +0.247 | sd 0.245
+[cloud_world-3] [INFO] [1792391918.876059460] [cloud_world]: 8280 pts | 17473 cells | mean map z +0.248 | sd 0.245
+[exploration_manager-5] [INFO] [1792391920.976265942] [exploration_manager]:  314.3 s NAVIGATING: 96 frontiers, 18742 unknown, margin 79168.089999712
+[cloud_world-3] [INFO] [1792391921.080136737] [cloud_world]: 8280 pts | 17473 cells | mean map z +0.249 | sd 0.245
+[cloud_world-3] [INFO] [1792391923.598037854] [cloud_world]: 8280 pts | 17473 cells | mean map z +0.251 | sd 0.245
+[cloud_world-3] [INFO] [1792391925.896907323] [cloud_world]: 8280 pts | 17473 cells | mean map z +0.251 | sd 0.245
+[cloud_world-3] [INFO] [1792391928.163478749] [cloud_world]: 8280 pts | 17473 cells | mean map z +0.252 | sd 0.245
+[cloud_world-3] [INFO] [1792391930.432599783] [cloud_world]: 8280 pts | 17473 cells | mean map z +0.253 | sd 0.246
+[trajectory_executor-4] [INFO] [1792391932.048701576] [trajectory_executor]: path 27: 1 legs, 16.2 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391932.520389419] [exploration_manager]:  326.6 s NAVIGATING: 96 frontiers, 18658 unknown, margin 75610.24699708758
+[trajectory_executor-4] [INFO] [1792391932.528356112] [trajectory_executor]: path 27: 1 legs, 15.8 m, 4.8 s
+[cloud_world-3] [INFO] [1792391932.703744891] [cloud_world]: 8233 pts | 17473 cells | mean map z +0.252 | sd 0.247
+[cloud_world-3] [INFO] [1792391935.271317473] [cloud_world]: 8276 pts | 17706 cells | mean map z +0.251 | sd 0.245
+[cloud_world-3] [INFO] [1792391937.549243765] [cloud_world]: 8229 pts | 18037 cells | mean map z +0.252 | sd 0.244
+[cloud_world-3] [INFO] [1792391939.847124526] [cloud_world]: 8401 pts | 18075 cells | mean map z +0.253 | sd 0.242
+[cloud_world-3] [INFO] [1792391942.189514730] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.252 | sd 0.242
+[cloud_world-3] [INFO] [1792391944.731420518] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.253 | sd 0.242
+[cloud_world-3] [INFO] [1792391946.739219706] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.253 | sd 0.242
+[exploration_manager-5] [INFO] [1792391947.113089157] [exploration_manager]:  341.9 s NAVIGATING: 98 frontiers, 18218 unknown, margin 71207.22474502528
+[cloud_world-3] [INFO] [1792391949.018644601] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.254 | sd 0.242
+[cloud_world-3] [INFO] [1792391951.493898766] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.254 | sd 0.242
+[cloud_world-3] [INFO] [1792391953.745047203] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.254 | sd 0.242
+[cloud_world-3] [INFO] [1792391956.008261181] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.253 | sd 0.242
+[cloud_world-3] [INFO] [1792391958.238739069] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.252 | sd 0.242
+[cloud_world-3] [INFO] [1792391960.538572091] [cloud_world]: 8280 pts | 18075 cells | mean map z +0.252 | sd 0.242
+[trajectory_executor-4] [INFO] [1792391962.167745446] [trajectory_executor]: path 28: 1 legs, 16.5 m, 5.0 s
+[exploration_manager-5] [INFO] [1792391962.507104226] [exploration_manager]:  352.8 s NAVIGATING: 98 frontiers, 18056 unknown, margin 66743.47628708399
+[trajectory_executor-4] [INFO] [1792391962.512846621] [trajectory_executor]: path 28: 1 legs, 16.3 m, 4.9 s
+[cloud_world-3] [INFO] [1792391962.898645672] [cloud_world]: 8287 pts | 18076 cells | mean map z +0.251 | sd 0.243
+[cloud_world-3] [INFO] [1792391965.393955216] [cloud_world]: 8330 pts | 18344 cells | mean map z +0.250 | sd 0.242
+[cloud_world-3] [INFO] [1792391967.707592057] [cloud_world]: 8201 pts | 18668 cells | mean map z +0.253 | sd 0.242
+[cloud_world-3] [INFO] [1792391970.328573698] [cloud_world]: 8344 pts | 18697 cells | mean map z +0.256 | sd 0.240
+[exploration_manager-5] [INFO] [1792391972.206607837] [exploration_manager]:  368.2 s NAVIGATING: 98 frontiers, 18056 unknown, margin 62338.556376208064
+[cloud_world-3] [INFO] [1792391972.507900038] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.255 | sd 0.239
+[cloud_world-3] [INFO] [1792391974.939910180] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.255 | sd 0.239
+[cloud_world-3] [INFO] [1792391977.373745684] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.255 | sd 0.239
+[cloud_world-3] [INFO] [1792391979.606815401] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.256 | sd 0.239
+[cloud_world-3] [INFO] [1792391981.806690083] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.256 | sd 0.239
+[cloud_world-3] [INFO] [1792391983.972071275] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.257 | sd 0.240
+[cloud_world-3] [INFO] [1792391986.233515118] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.255 | sd 0.239
+[cloud_world-3] [INFO] [1792391988.432991998] [cloud_world]: 8280 pts | 18697 cells | mean map z +0.254 | sd 0.239
+[trajectory_executor-4] [INFO] [1792391989.475896794] [trajectory_executor]: path 29: 1 legs, 16.1 m, 4.9 s
+[exploration_manager-5] [INFO] [1792391989.690025489] [exploration_manager]:  377.9 s NAVIGATING: 102 frontiers, 17437 unknown, margin 58578.6444656508
+[trajectory_executor-4] [INFO] [1792391989.692893802] [trajectory_executor]: path 29: 1 legs, 16.1 m, 4.9 s
+[cloud_world-3] [INFO] [1792391990.830429445] [cloud_world]: 8301 pts | 18711 cells | mean map z +0.252 | sd 0.240
+[cloud_world-3] [INFO] [1792391993.260033863] [cloud_world]: 8328 pts | 19029 cells | mean map z +0.251 | sd 0.243
+[cloud_world-3] [INFO] [1792391995.727491248] [cloud_world]: 8394 pts | 19239 cells | mean map z +0.255 | sd 0.238
+[cloud_world-3] [INFO] [1792391998.071881025] [cloud_world]: 8294 pts | 19249 cells | mean map z +0.256 | sd 0.237
+[cloud_world-3] [INFO] [1792392000.320116544] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.257 | sd 0.238
+[cloud_world-3] [INFO] [1792392002.569253008] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.257 | sd 0.238
+[cloud_world-3] [INFO] [1792392004.740855050] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.257 | sd 0.238
+[cloud_world-3] [INFO] [1792392006.937196122] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.258 | sd 0.238
+[exploration_manager-5] [INFO] [1792392007.712409822] [exploration_manager]:  395.3 s NAVIGATING: 102 frontiers, 17437 unknown, margin 53574.65417720217
+[cloud_world-3] [INFO] [1792392009.288089950] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.259 | sd 0.239
+[cloud_world-3] [INFO] [1792392011.661568498] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.257 | sd 0.238
+[cloud_world-3] [INFO] [1792392013.947269152] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.256 | sd 0.238
+[cloud_world-3] [INFO] [1792392016.353927777] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.257 | sd 0.238
+[cloud_world-3] [INFO] [1792392018.621625201] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.257 | sd 0.238
+[cloud_world-3] [INFO] [1792392020.836704545] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.258 | sd 0.238
+[cloud_world-3] [INFO] [1792392023.070701956] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.258 | sd 0.238
+[cloud_world-3] [INFO] [1792392025.357973993] [cloud_world]: 8280 pts | 19249 cells | mean map z +0.258 | sd 0.238
+[trajectory_executor-4] [INFO] [1792392027.059683251] [trajectory_executor]: path 30: 1 legs, 16.1 m, 4.9 s
+[exploration_manager-5] [INFO] [1792392027.293628700] [exploration_manager]:  413.4 s NAVIGATING: 105 frontiers, 16885 unknown, margin 47749.77694558728
+[trajectory_executor-4] [INFO] [1792392027.296942588] [trajectory_executor]: path 30: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792392027.614356643] [cloud_world]: 8270 pts | 19251 cells | mean map z +0.257 | sd 0.239
+[cloud_world-3] [INFO] [1792392030.103896939] [cloud_world]: 8283 pts | 19485 cells | mean map z +0.257 | sd 0.238
+[cloud_world-3] [INFO] [1792392032.758526842] [cloud_world]: 8241 pts | 19810 cells | mean map z +0.262 | sd 0.238
+[cloud_world-3] [INFO] [1792392035.140811407] [cloud_world]: 8365 pts | 19841 cells | mean map z +0.262 | sd 0.237
+[cloud_world-3] [INFO] [1792392037.463578569] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.261 | sd 0.236
+[cloud_world-3] [INFO] [1792392039.733609185] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.260 | sd 0.235
+[cloud_world-3] [INFO] [1792392041.954404666] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.260 | sd 0.235
+[cloud_world-3] [INFO] [1792392044.123059803] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.258 | sd 0.235
+[cloud_world-3] [INFO] [1792392046.341629240] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.257 | sd 0.235
+[exploration_manager-5] [INFO] [1792392047.069070892] [exploration_manager]:  432.9 s NAVIGATING: 105 frontiers, 16885 unknown, margin 42145.44797952827
+[cloud_world-3] [INFO] [1792392048.614346637] [cloud_world]: 8282 pts | 19841 cells | mean map z +0.256 | sd 0.235
+[cloud_world-3] [INFO] [1792392051.075140648] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.257 | sd 0.235
+[cloud_world-3] [INFO] [1792392053.525741764] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.258 | sd 0.235
+[cloud_world-3] [INFO] [1792392055.823289265] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.259 | sd 0.235
+[cloud_world-3] [INFO] [1792392058.505711015] [cloud_world]: 8280 pts | 19841 cells | mean map z +0.259 | sd 0.235
+[cloud_world-3] [INFO] [1792392060.527538952] [cloud_world]: 8293 pts | 19843 cells | mean map z +0.256 | sd 0.235
+[cloud_world-3] [INFO] [1792392062.881578082] [cloud_world]: 8290 pts | 19848 cells | mean map z +0.256 | sd 0.235
+[cloud_world-3] [INFO] [1792392065.270215122] [cloud_world]: 8280 pts | 19848 cells | mean map z +0.256 | sd 0.235
+[trajectory_executor-4] [INFO] [1792392067.056733052] [trajectory_executor]: path 31: 1 legs, 16.1 m, 4.9 s
+[exploration_manager-5] [INFO] [1792392067.339153978] [exploration_manager]:  452.7 s NAVIGATING: 109 frontiers, 16293 unknown, margin 35579.4650576959
+[trajectory_executor-4] [INFO] [1792392067.343491835] [trajectory_executor]: path 31: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792392067.729005438] [cloud_world]: 8298 pts | 19849 cells | mean map z +0.256 | sd 0.236
+[cloud_world-3] [INFO] [1792392070.779079944] [cloud_world]: 8297 pts | 20132 cells | mean map z +0.257 | sd 0.234
+[cloud_world-3] [INFO] [1792392073.614673391] [cloud_world]: 8338 pts | 20435 cells | mean map z +0.262 | sd 0.235
+[cloud_world-3] [INFO] [1792392075.881757835] [cloud_world]: 8285 pts | 20451 cells | mean map z +0.262 | sd 0.234
+[cloud_world-3] [INFO] [1792392078.275983200] [cloud_world]: 8287 pts | 20451 cells | mean map z +0.260 | sd 0.233
+[cloud_world-3] [INFO] [1792392080.571514590] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.259 | sd 0.233
+[cloud_world-3] [INFO] [1792392082.815291343] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.259 | sd 0.233
+[cloud_world-3] [INFO] [1792392085.060795758] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.259 | sd 0.233
+[cloud_world-3] [INFO] [1792392087.339747998] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.260 | sd 0.233
+[exploration_manager-5] [INFO] [1792392087.801243112] [exploration_manager]:  473.0 s NAVIGATING: 110 frontiers, 16286 unknown, margin 29778.496846347705
+[cloud_world-3] [INFO] [1792392089.645690904] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.260 | sd 0.233
+[cloud_world-3] [INFO] [1792392091.944194701] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.261 | sd 0.233
+[cloud_world-3] [INFO] [1792392094.415150803] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.262 | sd 0.233
+[cloud_world-3] [INFO] [1792392096.775513494] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.262 | sd 0.234
+[cloud_world-3] [INFO] [1792392099.227009244] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.262 | sd 0.234
+[INFO] [rqt_reconfigure-7]: process has finished cleanly [pid 79017]
+[cloud_world-3] [INFO] [1792392101.475582794] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.262 | sd 0.233
+[cloud_world-3] [INFO] [1792392103.654226103] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.262 | sd 0.233
+[cloud_world-3] [INFO] [1792392105.796510903] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.262 | sd 0.233
+[cloud_world-3] [INFO] [1792392108.137361863] [cloud_world]: 8280 pts | 20451 cells | mean map z +0.261 | sd 0.233
+[trajectory_executor-4] [INFO] [1792392109.560364728] [trajectory_executor]: path 32: 1 legs, 16.1 m, 4.9 s
+[exploration_manager-5] [INFO] [1792392109.854742330] [exploration_manager]:  493.5 s NAVIGATING: 112 frontiers, 15683 unknown, margin 22959.139077151227
+[trajectory_executor-4] [INFO] [1792392109.858305598] [trajectory_executor]: path 32: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792392110.330702884] [cloud_world]: 8268 pts | 20451 cells | mean map z +0.261 | sd 0.234
+[cloud_world-3] [INFO] [1792392113.151574571] [cloud_world]: 8349 pts | 20723 cells | mean map z +0.258 | sd 0.232
+[cloud_world-3] [INFO] [1792392115.563739064] [cloud_world]: 8423 pts | 21022 cells | mean map z +0.259 | sd 0.233
+[cloud_world-3] [INFO] [1792392117.817710541] [cloud_world]: 8398 pts | 21041 cells | mean map z +0.256 | sd 0.230
+[cloud_world-3] [INFO] [1792392120.071450022] [cloud_world]: 8329 pts | 21045 cells | mean map z +0.256 | sd 0.230
+[cloud_world-3] [INFO] [1792392122.444696550] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.256 | sd 0.230
+[cloud_world-3] [INFO] [1792392124.647420611] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.257 | sd 0.230
+[cloud_world-3] [INFO] [1792392126.898184431] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.257 | sd 0.230
+[exploration_manager-5] [INFO] [1792392127.155682413] [exploration_manager]:  515.5 s NAVIGATING: 112 frontiers, 15683 unknown, margin 16668.7563079898
+[cloud_world-3] [INFO] [1792392129.314039786] [cloud_world]: 8294 pts | 21045 cells | mean map z +0.256 | sd 0.230
+[cloud_world-3] [INFO] [1792392131.782141004] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.257 | sd 0.230
+[cloud_world-3] [INFO] [1792392134.026870801] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.258 | sd 0.230
+[cloud_world-3] [INFO] [1792392136.195240702] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.260 | sd 0.230
+[cloud_world-3] [INFO] [1792392138.621050722] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.259 | sd 0.230
+[cloud_world-3] [INFO] [1792392140.822477362] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.257 | sd 0.230
+[cloud_world-3] [INFO] [1792392143.136994626] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.257 | sd 0.230
+[cloud_world-3] [INFO] [1792392145.493125875] [cloud_world]: 8280 pts | 21045 cells | mean map z +0.258 | sd 0.230
+[trajectory_executor-4] [INFO] [1792392146.234770603] [trajectory_executor]: path 33: 1 legs, 16.1 m, 4.9 s
+[exploration_manager-5] [INFO] [1792392146.514987272] [exploration_manager]:  532.8 s NAVIGATING: 117 frontiers, 15089 unknown, margin 10879.51234655633
+[trajectory_executor-4] [INFO] [1792392146.527309383] [trajectory_executor]: path 33: 1 legs, 16.0 m, 4.9 s
+[cloud_world-3] [INFO] [1792392147.855159761] [cloud_world]: 8227 pts | 21072 cells | mean map z +0.259 | sd 0.230
+[cloud_world-3] [INFO] [1792392150.249043526] [cloud_world]: 8350 pts | 21467 cells | mean map z +0.254 | sd 0.239
+[cloud_world-3] [INFO] [1792392152.715321997] [cloud_world]: 8374 pts | 21637 cells | mean map z +0.261 | sd 0.228
+[cloud_world-3] [INFO] [1792392154.945403697] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.262 | sd 0.228
+[cloud_world-3] [INFO] [1792392157.188619015] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.263 | sd 0.228
+[cloud_world-3] [INFO] [1792392159.577431914] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.264 | sd 0.228
+[cloud_world-3] [INFO] [1792392161.873867408] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.264 | sd 0.228
+[cloud_world-3] [INFO] [1792392164.143146732] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.264 | sd 0.228
+[exploration_manager-5] [INFO] [1792392165.654553097] [exploration_manager]:  552.2 s NAVIGATING: 117 frontiers, 15089 unknown, margin 5326.755511462026
+[cloud_world-3] [INFO] [1792392166.449660078] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.264 | sd 0.228
+[cloud_world-3] [INFO] [1792392168.861322433] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.264 | sd 0.228
+[cloud_world-3] [INFO] [1792392171.317410347] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.263 | sd 0.228
+[cloud_world-3] [INFO] [1792392174.013988952] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.262 | sd 0.228
+[cloud_world-3] [INFO] [1792392176.569642299] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.262 | sd 0.227
+[cloud_world-3] [INFO] [1792392178.764275055] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.262 | sd 0.227
+[cloud_world-3] [INFO] [1792392181.002756886] [cloud_world]: 8281 pts | 21646 cells | mean map z +0.260 | sd 0.227
+[cloud_world-3] [INFO] [1792392183.273174939] [cloud_world]: 8280 pts | 21646 cells | mean map z +0.260 | sd 0.227
+[trajectory_executor-4] [INFO] [1792392183.501102881] [trajectory_executor]: path 34: 6 legs, 180.9 m, 46.0 s
+[exploration_manager-5] [INFO] [1792392183.828781578] [exploration_manager]:  571.3 s RETURNING: 118 frontiers, 14488 unknown, margin -1121.5474804950063
+[trajectory_executor-4] [INFO] [1792392183.834044897] [trajectory_executor]: path 34: 6 legs, 180.7 m, 45.9 s
+[cloud_world-3] [INFO] [1792392185.660436374] [cloud_world]: 8202 pts | 21652 cells | mean map z +0.259 | sd 0.229
+[cloud_world-3] [INFO] [1792392188.081230342] [cloud_world]: 8309 pts | 21667 cells | mean map z +0.261 | sd 0.228
+[cloud_world-3] [INFO] [1792392190.532546563] [cloud_world]: 8302 pts | 21771 cells | mean map z +0.262 | sd 0.228
+[cloud_world-3] [INFO] [1792392192.883115593] [cloud_world]: 8295 pts | 21886 cells | mean map z +0.265 | sd 0.227
+[cloud_world-3] [INFO] [1792392195.135745479] [cloud_world]: 8291 pts | 22033 cells | mean map z +0.267 | sd 0.227
+[cloud_world-3] [INFO] [1792392197.484735133] [cloud_world]: 8240 pts | 22074 cells | mean map z +0.268 | sd 0.229
+[exploration_manager-5] [INFO] [1792392199.683743234] [exploration_manager]:  589.5 s RETURNING: 118 frontiers, 14488 unknown, margin -6327.779237439128
+[cloud_world-3] [INFO] [1792392199.878091337] [cloud_world]: 8153 pts | 22083 cells | mean map z +0.268 | sd 0.227
+[cloud_world-3] [INFO] [1792392202.434190704] [cloud_world]: 8327 pts | 22152 cells | mean map z +0.267 | sd 0.226
+[cloud_world-3] [INFO] [1792392204.937722693] [cloud_world]: 8233 pts | 22179 cells | mean map z +0.269 | sd 0.228
+[exploration_manager-5] [INFO] [1792392206.519109143] [exploration_manager]:  605.3 s RETURNING: 114 frontiers, 14055 unknown, margin -10313.810819446566
+[cloud_world-3] [INFO] [1792392207.280584779] [cloud_world]: 8331 pts | 22297 cells | mean map z +0.270 | sd 0.226
+[cloud_world-3] [INFO] [1792392209.747170336] [cloud_world]: 8397 pts | 22484 cells | mean map z +0.269 | sd 0.225
+[cloud_world-3] [INFO] [1792392212.266737363] [cloud_world]: 8253 pts | 22527 cells | mean map z +0.271 | sd 0.226
+[cloud_world-3] [INFO] [1792392214.578049249] [cloud_world]: 8309 pts | 22530 cells | mean map z +0.272 | sd 0.231
+[cloud_world-3] [INFO] [1792392216.972653234] [cloud_world]: 8341 pts | 22535 cells | mean map z +0.271 | sd 0.232
+[cloud_world-3] [INFO] [1792392219.514361170] [cloud_world]: 8132 pts | 22560 cells | mean map z +0.272 | sd 0.225
+[cloud_world-3] [INFO] [1792392221.765790101] [cloud_world]: 8506 pts | 22657 cells | mean map z +0.275 | sd 0.210
+[cloud_world-3] [INFO] [1792392224.061478905] [cloud_world]: 8405 pts | 22709 cells | mean map z +0.274 | sd 0.224
+[exploration_manager-5] [INFO] [1792392225.942992160] [exploration_manager]:  616.1 s RETURNING: 111 frontiers, 13638 unknown, margin -6989.965639926275
+[cloud_world-3] [INFO] [1792392226.268504851] [cloud_world]: 8437 pts | 22734 cells | mean map z +0.273 | sd 0.225
+[cloud_world-3] [INFO] [1792392228.766154596] [cloud_world]: 8504 pts | 22734 cells | mean map z +0.274 | sd 0.224
+[cloud_world-3] [INFO] [1792392231.165236759] [cloud_world]: 8455 pts | 22734 cells | mean map z +0.276 | sd 0.223
+[cloud_world-3] [INFO] [1792392233.477161590] [cloud_world]: 8457 pts | 22734 cells | mean map z +0.276 | sd 0.224
+[cloud_world-3] [INFO] [1792392235.722619250] [cloud_world]: 8459 pts | 22734 cells | mean map z +0.276 | sd 0.224
+[cloud_world-3] [INFO] [1792392237.925077351] [cloud_world]: 8445 pts | 22734 cells | mean map z +0.276 | sd 0.224
+[cloud_world-3] [INFO] [1792392240.114024234] [cloud_world]: 8450 pts | 22734 cells | mean map z +0.277 | sd 0.224
+[cloud_world-3] [INFO] [1792392242.451848109] [cloud_world]: 8452 pts | 22734 cells | mean map z +0.276 | sd 0.224
+[exploration_manager-5] [INFO] [1792392244.524586218] [exploration_manager]:  631.6 s RETURNING: 108 frontiers, 13406 unknown, margin -6704.866056402548
+[cloud_world-3] [INFO] [1792392244.641681977] [cloud_world]: 8464 pts | 22734 cells | mean map z +0.275 | sd 0.225
+[cloud_world-3] [INFO] [1792392247.152803539] [cloud_world]: 8461 pts | 22734 cells | mean map z +0.274 | sd 0.226
+[cloud_world-3] [INFO] [1792392249.587797693] [cloud_world]: 8462 pts | 22734 cells | mean map z +0.274 | sd 0.227
+[cloud_world-3] [INFO] [1792392251.929628482] [cloud_world]: 8463 pts | 22734 cells | mean map z +0.274 | sd 0.229
+[cloud_world-3] [INFO] [1792392254.256718211] [cloud_world]: 8448 pts | 22734 cells | mean map z +0.275 | sd 0.228
+[cloud_world-3] [INFO] [1792392256.551754706] [cloud_world]: 8453 pts | 22734 cells | mean map z +0.275 | sd 0.228
+[cloud_world-3] [INFO] [1792392258.838711075] [cloud_world]: 8445 pts | 22734 cells | mean map z +0.276 | sd 0.228
+[cloud_world-3] [INFO] [1792392261.046369867] [cloud_world]: 8440 pts | 22734 cells | mean map z +0.276 | sd 0.228
+[cloud_world-3] [INFO] [1792392263.364823410] [cloud_world]: 8447 pts | 22734 cells | mean map z +0.277 | sd 0.228
+[exploration_manager-5] [INFO] [1792392264.858621403] [exploration_manager]:  650.2 s COMMIT_LANDING: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[cloud_world-3] [INFO] [1792392265.767415956] [cloud_world]: 8523 pts | 22734 cells | mean map z +0.279 | sd 0.229
+[cloud_world-3] [INFO] [1792392268.064224208] [cloud_world]: 9241 pts | 22734 cells | mean map z +0.281 | sd 0.226
+[cloud_world-3] [INFO] [1792392270.507132312] [cloud_world]: 9859 pts | 22734 cells | mean map z +0.282 | sd 0.224
+[exploration_manager-5] [INFO] [1792392270.864731413] [exploration_manager]:  675.9 s COMMIT_LANDING: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[cloud_world-3] [INFO] [1792392273.684690666] [cloud_world]: 10427 pts | 22734 cells | mean map z +0.289 | sd 0.228
+[exploration_manager-5] [INFO] [1792392276.688207182] [exploration_manager]:  681.8 s COMMIT_LANDING: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392282.648975037] [exploration_manager]:  687.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392288.558255443] [exploration_manager]:  693.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392293.591861276] [exploration_manager]:  698.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392298.672059649] [exploration_manager]:  703.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392304.579459542] [exploration_manager]:  709.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392309.591577274] [exploration_manager]:  714.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392314.646241934] [exploration_manager]:  719.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392320.572498715] [exploration_manager]:  725.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392325.576963243] [exploration_manager]:  730.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392330.589656418] [exploration_manager]:  735.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392336.535144961] [exploration_manager]:  741.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
+[exploration_manager-5] [INFO] [1792392341.570753665] [exploration_manager]:  746.8 s LANDED: 108 frontiers, 13400 unknown, margin -12062.900359934472
