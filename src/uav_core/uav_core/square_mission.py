@@ -1,3 +1,18 @@
+"""Square waypoint mission at fixed altitude, then auto-land.
+
+Kept as the simplest geometric trajectory (spec 3.3). Arrival uses
+separate horizontal and vertical radii (spec S4), because PX4 holds
+altitude much tighter than position and a single 3D distance would
+stall on a small vertical error with the aircraft right above the
+waypoint.
+
+Every message is stamped with px4_now(), the local clock plus the
+offset to the PX4 clock measured at each timesync_status. The rejected
+alternative, copying the raw 1 Hz timesync timestamp, stamps ten
+setpoints in a row with the same value and makes PX4 treat the stream
+as stale, the bug measured on offboard_demo on 17 Oct 2026.
+"""
+
 import math
 
 import rclpy
@@ -59,7 +74,7 @@ class SquareMission(Node):
             VehicleLocalPosition, '/fmu/out/vehicle_local_position_v1',
             self.on_position, qos)
 
-        self.px4_timestamp = 0
+        self.px4_offset_us = None
         self.position = None
         self.armed = False
         self.offboard = False
@@ -69,7 +84,16 @@ class SquareMission(Node):
         self.timer = self.create_timer(0.1, self.on_timer)
 
     def on_timesync(self, msg):
-        self.px4_timestamp = msg.timestamp
+        # timesync_status only arrives at 1 Hz: store the offset to the
+        # PX4 clock and extrapolate with the local clock in between.
+        local_us = self.get_clock().now().nanoseconds // 1000
+        self.px4_offset_us = msg.timestamp - local_us
+
+    def px4_now(self):
+        if self.px4_offset_us is None:
+            return 0
+        return int(self.get_clock().now().nanoseconds // 1000
+                   + self.px4_offset_us)
 
     def on_status(self, msg):
         self.armed = (msg.arming_state == 2)
@@ -85,7 +109,7 @@ class SquareMission(Node):
         msg.acceleration = False
         msg.attitude = False
         msg.body_rate = False
-        msg.timestamp = self.px4_timestamp
+        msg.timestamp = self.px4_now()
         self.offboard_pub.publish(msg)
 
     def publish_setpoint(self, x, y, z):
@@ -96,7 +120,7 @@ class SquareMission(Node):
         msg.jerk = [float('nan')] * 3
         msg.yaw = 0.0
         msg.yawspeed = float('nan')
-        msg.timestamp = self.px4_timestamp
+        msg.timestamp = self.px4_now()
         self.setpoint_pub.publish(msg)
 
     def send_command(self, command, param1=0.0, param2=0.0):
@@ -109,7 +133,7 @@ class SquareMission(Node):
         msg.source_system = 1
         msg.source_component = 1
         msg.from_external = True
-        msg.timestamp = self.px4_timestamp
+        msg.timestamp = self.px4_now()
         self.command_pub.publish(msg)
 
     def reached(self, target):
