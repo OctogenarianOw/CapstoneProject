@@ -165,18 +165,35 @@ def line_of_sight(traversable, a, b, step=0.25):
     return bool(traversable[ii, jj].all())
 
 
-def simplify(cells, traversable):
-    """Keep a vertex only where the straight segment past it is blocked."""
+def simplify(cells, traversable, step=0.25):
+    """
+    Keep a vertex only where the straight segment past it is blocked.
+
+    Greedy: from each kept vertex, jump to the farthest later point in
+    line of sight. All the lines of sight from a vertex are tested in
+    one vectorised pass, each segment sampled exactly as line_of_sight
+    samples it (its own count, shorter ones padded with their end
+    point), so the result is that of testing them one by one. The one by
+    one loop made one numpy call per point and up to quadratic calls per
+    path: 2.0 s for the 225 paths of one cycle late in the 190 m flight
+    of 19 Oct (experiments/2026-10-19_big_area).
+    """
     if len(cells) <= 2:
         return list(cells)
+    pts = np.asarray(cells, dtype=np.float64)
     out = [cells[0]]
     k = 0
-    while k < len(cells) - 1:
-        far = k + 1
-        for m in range(len(cells) - 1, k, -1):
-            if line_of_sight(traversable, cells[k], cells[m]):
-                far = m
-                break
+    last = len(cells) - 1
+    while k < last:
+        delta = pts[k + 1:] - pts[k]
+        n = np.maximum(1, np.ceil(np.hypot(delta[:, 0], delta[:, 1])
+                                  / step)).astype(int)
+        t = np.minimum(np.arange(int(n.max()) + 1)[None, :] / n[:, None],
+                       1.0)
+        ii = np.floor(pts[k, 0] + delta[:, 0, None] * t + 0.5).astype(int)
+        jj = np.floor(pts[k, 1] + delta[:, 1, None] * t + 0.5).astype(int)
+        visible = np.flatnonzero(traversable[ii, jj].all(axis=1))
+        far = k + 1 + (int(visible[-1]) if visible.size else 0)
         out.append(cells[far])
         k = far
     return out

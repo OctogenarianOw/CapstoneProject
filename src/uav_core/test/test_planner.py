@@ -12,8 +12,8 @@ import math
 import numpy as np
 import pytest
 from uav_core.observation import OBSERVED, UNKNOWN
-from uav_core.planner import (distance_field, line_of_sight,
-                              nearest_traversable, plan_path,
+from uav_core.planner import (distance_field, extract_path, line_of_sight,
+                              nearest_traversable, plan_path, simplify,
                               traversable_mask)
 
 RES = 1.0
@@ -94,6 +94,38 @@ def test_traversability_follows_altitude_margin_and_inflation():
     assert not free[10, 10] and not free[12, 12] and free[13, 10]
     assert free[3, 3]
     assert not free[18, 18] and not free[16, 16] and free[15, 18]
+
+
+def loop_reference(cells, traversable):
+    """Return the previous one-by-one simplification, the reference."""
+    if len(cells) <= 2:
+        return list(cells)
+    out, k = [cells[0]], 0
+    while k < len(cells) - 1:
+        far = k + 1
+        for m in range(len(cells) - 1, k, -1):
+            if line_of_sight(traversable, cells[k], cells[m]):
+                far = m
+                break
+        out.append(cells[far])
+        k = far
+    return out
+
+
+def test_vectorised_simplify_matches_the_loop_on_random_fields():
+    """Same vertices as the one-by-one loop on 100 random obstacle maps."""
+    rng = np.random.default_rng(3)
+    checked = 0
+    for _ in range(100):
+        free = rng.random((60, 60)) > rng.uniform(0.0, 0.35)
+        free[0, :] = free[:, 0] = True
+        dist = distance_field(free, [(0, 0)])
+        goals = np.argwhere(np.isfinite(dist))
+        goal = tuple(goals[rng.integers(len(goals))])
+        raw = extract_path(dist, goal)[::-1]
+        assert simplify(raw, free) == loop_reference(raw, free)
+        checked += 1
+    assert checked == 100
 
 
 def test_start_inside_inflation_moves_to_nearest_free_cell():
