@@ -8,6 +8,8 @@
 # Same guarantees as the campaign scripts of 19 Oct: cleanup before launch
 # (spec trap 14) including the "gz sim" server, refusal to run on a
 # surviving server or on a reused world, git HEAD in OUT_DIR/setup.txt.
+# PX4 starts from the airframe defaults every time: its saved parameters
+# are removed first (see below), so no mission depends on those before.
 # Launch from a command line that contains none of the cleanup patterns,
 # and pass no command containing one either (rviz2, "gz sim", bin/px4...):
 # they sit in this script's own arguments, and its first cleanup would
@@ -42,9 +44,22 @@ if pgrep -f 'gz[ ]sim|bin/px4' > /dev/null; then
 fi
 trap cleanup EXIT
 
+# PX4 SITL saves what it learns in flight to rootfs/parameters.bson, the
+# magnetometer offsets estimated in flight among them, and loads it at
+# the next start. Over the flights of 19 Oct these offsets drifted from
+# [0.053, -0.029, 0.212] to [0.081, 0.035, 0.286] G; the heading
+# innovation test then failed ("heading estimate invalid", EKF yaw
+# 113 deg for 90) and PX4 never became ready. Every parameter in that
+# file was learned or detected, none was set on purpose (the airframe
+# 4030_gz_x500_slz holds those), so removing it gives each mission the
+# same start, whatever was flown before.
+PX4_ROOTFS=~/PX4-Autopilot/build/px4_sitl_default/rootfs
+rm -f "$PX4_ROOTFS/parameters.bson" "$PX4_ROOTFS/parameters_backup.bson"
+
 {
   echo "date $(date -Is)"
   echo "duration $DURATION"
+  echo "px4 parameters reset to the airframe defaults"
   for spec in "$@"; do echo "run $spec"; done
   echo "git $(git -C "$WS" rev-parse HEAD)"
   git -C "$WS" status --short
