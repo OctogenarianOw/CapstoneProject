@@ -152,6 +152,28 @@ def test_inscribed_radius_and_touchdown_point():
     assert radius == 3.5
 
 
+def test_touchdown_of_a_large_zone_stays_put_when_the_zone_grows():
+    """
+    Beyond the cap, a known zone keeps the touchdown nearest its last one.
+
+    A 60 x 60 free square has hundreds of cells past the 12-cell cap.
+    Grown to 80 x 80, its farthest cell moves 10 cells along each axis;
+    the touchdown of a known zone does not, a new zone takes the centre.
+    """
+    refused = np.ones((100, 100), dtype=bool)
+    refused[10:70, 10:70] = False
+    cells = np.argwhere(~refused)
+    radius, first = inscribed_radius(cells, refused_distance(refused), 1.0)
+    assert first == (39, 39) and radius == 11.5
+    refused[10:90, 10:90] = False
+    grown = np.argwhere(~refused)
+    _, fresh = inscribed_radius(grown, refused_distance(refused), 1.0)
+    _, kept = inscribed_radius(grown, refused_distance(refused), 1.0,
+                               previous_ij=first)
+    assert fresh == (49, 49)
+    assert kept == first
+
+
 def pairwise_reference(zone_cells, refused, resolution, window=12):
     """Return the previous pairwise implementation, the reference."""
     i0, j0 = zone_cells.min(axis=0) - window

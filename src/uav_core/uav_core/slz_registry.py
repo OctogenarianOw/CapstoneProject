@@ -40,7 +40,9 @@ Choices:
     appears once its cells are well observed, so counting from detection
     drops exactly the passes that built the evidence
   - the touchdown point is the zone cell farthest from refused ground,
-    not the centroid, which can fall outside a concave zone
+    not the centroid, which can fall outside a concave zone; once set,
+    it moves only if another cell is clearer by more than one cell
+    (inscribed_radius), since passes are counted around it
   - the take-off point enters as a provisional CONFIRMED zone (S15.3,
     policy a): the aircraft took off from it, so it can land there
 """
@@ -106,18 +108,38 @@ def refused_distance(refused):
     return distance_transform_edt(~refused)
 
 
-def inscribed_radius(zone_cells, distance, resolution, window=12):
+def inscribed_radius(zone_cells, distance, resolution, window=12,
+                     previous_ij=None):
     """
     Largest distance from a zone cell centre to refused ground.
 
-    distance : refused_distance() of the cycle
+    distance    : refused_distance() of the cycle
+    previous_ij : touchdown cell of the zone at the previous cycle
     Returns the radius in metres, from the cell centre to the nearest
-    edge of a refused cell, capped at window cells, and the cell where
-    the uncapped distance is largest, the touchdown point.
+    edge of a refused cell, capped at window cells, and the touchdown
+    cell. A new zone takes the cell where the uncapped distance is
+    largest. A known zone keeps the cell nearest its previous touchdown
+    among those within one cell of the best capped distance: in a large
+    flat zone hundreds of cells lie beyond the cap, and the farthest one
+    moves with every change of the map edge. On 19 Oct the touchdown of
+    such a zone moved by up to 64 m between two cycles on W1 and 160 m
+    on the 190 m flight, its pass count with it, and the zone fell back
+    to CANDIDATE 2 to 5 times per mission; in the W1 campaign each of
+    the 31 C1 missions that broke I1 did so within 3 s of such a
+    demotion (experiments/2026-10-19_campaign_w1). One cell is the
+    resolution the distance is known to. Rejected: making the pass
+    count of a matched zone never decrease, which would change what I4
+    means rather than remove the cause.
     """
-    d = distance[zone_cells[:, 0], zone_cells[:, 1]]
-    best = int(np.argmax(d))
-    radius = min(float(d[best]), float(window))
+    raw = distance[zone_cells[:, 0], zone_cells[:, 1]]
+    capped = np.minimum(raw, float(window))
+    best = int(np.argmax(raw))
+    if previous_ij is not None:
+        near = np.flatnonzero(capped >= capped[best] - 1.0)
+        d2 = ((zone_cells[near, 0] - previous_ij[0]) ** 2
+              + (zone_cells[near, 1] - previous_ij[1]) ** 2)
+        best = int(near[np.argmin(d2)])
+    radius = float(capped.max())
     return max(0.0, (radius - 0.5) * resolution), tuple(
         int(v) for v in zone_cells[best])
 
@@ -264,7 +286,7 @@ class SlzRegistry:
         z.centroid_ne = (float(centres[:, 0].mean()),
                          float(centres[:, 1].mean()))
         z.inscribed_radius_m, z.touchdown_ij = inscribed_radius(
-            cells, distance, resolution)
+            cells, distance, resolution, previous_ij=z.touchdown_ij)
         z.touchdown_ne = (origin_ne[0] + (z.touchdown_ij[0] + 0.5)
                           * resolution,
                           origin_ne[1] + (z.touchdown_ij[1] + 0.5)
