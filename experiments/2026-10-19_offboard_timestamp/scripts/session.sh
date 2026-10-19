@@ -25,9 +25,17 @@ cleanup() {
   pkill -9 -f uav_core/lib; pkill -9 -f energy_probe.py
   pkill -9 -f MicroXRCEAgent; pkill -9 -f bin/px4
   pkill -9 -f gz-sim-server; pkill -9 -f 'ruby.*gz'; pkill -9 -f 'sleep 100000'
+  # The Gazebo server shows as "gz sim ..." and matched none of the above:
+  # one survived and was reused by later runs. The bracket keeps this
+  # pattern from matching the command line of the caller.
+  pkill -9 -f 'gz[ ]sim'
 }
 cleanup
 sleep 3
+if pgrep -f 'gz[ ]sim|bin/px4' > /dev/null; then
+  echo "a Gazebo or PX4 process survived the cleanup, refusing to start"
+  exit 1
+fi
 trap cleanup EXIT
 
 {
@@ -53,7 +61,11 @@ for i in $(seq 1 300); do
   sleep 1
 done
 grep -q "Ready for takeoff" "$OUT/px4.log" || { echo "PX4 not ready"; tail -30 "$OUT/px4.log"; exit 1; }
-echo "[$(date +%T)] PX4 ready after ${i}s"
+if grep -q "gazebo already running" "$OUT/px4.log"; then
+  echo "PX4 reused a running Gazebo world, refusing a non fresh run"
+  exit 1
+fi
+echo "[$(date +%T)] PX4 ready after ${i}s, fresh Gazebo world"
 
 MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1 &
 sleep 8

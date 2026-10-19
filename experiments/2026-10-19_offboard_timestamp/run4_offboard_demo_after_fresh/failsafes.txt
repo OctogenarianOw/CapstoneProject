@@ -1,0 +1,11 @@
+== run4_offboard_demo_after_fresh
+px4.log failsafe activations       1
+  before node start                0
+  while node publishing            0   (220.0 s wall)
+  after node stop                  1
+    after stop, line 82: INFO  [tone_alarm] arming warning | INFO  [commander] Takeoff detected | WARN  [failsafe] Failsafe activated | INFO  [tone_alarm] battery warning (fast)
+state.csv armed span               232.6 s
+  offboard exits while armed       1   (lower bound)
+  first at 218.4 s, last at 218.4 s after arming
+  nav_state after last exit        5
+  armed samples in offboard        93.9 %

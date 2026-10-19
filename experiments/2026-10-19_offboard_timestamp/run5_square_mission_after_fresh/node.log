@@ -1,0 +1,25 @@
+[INFO] [1792379182.120304774] [square_mission]: Offboard active, starting mission
+[INFO] [1792379189.203670033] [square_mission]: Waypoint 1 reached
+[INFO] [1792379191.603635473] [square_mission]: Waypoint 2 reached
+[INFO] [1792379193.803603822] [square_mission]: Waypoint 3 reached
+[INFO] [1792379196.003545639] [square_mission]: Waypoint 4 reached
+[INFO] [1792379198.303583337] [square_mission]: Mission complete, landing
+Traceback (most recent call last):
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/uav_core/square_mission", line 33, in <module>
+    sys.exit(load_entry_point('uav-core==0.0.0', 'console_scripts', 'square_mission')())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/python3.12/site-packages/uav_core/square_mission.py", line 181, in main
+    rclpy.spin(node)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/__init__.py", line 247, in spin
+    executor.spin_once()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 926, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 907, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 877, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 785, in _wait_for_ready_callbacks
+    raise ExternalShutdownException()
+rclpy.executors.ExternalShutdownException

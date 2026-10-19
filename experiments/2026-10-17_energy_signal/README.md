@@ -86,3 +86,10 @@ the budget is rotor mechanical energy, converted to electrical energy by
 one declared constant efficiency of 0.70 to 0.75, with a sensitivity
 analysis. The campaign moved from ~/ros2_ws/experiments into the
 droneAfter repository on the same day, data and scripts unchanged.
+
+Update, 19 Oct 2026. run3_hover_hold_8m, the source of the 285.9 W hover
+reference, ran on a Gazebo server left over from run2: its px4.log reads
+"gazebo already running world: validation". The cleanup patterns of
+hover_energy_check.sh miss the server, whose command line is "gz sim ...".
+run1 and run2 started a fresh world. The fresh-world sessions of
+2026-10-19 check the hover power again.
