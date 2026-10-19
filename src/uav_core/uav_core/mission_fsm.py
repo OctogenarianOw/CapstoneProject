@@ -34,6 +34,13 @@ never silent. Under a C1 policy it also triggers an immediate return.
 A frontier whose cells are still frontier after the visit is
 blacklisted (S11): more than half of its cells unchanged at the first
 cycle after arrival.
+
+Every command stays pending until the executor state confirms it (not
+idle after a take-off, echoing the path id, landing), and is resent
+every command_retry_s otherwise. Measured need: in the budget demo of
+19 Oct the manager had a valid pose before the executor, which refused
+the take-off ("no pose yet"); sent once, the command was lost and the
+aircraft never left the ground.
 """
 
 from dataclasses import dataclass, field
@@ -66,6 +73,7 @@ class MissionParams:
     dwell_s: float = 2.0
     bootstrap_cycles: int = 2
     energy_stale_s: float = 2.0
+    command_retry_s: float = 2.0
 
 
 @dataclass
@@ -113,6 +121,7 @@ class MissionFSM:
     check_visit: object = None  # frontier cells to check after arrival
     cycles_in_state: int = 0
     return_attempts: int = 0
+    pending: object = None      # (Action, time sent), until confirmed
     violations: int = 0
     last_margin: float = None
     last_decision: object = None
@@ -146,9 +155,42 @@ class MissionFSM:
         return (inp.ex_state == EX_HOLDING and not inp.ex_arrived
                 and inp.ex_path_id == self.path_id)
 
-    # ------------------------------------------------------------ step
+    @staticmethod
+    def _confirmed(action, inp):
+        """Tell whether the executor state shows the action was taken."""
+        if action.kind == 'takeoff':
+            return inp.ex_state not in (None, EX_IDLE)
+        if action.kind == 'land':
+            return inp.ex_state in (EX_LANDING, EX_LANDED)
+        if action.kind == 'path':
+            return inp.ex_path_id == action.path_id
+        return True
+
+    def _retry(self, inp):
+        """Resend the pending command if the executor ignored it."""
+        if self.pending is None:
+            return []
+        action, sent = self.pending
+        if self._confirmed(action, inp):
+            self.pending = None
+            return []
+        if inp.t - sent < self.params.command_retry_s:
+            return []
+        self.pending = (action, inp.t)
+        self._event(inp.t, 'retry', action=action.kind,
+                    path_id=action.path_id)
+        return [action]
+
     def step(self, inp):
         """Advance the mission by one step, return the actions."""
+        actions = self._step(inp)
+        if actions:
+            self.pending = (actions[-1], inp.t)
+            return actions
+        return self._retry(inp)
+
+    def _step(self, inp):
+        """Advance the state machine, return new actions."""
         if self.state == INIT:
             ready = (inp.pose_valid and inp.ex_state == EX_IDLE
                      and inp.energy_age_s < self.params.energy_stale_s)

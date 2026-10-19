@@ -67,6 +67,27 @@ def test_takeoff_waits_for_energy_and_registers_home():
     assert home.provisional and home.touchdown_ne == (0, 0)
 
 
+def test_ignored_takeoff_is_resent():
+    """The executor stays idle (no pose yet): takeoff resent after 2 s."""
+    m = fsm()
+    assert [a.kind for a in m.step(inputs(0.0, EX_IDLE))] == ['takeoff']
+    assert m.step(inputs(1.0, EX_IDLE)) == []
+    assert [a.kind for a in m.step(inputs(2.5, EX_IDLE))] == ['takeoff']
+    assert m.step(inputs(3.0, EX_HOLDING)) == []
+    assert m.state == BOOTSTRAP
+
+
+def test_unacknowledged_path_is_resent_with_its_id():
+    """The executor never echoes path 1: the same path is resent."""
+    m = fsm()
+    first = airborne(m)[0]
+    assert m.step(inputs(4.0, path_id=0)) == []
+    again = m.step(inputs(5.5, path_id=0))
+    assert len(again) == 1 and again[0].path_id == first.path_id
+    assert again[0].waypoints_ne == first.waypoints_ne
+    assert m.step(inputs(8.0, path_id=1)) == []
+
+
 def test_first_selection_sends_a_path_and_navigates():
     """After the bootstrap cycles, a frontier path is sent."""
     m = fsm()
