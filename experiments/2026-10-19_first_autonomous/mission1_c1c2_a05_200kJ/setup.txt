@@ -1,0 +1,16 @@
+date 2026-10-19T16:22:35+11:00
+duration 480
+run map=ros2 run uav_core cloud_world
+run mon=ros2 run uav_core energy_monitor --ros-args -p capacity_j:=200000.0
+run exe=ros2 run uav_core trajectory_executor
+run mgr=ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=0.5 -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-19_first_autonomous/mission1_c1c2_a05_200kJ/missions
+run watch=sleep 20; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 4; touch stop
+git 6cb770e7c3adc2ba6471a9acfeacd1ca264ffbc8
+ M src/uav_core/launch/exploration.launch.py
+ M src/uav_core/uav_core/exploration_manager.py
+ M src/uav_core/uav_core/viz.py
+ M src/uav_core/uav_core/world_model.py
+?? experiments/2026-10-19_first_autonomous/
+?? experiments/analyse_mission.py
+?? src/uav_core/test/test_mission_fsm.py
+?? src/uav_core/uav_core/mission_fsm.py

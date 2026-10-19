@@ -1,0 +1,29 @@
+[INFO] [1792386834.731287986] [exploration_manager]: mode explore, policy c1_c2, alpha 0.5, log in /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_first_autonomous/mission1_c1c2_a05_200kJ/missions/2026-10-19_16-13-54
+Traceback (most recent call last):
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/uav_core/exploration_manager", line 33, in <module>
+    sys.exit(load_entry_point('uav-core==0.0.0', 'console_scripts', 'exploration_manager')())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/python3.12/site-packages/uav_core/exploration_manager.py", line 338, in main
+    rclpy.spin(node)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/__init__.py", line 247, in spin
+    executor.spin_once()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 926, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 918, in _spin_once_impl
+    raise handler.exception()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/task.py", line 286, in _execute_coroutine_step
+    result = coro.send(None)
+             ^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 592, in handler
+    await call_coroutine()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 454, in _execute
+    await await_or_execute(tmr.callback)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 115, in await_or_execute
+    return callback(*args)
+           ^^^^^^^^^^^^^^^
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/python3.12/site-packages/uav_core/exploration_manager.py", line 234, in on_timer
+    self.act(self.fsm.step(self.inputs()))
+  File "/home/doria/ros2_ws/droneAfter/install/uav_core/lib/python3.12/site-packages/uav_core/exploration_manager.py", line 225, in act
+    self.log.event(self.now_s(), 'action', kind=a.kind,
+TypeError: MissionLog.event() got multiple values for argument 'kind'
+[ros2run]: Process exited with failure 1

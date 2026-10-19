@@ -58,6 +58,9 @@ class WorldParams:
 class WorldModel:
     """Snapshot of one cycle."""
 
+    elevation: np.ndarray
+    variance: np.ndarray
+    count: np.ndarray
     state: np.ndarray
     layers: dict
     landing: dict            # output of slz_detection.detect
@@ -125,7 +128,8 @@ def build_world(elevation, variance, count, resolution, origin_ne,
                                  blacklist=blacklist, now=now,
                                  sensor_radius_m=params.sensor_radius_m)
     lap('frontiers')
-    return WorldModel(state=state, layers=layers, landing=landing,
+    return WorldModel(elevation=elevation, variance=variance, count=count,
+                      state=state, layers=layers, landing=landing,
                       traversable=traversable, vehicle_ij=start,
                       dist_m=dist, catalogue=catalogue,
                       explore_mask=explore, timings_ms=timings)

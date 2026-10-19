@@ -18,7 +18,12 @@ Layers, each its own topic so it can be toggled:
                      OccupancyGrid layout (rows along y), no reshuffle
   /viz/landing       MarkerArray: candidate landing cells
   /viz/frontiers     MarkerArray: frontier cells, viewpoints, gain and
-                     path distance; kept in cyan, rejected in grey
+                     path distance; kept in cyan, rejected in grey,
+                     refused by C1 in red, chosen viewpoint in blue
+  /viz/zones         MarkerArray: registry zones, candidate yellow,
+                     confirmed green, retired grey, take-off point blue
+  /viz/path          Path: the path sent to the executor
+  /viz/status        Marker: mission state, energy and I1 margin
   /viz/vehicle       Marker at the aircraft
 Every MarkerArray starts with DELETEALL, so nothing stale survives a
 cycle in which a frontier disappeared.
@@ -26,8 +31,8 @@ cycle in which a frontier disappeared.
 
 import array
 
-from geometry_msgs.msg import Point
-from nav_msgs.msg import OccupancyGrid
+from geometry_msgs.msg import Point, PoseStamped
+from nav_msgs.msg import OccupancyGrid, Path
 import numpy as np
 from sensor_msgs.msg import PointField
 from sensor_msgs_py import point_cloud2
@@ -40,6 +45,9 @@ GREY = (0.55, 0.55, 0.55, 0.8)
 GREEN = (0.1, 0.8, 0.2, 0.7)
 BLUE = (0.2, 0.4, 1.0, 1.0)
 WHITE = (1.0, 1.0, 1.0, 1.0)
+RED = (0.9, 0.2, 0.2, 0.9)
+YELLOW = (0.95, 0.8, 0.1, 0.8)
+ZONE_COLOURS = {'CANDIDATE': YELLOW, 'CONFIRMED': GREEN, 'RETIRED': GREY}
 
 
 def _color(rgba):
@@ -120,14 +128,21 @@ def landing_markers(candidate, elevation, resolution, origin_ne, header):
 
 
 def frontier_markers(catalogue, elevation, resolution, origin_ne, header,
-                     altitude_m, chosen=None):
-    """Frontier pieces, their viewpoints at cruise altitude and labels."""
+                     altitude_m, chosen=None, inadmissible=()):
+    """
+    Frontier pieces, their viewpoints at cruise altitude and labels.
+
+    Kept pieces are cyan, rejected ones grey, those C1 refused red, the
+    viewpoint chosen blue.
+    """
     out = MarkerArray()
     out.markers.append(_delete_all(header))
     mid = 0
     for f in catalogue.frontiers + catalogue.rejected:
         kept = not f.rejected
         rgba = CYAN if kept else GREY
+        if kept and f.viewpoint_ij in inadmissible:
+            rgba = RED
         heights = np.nan_to_num(-elevation[f.cells[:, 0], f.cells[:, 1]])
         out.markers.append(_cells_marker(header, 'frontier_cells', mid,
                                          map(tuple, f.cells), resolution,
@@ -155,6 +170,63 @@ def frontier_markers(catalogue, elevation, resolution, origin_ne, header,
             out.markers.append(label)
         mid += 1
     return out
+
+
+def zone_markers(zones, header):
+    """Registry zones: a disc per zone at its touchdown point, by state."""
+    out = MarkerArray()
+    out.markers.append(_delete_all(header))
+    for z in zones:
+        if z.touchdown_ne is None:
+            continue
+        disc = Marker()
+        disc.header, disc.ns, disc.id = header, 'zones', z.zone_id
+        disc.type = Marker.CYLINDER
+        radius = max(0.75, min(z.inscribed_radius_m, 5.0))
+        disc.scale.x = disc.scale.y = 2.0 * radius
+        disc.scale.z = 0.3
+        disc.color = _color(BLUE if z.provisional
+                            else ZONE_COLOURS.get(z.state, GREY))
+        disc.pose.position = ned_to_enu(*z.touchdown_ne, -0.5)
+        disc.pose.orientation.w = 1.0
+        out.markers.append(disc)
+        label = Marker()
+        label.header, label.ns, label.id = header, 'zone_labels', z.zone_id
+        label.type = Marker.TEXT_VIEW_FACING
+        label.scale.z = 1.2
+        label.color = _color(WHITE)
+        label.pose.position = ned_to_enu(*z.touchdown_ne, -2.5)
+        label.pose.orientation.w = 1.0
+        kind = 'home' if z.provisional else z.state.lower()
+        label.text = f'Z{z.zone_id} {kind} p{z.n_passes}'
+        out.markers.append(label)
+    return out
+
+
+def path_message(waypoints_ne, altitude_m, header):
+    """Return the planned path as a nav_msgs/Path in ENU."""
+    path = Path()
+    path.header = header
+    for n, e in waypoints_ne:
+        pose = PoseStamped()
+        pose.header = header
+        pose.pose.position = ned_to_enu(n, e, -altitude_m)
+        pose.pose.orientation.w = 1.0
+        path.poses.append(pose)
+    return path
+
+
+def status_marker(lines, north, east, header):
+    """Return a text panel above the aircraft."""
+    m = Marker()
+    m.header, m.ns, m.id = header, 'status', 0
+    m.type = Marker.TEXT_VIEW_FACING
+    m.scale.z = 1.4
+    m.color = _color(WHITE)
+    m.pose.position = ned_to_enu(north, east, -16.0)
+    m.pose.orientation.w = 1.0
+    m.text = '\n'.join(lines)
+    return m
 
 
 def vehicle_marker(north, east, down, header):
