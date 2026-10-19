@@ -272,7 +272,13 @@ class ExplorationManager(Node):
         self.record(t, world, elev, var, cnt, res, origin)
 
     def display(self, world, elev, res, origin):
-        """Publish every display layer."""
+        """
+        Publish the display layers somebody subscribes to.
+
+        A layer unchecked in RViz has no subscriber, and is not built:
+        on the 200 m grid each cloud holds up to 40 000 cells, and
+        building all of them every cycle competed with the decisions.
+        """
         h = self.header()
         d = self.fsm.last_decision
         refused = set()
@@ -282,18 +288,28 @@ class ExplorationManager(Node):
         chosen = (self.fsm.target.frontier.viewpoint_ij
                   if self.fsm.target is not None
                   and self.fsm.state == 'NAVIGATING' else None)
-        self.pub_cloud.publish(viz.elevation_cloud(elev, world.state, res,
-                                                   origin, h))
-        self.pub_class.publish(viz.classification_cloud(
-            elev, world.state, world.layers, world.landing, res, origin, h))
+
+        def wanted(pub):
+            return pub.get_subscription_count() > 0
+
+        if wanted(self.pub_cloud):
+            self.pub_cloud.publish(viz.elevation_cloud(
+                elev, world.state, res, origin, h))
+        if wanted(self.pub_class):
+            self.pub_class.publish(viz.classification_cloud(
+                elev, world.state, world.layers, world.landing, res, origin,
+                h))
         for pub, layer, threshold in self.pub_scores.values():
-            pub.publish(viz.score_cloud(
-                world.layers[layer], threshold, world.layers['valid'], elev,
-                res, origin, h))
-        self.pub_grid.publish(viz.observation_grid(world.state, res, origin,
-                                                   h))
-        self.pub_landing.publish(viz.landing_markers(
-            world.landing['candidate'], elev, res, origin, h))
+            if wanted(pub):
+                pub.publish(viz.score_cloud(
+                    world.layers[layer], threshold, world.layers['valid'],
+                    elev, res, origin, h))
+        if wanted(self.pub_grid):
+            self.pub_grid.publish(viz.observation_grid(world.state, res,
+                                                       origin, h))
+        if wanted(self.pub_landing):
+            self.pub_landing.publish(viz.landing_markers(
+                world.landing['candidate'], elev, res, origin, h))
         self.pub_frontiers.publish(viz.frontier_markers(
             world.catalogue, elev, res, origin, h,
             self.world_params.altitude_m, chosen, refused))

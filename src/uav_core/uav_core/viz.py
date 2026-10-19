@@ -48,7 +48,6 @@ from geometry_msgs.msg import Point, PoseStamped
 from nav_msgs.msg import OccupancyGrid, Path
 import numpy as np
 from sensor_msgs.msg import PointCloud2, PointField
-from sensor_msgs_py import point_cloud2
 from std_msgs.msg import ColorRGBA
 from uav_core.observation import OBSERVED, SPARSE, UNKNOWN
 from visualization_msgs.msg import Marker, MarkerArray
@@ -77,13 +76,23 @@ def elevation_cloud(elevation, state, resolution, origin_ne, header):
     i, j = np.nonzero(state != UNKNOWN)
     north = origin_ne[0] + (i + 0.5) * resolution
     east = origin_ne[1] + (j + 0.5) * resolution
-    height = -elevation[i, j].astype(np.float32)
-    fields = [PointField(name=n, offset=4 * k, datatype=PointField.FLOAT32,
-                         count=1)
-              for k, n in enumerate(('x', 'y', 'z', 'intensity'))]
-    points = np.stack([east, north, height, height], axis=1).astype(
-        np.float32)
-    return point_cloud2.create_cloud(header, fields, points.tolist())
+    height = np.nan_to_num(-elevation[i, j]).astype(np.float32)
+    cloud = np.zeros(len(i), dtype=[('x', '<f4'), ('y', '<f4'),
+                                    ('z', '<f4'), ('intensity', '<f4')])
+    cloud['x'], cloud['y'] = east, north
+    cloud['z'], cloud['intensity'] = height, height
+    msg = PointCloud2()
+    msg.header = header
+    msg.height, msg.width = 1, len(i)
+    msg.fields = [PointField(name=n, offset=4 * k,
+                             datatype=PointField.FLOAT32, count=1)
+                  for k, n in enumerate(('x', 'y', 'z', 'intensity'))]
+    msg.is_bigendian = False
+    msg.point_step = 16
+    msg.row_step = 16 * len(i)
+    msg.is_dense = True
+    msg.data = cloud.tobytes()
+    return msg
 
 
 CLASS_RGB = {
