@@ -1,0 +1,8 @@
+date 2026-10-19T17:04:05+11:00
+duration 900
+run display=bash open_display.sh
+run simwin=bash open_sim_window.sh
+run ros=sleep 25; ros2 launch uav_core exploration.launch.py bridge:=false rviz:=false capacity_j:=20000.0 log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-19_live_demo/missions
+git 6502a231dbf6079ab08b0b482d709aab0198a1a5
+ M experiments/sim_session.sh
+?? experiments/2026-10-19_live_demo/
