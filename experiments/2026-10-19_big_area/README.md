@@ -15,7 +15,7 @@ counted in `px4.log`.
 | flight | git | I1 violations | min margin | coverage | energy left | end |
 |---|---|---|---|---|---|---|
 | `c1c2_200kJ_190m` | 39922ae | **7** | **-12.06 kJ** | 62.9 % | 2.8 kJ | I1 violated at 571.7 s, return, landed on the take-off zone 0.6 m from its point |
-| `c1c2_200kJ_190m_fixed` | db7dc55 | 0 | +1.74 kJ | 95.6 % | 21.2 kJ | S9.5 abort at 583.1 s, return, landed on the take-off zone 0.4 m from its point |
+| `c1c2_200kJ_190m_fixed` | db7dc55 | 0 | +1.74 kJ | 95.6 % | 21.2 kJ | abort at 583.1 s on a registry artefact (see correction below), return, landed on the take-off zone 0.4 m from its point |
 
 The first flight is a failure of C1, not of a baseline: the aircraft
 entered a state where the confirmed zone it relied on was out of reach
@@ -87,9 +87,21 @@ Four commits, each measured offline on snapshots of the first flight
 The fixed flight is the measurement of the four together, so its
 outcome is not attributable to one of them. What it shows: with the
 decision latency back near one second, the same configuration keeps I1
-over a 739 s mission. It also produced an S9.5 sequence on its own: at
-583.1 s a confirmed zone was retired, the target was no longer
-admissible, the manager aborted and returned with a +2.3 kJ margin.
+over a 739 s mission.
+
+**Correction, same evening.** A first version of this README, and the
+message of commit 5c0e08f, called the abort at 583.1 s an S9.5 sequence
+produced on its own. It was not a zone invalidated by observation. Zone
+2, 30 250 m2, left CONFIRMED with reason "1 pass, 2 needed" and was
+confirmed again 1 s later: its touchdown point had moved from
+(-13.5, -59.5) to (-10.5, -60.5), then to (30.5, 57.5), and its passes,
+counted around that point, from 2 to 1 and back. The manager reacted
+correctly to the registry it had (target no longer admissible without
+zone 2, return with a +2.3 kJ margin), but the trigger was an artefact
+of the registry: in a large flat zone the farthest cell from refused
+ground moves with every change of the map edge, 24 moves over 5 m in
+this flight, up to 160 m. Measured and treated in
+`2026-10-19_registry_flicker`.
 
 ## What is still open
 
