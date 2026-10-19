@@ -28,7 +28,9 @@ import sys
 import numpy as np
 
 P_HOVER_W = 285.636     # energy_model.CALIBRATION_2026_10_19
-LINE = re.compile(r'\[trajectory_executor[^\]]*\] \[INFO\] \[([0-9.]+)\] '
+# ros.log of a launch prefixes each line with the process name, exe.log
+# of sim_session.sh does not.
+LINE = re.compile(r'\[INFO\] \[([0-9.]+)\] '
                   r'\[trajectory_executor\]: path (\d+): (\d+) legs, '
                   r'([0-9.]+) m, ([0-9.]+) s')
 
