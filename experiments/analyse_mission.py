@@ -72,8 +72,10 @@ for c in cycles:
 
 margins = np.array([num(c['i1_margin_j']) for c in cycles
                     if c['i1_margin_j'] is not None])
-area = 60 * 60
 last = cycles[-1]
+# Every cell of the exploration area is either seen or unknown, so their
+# sum is the area in cells whatever area_half_m the mission flew.
+area = last['seen_in_area'] + last['unknown_in_area']
 print('\n== result')
 print(f'duration {cycles[-1]["t"] - cycles[0]["t"]:.0f} s, coverage '
       f'{100 * last["seen_in_area"] / area:.1f} % of the area, unknown '
