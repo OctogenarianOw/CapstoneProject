@@ -1,0 +1,8 @@
+date 2026-10-19T16:03:25+11:00
+duration 130
+run map=ros2 run uav_core cloud_world
+run mgr=ros2 run uav_core exploration_manager --ros-args -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-19_live_map/survey_observe_gate2m/missions
+run fly=sleep 12; ros2 run uav_core survey_mission
+git eb49d1e115edec2b04d54e679876d642d8a8685d
+ M src/uav_core/uav_core/cloud_world.py
+?? experiments/2026-10-19_live_map/survey_observe_gate2m/

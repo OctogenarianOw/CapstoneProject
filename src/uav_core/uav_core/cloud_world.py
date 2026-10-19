@@ -29,6 +29,12 @@ noise: that was the supervisor's explicit request.
 
 Pose is the latest message received, not interpolated to the scan time:
 a candidate cause for the one-cell offset P5, untested.
+
+No fusion below min_fuse_height_m, 2 m above the EKF origin. From the
+ground, at 0.37 m, the lidar sees the terrain at grazing angles: on the
+survey of 19 Oct the landing cells fell from 1620 to 1304 once the
+aircraft had landed, and the 165 cells seen before take-off came from
+the same geometry (experiments/2026-10-19_live_map).
 """
 
 import os
@@ -75,6 +81,8 @@ class CloudWorld(Node):
         self.declare_parameter('sigma_angular_rad', 0.009)
         self.declare_parameter('map_path', '/tmp/elevation_map.npz')
         self.declare_parameter('map_publish_period_s', 1.0)
+        self.declare_parameter('min_fuse_height_m', 2.0)
+        self.min_fuse_height = self.get_parameter('min_fuse_height_m').value
 
         self.min_range = self.get_parameter('min_range').value
         self.max_range = self.get_parameter('max_usable_range').value
@@ -150,6 +158,8 @@ class CloudWorld(Node):
     def on_cloud(self, msg):
         """Transform one scan to NED and fuse it into the grid."""
         if self.position is None or self.attitude is None:
+            return
+        if -self.position[2] < self.min_fuse_height:
             return
 
         pts = self.extract_xyz(msg)

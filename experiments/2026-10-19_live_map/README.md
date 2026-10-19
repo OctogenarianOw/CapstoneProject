@@ -38,6 +38,38 @@ grazing angles, and degrades the map; the 165 cells seen on the ground
 before take-off have the same origin. Candidate fix, as its own
 measured change: fuse only above a minimum height.
 
+## survey_observe_gate2m: no fusion below 2 m (cloud_world)
+
+Same session after two commits: landing detection restricted to OBSERVED
+cells (2026-10-19_observed_gate), then no fusion below 2 m above the EKF
+origin. The OBSERVED gate can only remove landing cells, so the change
+below is that of the height gate. Summary in
+survey_observe_gate2m/summary.txt: nothing is fused on the ground, the
+take-off circle appears at 27 s, the survey ends with the same 13 cells
+of the ramp shadow, and the landing cells stay at 4914 after landing
+instead of falling. Cycle median 22 ms, max 39 ms.
+
+Against the truth (gate2m_eval.txt: snapshots converted with
+snapshot_to_map.py, evaluated with 2026-10-19_observed_gate/measure.py,
+footprint 1.5 m, OBSERVED gate):
+
+| map | recall | accepted | benign | severe |
+|---|---|---|---|---|
+| no height gate, in the air after the survey (66 s) | 43.5 % | 1047 | 27 | 16 |
+| no height gate, landed (119 s) | 31.1 % | 762 | 28 | 16 |
+| 2 m gate, in the air after the survey (63 s) | 94.6 % | 2233 | 49 | 1 |
+| 2 m gate, landed (127 s) | 94.8 % | 2236 | 46 | 2 |
+| v6, reference | 94.2 % | 2219 | 46 | 0 |
+
+Fusion from the ground was wrecking the map; with the gate the flight is
+back to the level of v6. One flight per configuration, and the first
+flight was much worse than v6 for reasons not measured here.
+
+The gated flight holds 1 to 2 severe false accepts where v6 held 0: the
+zero of v6 was one observation on one flight, as S8 warned, and the S8
+barrier of zero over three flights is not met in general. Where these
+cells lie belongs with P5.
+
     cd ~/ros2_ws/droneAfter/experiments
     bash sim_session.sh 2026-10-19_live_map/survey_observe 130 \
       map="ros2 run uav_core cloud_world" \
