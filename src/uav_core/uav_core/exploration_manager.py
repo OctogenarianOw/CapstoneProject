@@ -27,6 +27,13 @@ only the winner (S14). alpha can be changed in flight (S14), with the
 slider of rqt_reconfigure (declared range 0 to 1, step 0.05) or:
     ros2 param set /exploration_manager alpha 0.25
 Each change is logged as an event, so a figure can mark it.
+
+Fault injection, for experiments only: inject_delay_s (default 0) holds
+each decision that long after its inputs are read, as a slower computer
+would. The first 190 m flight of 19 Oct broke I1 under C1 when its
+decision step grew to 21.5 s; this parameter reproduces that latency on
+W1, in a few minutes, on purpose and with a known value. It is logged
+in config.json, so no mission can carry it unnoticed.
 """
 
 from dataclasses import asdict
@@ -93,6 +100,9 @@ class ExplorationManager(Node):
         self.declare_parameter('mode', 'observe')
         self.declare_parameter('log_root', '~/ros2_ws/droneAfter/missions')
         self.declare_parameter('repo', '~/ros2_ws/droneAfter')
+        self.declare_parameter('inject_delay_s', 0.0)
+        self.inject_delay_s = float(
+            self.get_parameter('inject_delay_s').value)
         self.world_params = WorldParams(**{
             n: self.get_parameter(n).value for n in world_defaults})
         mission = {n: self.get_parameter(n).value for n in MISSION_PARAMS}
@@ -112,6 +122,7 @@ class ExplorationManager(Node):
         repo = os.path.expanduser(self.get_parameter('repo').value)
         self.log = MissionLog(self.get_parameter('log_root').value,
                               {'mode': self.mode,
+                               'inject_delay_s': self.inject_delay_s,
                                **asdict(self.world_params), **mission,
                                'energy_model': asdict(self.model)},
                               repo=repo)
@@ -277,7 +288,10 @@ class ExplorationManager(Node):
                             self.world_params, self.blacklist, t)
         t2 = time.perf_counter()
         if self.mode == 'explore':
-            self.act(self.fsm.step(self.inputs(world, res, origin)))
+            inp = self.inputs(world, res, origin)
+            if self.inject_delay_s > 0.0:
+                time.sleep(self.inject_delay_s)
+            self.act(self.fsm.step(inp))
         t3 = time.perf_counter()
         self.display(world, elev, res, origin)
         t4 = time.perf_counter()

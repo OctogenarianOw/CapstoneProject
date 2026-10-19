@@ -59,6 +59,9 @@ def test_manager_acts_and_runs_a_map_cycle(tmp_path):
         # The whole cycle is timed, decision and display included.
         timings = json.loads(cycles[0])['timings_ms']
         assert {'decode', 'decision', 'display'} <= set(timings)
+        # No injected latency unless asked, and the value is logged.
+        config = json.loads((run / 'config.json').read_text())
+        assert config['inject_delay_s'] == 0.0
         node.destroy_node()
     finally:
         rclpy.shutdown()
