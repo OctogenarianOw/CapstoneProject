@@ -10,8 +10,12 @@ authority (spec 3.3).
 C1, energy feasibility invariant (S13): a frontier f is admissible iff
     E_go(vehicle -> f) + E_return(f -> slz*) + E_land <= B - R
   E_go     energy of the simplified path to the viewpoint, plus a hover
-           of dwell_s for stabilisation and computation at arrival (the
-           t_overhead of S10: small, but omitting it is optimistic)
+           of overhead_s for everything the plan does not contain: the
+           computation before the path leaves, the settling, the wait
+           and computation at the frontier before the next command (the
+           t_overhead of S10). The mission state machine sets it from
+           the decision latency it measures (mission_fsm.overhead_s);
+           a constant here broke I1 on 19 Oct when the latency grew
   E_return energy of the simplified path from the viewpoint to the
            nearest CONFIRMED zone, the take-off point included (S15.3)
   E_land   calibrated descent and touchdown, energy_model.e_land_j
@@ -67,7 +71,7 @@ class PolicyParams:
     policy: str = 'c1_c2'
     alpha: float = 0.5
     reserve_j: float = 0.0
-    dwell_s: float = 2.0
+    overhead_s: float = 2.0     # hover charged per visit, see E_go
 
 
 @dataclass
@@ -172,7 +176,7 @@ def evaluate(world, rfield, model, b_current, params, resolution,
                               f.viewpoint_ij, resolution, origin_ne)
         if c.plan_go is not None:
             c.e_go = (model.path_energy(c.plan_go.waypoints_ne)
-                      + model.hover_energy(params.dwell_s))
+                      + model.hover_energy(params.overhead_s))
             c.plan_return, c.zone_id = plan_return(
                 world.traversable, rfield, f.viewpoint_ij, resolution,
                 origin_ne)

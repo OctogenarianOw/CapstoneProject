@@ -117,6 +117,43 @@ def test_arrival_selects_the_next_frontier():
     assert m.state == NAVIGATING and actions[0].path_id == 2
 
 
+def test_visit_latency_is_measured_from_decision_to_next_command():
+    """U = next command published - decision - planned flight time."""
+    m = fsm()
+    airborne(m)
+    planned = MODEL.path_time(m.target.plan_go.waypoints_ne)
+    vp = m.target.frontier.viewpoint_ne
+    t_arrival = 3.0 + planned + 10.0
+    m.step(inputs(t_arrival, w=world(vp), vehicle=vp, path_id=1,
+                  arrived=True))
+    m.sent(t_arrival + 0.5)
+    assert np.isclose(m.overruns[-1], 10.5)
+    assert np.isclose(m.overhead_s(), 10.5)
+
+
+def test_overhead_is_window_max_plus_rise_floored_at_dwell():
+    """Largest of the last 5, plus the largest rise, at least dwell_s."""
+    m = fsm()
+    assert m.overhead_s() == 2.0
+    m.overruns = [1.0, 4.0, 3.0]
+    assert m.overhead_s() == 7.0
+    m.overruns = [50.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    assert m.overhead_s() == 2.0
+
+
+def test_measured_latency_is_charged_by_c1():
+    """A target that fits with 2 s of hover does not with 60 s measured."""
+    m = fsm()
+    airborne(m)
+    fits = m.target.e_total + 0.1 * CAP + 5000.0
+    assert m.step(inputs(4, w=world(), remaining=fits)) == []
+    assert m.state == NAVIGATING
+    m.overruns = [60.0]
+    m.step(inputs(5, w=world(), remaining=fits))
+    assert m.state in (RETURNING, COMMIT_LANDING)
+    assert m.end_reason == 'invariant'
+
+
 def test_budget_too_small_returns_home_and_lands():
     """
     None admissible while I1 holds: end 'budget', commit, land.

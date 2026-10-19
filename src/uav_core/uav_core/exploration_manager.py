@@ -69,7 +69,7 @@ LATCHED = QoSProfile(reliability=ReliabilityPolicy.RELIABLE,
                      durability=DurabilityPolicy.TRANSIENT_LOCAL,
                      history=HistoryPolicy.KEEP_LAST, depth=1)
 MISSION_PARAMS = ('policy', 'alpha', 'reserve_fraction',
-                  'return_threshold_fraction', 'dwell_s',
+                  'return_threshold_fraction', 'dwell_s', 'latency_window',
                   'bootstrap_cycles', 'energy_stale_s')
 
 
@@ -389,6 +389,7 @@ class ExplorationManager(Node):
             'consumed_j': e.consumed_j if e else None,
             'i1_margin_j': self.fsm.last_margin,
             'violations': self.fsm.violations,
+            'overhead_s': self.fsm.overhead_s(),
             'unknown_in_area': cat.unknown_in_area,
             'seen_in_area': int(((world.state != 0)
                                  & world.explore_mask).sum()),

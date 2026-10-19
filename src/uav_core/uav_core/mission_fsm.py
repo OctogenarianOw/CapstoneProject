@@ -31,6 +31,24 @@ Invariant I1 is evaluated every cycle from the vehicle position and
 logged with its margin; a negative margin is a violation, counted and
 never silent. Under a C1 policy it also triggers an immediate return.
 
+Hover charged by C1 per visit (overhead_s), measured, not assumed. For
+each frontier path flown to arrival the machine measures
+    U = publish of the next command - decision - planned flight time
+the time C1 had to cover beyond the plan: the computation before the
+path left, the settling, the wait and computation at the frontier. The
+next decisions charge the largest U of the last latency_window visits
+plus the largest rise between two consecutive ones, floored at dwell_s.
+Why: with dwell_s alone, 2 s, the first 190 m flight of 19 Oct spent
+301 s of hover C1 never counted, as its decision step grew to 21.5 s,
+and broke I1 7 times. A window maximum alone lags a latency that grows
+with the map (worst shortfall 3.58 kJ on that flight); adding the
+recent rise bounds the growth too (1.64 kJ), and on a fast machine
+stays at dwell_s. Rejected: a fixed larger dwell_s, which would charge
+a slow machine's latency to every mission. No bound known at decision
+time can cover an unbounded jump, so a visit whose U exceeds what was
+charged is logged as an 'overrun' event: the assumption is measured in
+every mission, and the reserve R covers the shortfall.
+
 A frontier whose cells are still frontier after the visit is
 blacklisted (S11): more than half of its cells unchanged at the first
 cycle after arrival.
@@ -75,7 +93,8 @@ class MissionParams:
     alpha: float = 0.5
     reserve_fraction: float = 0.10       # R, fraction of the capacity
     return_threshold_fraction: float = 0.30   # B1 baseline only
-    dwell_s: float = 2.0
+    dwell_s: float = 2.0                 # floor of the hover per visit
+    latency_window: int = 5              # visits behind overhead_s
     bootstrap_cycles: int = 2
     energy_stale_s: float = 2.0
     command_retry_s: float = 2.0
@@ -131,6 +150,9 @@ class MissionFSM:
     last_margin: float = None
     last_decision: object = None
     history: list = field(default_factory=list)
+    overruns: list = field(default_factory=list)   # measured U, seconds
+    decided: tuple = None       # (t, planned s, charged s) of the target
+    visit: tuple = None         # decided, once arrived, until next command
 
     # ------------------------------------------------------------ helpers
     def _event(self, t, kind, **data):
@@ -195,9 +217,31 @@ class MissionFSM:
         return self._retry(inp)
 
     def sent(self, t):
-        """Restamp the pending command with the time it was published."""
+        """
+        Record that the node published the step's commands at time t.
+
+        Restamps the pending command, and closes the measurement of the
+        visit just completed: the first command after an arrival ends
+        the time C1 had to cover beyond the planned flight.
+        """
         if self.pending is not None:
             self.pending = (self.pending[0], t)
+        if self.visit is not None:
+            t_decision, planned, charged = self.visit
+            u = t - t_decision - planned
+            self.overruns.append(u)
+            self._event(t, 'overrun' if u > charged else 'latency', u_s=u,
+                        charged_s=charged, planned_s=planned,
+                        next_charge_s=self.overhead_s())
+            self.visit = None
+
+    def overhead_s(self):
+        """Hover C1 charges per visit, from the latency measured so far."""
+        w = self.overruns[-self.params.latency_window:]
+        if not w:
+            return self.params.dwell_s
+        rise = max([0.0] + [b - a for a, b in zip(w[:-1], w[1:])])
+        return max(self.params.dwell_s, max(w) + rise)
 
     def _step(self, inp):
         """Advance the state machine, return new actions."""
@@ -301,9 +345,9 @@ class MissionFSM:
                 self._event(inp.t, 'blacklist', viewpoint_ne=vp,
                             hold_s=hold, unchanged=float(still.mean()))
             self.check_visit = None
+        charged = self.overhead_s()
         p = PolicyParams(policy=self.params.policy, alpha=self.params.alpha,
-                         reserve_j=self._reserve(inp),
-                         dwell_s=self.params.dwell_s)
+                         reserve_j=self._reserve(inp), overhead_s=charged)
         d = evaluate(w, rfield, self.model, inp.remaining_j, p,
                      inp.resolution, inp.origin_ne)
         self.last_decision = d
@@ -312,6 +356,9 @@ class MissionFSM:
                                else 'budget')
             return self._return(inp, rfield, d.reason)
         self.target = d.best
+        self.decided = (inp.t,
+                        self.model.path_time(d.best.plan_go.waypoints_ne),
+                        charged)
         self._go(inp.t, NAVIGATING,
                  f'frontier at {d.best.frontier.viewpoint_ne}')
         return [self._path(d.best.plan_go.waypoints_ne)]
@@ -321,6 +368,7 @@ class MissionFSM:
             f = self.target.frontier
             if self._arrived(inp):
                 self.check_visit = (f.viewpoint_ne, f.cells)
+                self.visit = self.decided
                 self._go(inp.t, SELECTING, 'arrived')
             else:
                 hold = self.blacklist.record_failure(f.viewpoint_ne, inp.t)
@@ -348,7 +396,7 @@ class MissionFSM:
         if go is None or back is None:
             return False, math.inf
         need = (self.model.path_energy(go.waypoints_ne)
-                + self.model.hover_energy(self.params.dwell_s)
+                + self.model.hover_energy(self.overhead_s())
                 + self.model.path_energy(back.waypoints_ne)
                 + self.model.e_land_j)
         return need <= inp.remaining_j - self._reserve(inp), need
