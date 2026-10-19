@@ -13,6 +13,7 @@ from pathlib import Path
 
 import numpy as np
 import rclpy
+from rclpy.parameter import Parameter
 from std_msgs.msg import Header
 from uav_core.exploration_manager import ExplorationManager
 from uav_core.map_msg import grid_to_msg
@@ -39,12 +40,19 @@ def test_manager_acts_and_runs_a_map_cycle(tmp_path):
         node.vehicle = (0.0, 0.0, -8.0)
         node.pose_valid = True
         node.on_map(msg)
+        # alpha: declared range for the rqt_reconfigure slider, and a
+        # change reaches the state machine and the log.
+        rng = node.describe_parameter('alpha').floating_point_range[0]
+        assert (rng.from_value, rng.to_value) == (0.0, 1.0)
+        node.set_parameters([Parameter('alpha', value=0.25)])
+        assert node.fsm.params.alpha == 0.25
         node.log.close()
         run = Path(node.log.dir)
         events = [json.loads(line) for line in
                   (run / 'events.jsonl').read_text().splitlines()]
         kinds = [e['action'] for e in events if e['kind'] == 'action']
         assert kinds == ['takeoff', 'path', 'hold', 'land']
+        assert [e['value'] for e in events if e['kind'] == 'alpha'] == [0.25]
         cycles = (run / 'cycles.jsonl').read_text().splitlines()
         assert len(cycles) == 1
         assert json.loads(cycles[0])['unknown_in_area'] > 0

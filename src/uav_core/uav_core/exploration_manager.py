@@ -23,8 +23,10 @@ map: take-off, the executor's landing, the vehicle marker.
 
 Logged per cycle (S17): state, energy left, I1 margin, and every
 candidate with E_go, E_return, E_total, admissibility, G, M and U, not
-only the winner (S14). alpha can be changed in flight (S14):
+only the winner (S14). alpha can be changed in flight (S14), with the
+slider of rqt_reconfigure (declared range 0 to 1, step 0.05) or:
     ros2 param set /exploration_manager alpha 0.25
+Each change is logged as an event, so a figure can mark it.
 """
 
 from dataclasses import asdict
@@ -32,7 +34,8 @@ import os
 
 from nav_msgs.msg import OccupancyGrid, Path
 from px4_msgs.msg import VehicleLocalPosition
-from rcl_interfaces.msg import SetParametersResult
+from rcl_interfaces.msg import (FloatingPointRange, ParameterDescriptor,
+                                SetParametersResult)
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import (DurabilityPolicy, HistoryPolicy, QoSProfile,
@@ -72,7 +75,20 @@ class ExplorationManager(Node):
         for name, value in world_defaults.items():
             self.declare_parameter(name, value)
         for name in MISSION_PARAMS:
-            self.declare_parameter(name, mission_defaults[name])
+            if name == 'alpha':
+                # A declared range makes rqt_reconfigure show a slider.
+                self.declare_parameter(name, mission_defaults[name],
+                                       ParameterDescriptor(
+                                           description='C2 weight: 1 '
+                                           'information gain, 0 energy '
+                                           'margin',
+                                           floating_point_range=[
+                                               FloatingPointRange(
+                                                   from_value=0.0,
+                                                   to_value=1.0,
+                                                   step=0.05)]))
+            else:
+                self.declare_parameter(name, mission_defaults[name])
         self.declare_parameter('mode', 'observe')
         self.declare_parameter('log_root', '~/ros2_ws/droneAfter/missions')
         self.declare_parameter('repo', '~/ros2_ws/droneAfter')

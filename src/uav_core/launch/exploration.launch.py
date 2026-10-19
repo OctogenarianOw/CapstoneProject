@@ -37,6 +37,7 @@ def generate_launch_description():
         DeclareLaunchArgument('policy', default_value='c1_c2'),
         DeclareLaunchArgument('alpha', default_value='0.5'),
         DeclareLaunchArgument('rviz', default_value='true'),
+        DeclareLaunchArgument('slider', default_value='true'),
         DeclareLaunchArgument('bridge', default_value='true'),
         DeclareLaunchArgument('capacity_j', default_value='200000.0'),
         DeclareLaunchArgument('log_root',
@@ -70,4 +71,8 @@ def generate_launch_description():
              arguments=['-d', os.path.join(share, 'rviz',
                                            'exploration.rviz')],
              condition=IfCondition(LaunchConfiguration('rviz'))),
+        # Slider for alpha in flight: rqt_reconfigure shows one for any
+        # parameter declared with a range; pick exploration_manager.
+        Node(package='rqt_reconfigure', executable='rqt_reconfigure',
+             condition=IfCondition(LaunchConfiguration('slider'))),
     ])
