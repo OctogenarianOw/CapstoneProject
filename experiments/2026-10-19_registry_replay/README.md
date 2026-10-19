@@ -37,6 +37,18 @@ itself on OBSERVED (the variance gate S8 asks for), measured separately.
 After landing (from 78 s) small zones appear and retire: the map
 degradation from the ground noted in 2026-10-19_live_map.
 
+## Detection restricted to OBSERVED cells (2026-10-19_observed_gate)
+
+The default replay now uses world_model.detect_landing, the manager's
+detection, gated on OBSERVED cells (replay_survey.txt; the ungated run
+is kept as replay_survey_ungated.txt). Zone 6 shrinks from 672 to
+632 m2, the 40 cells short of OBSERVED leaving it, and its blocking
+criterion becomes "1 pass, 2 needed": the cell criterion now holds by
+construction. Confirmed zones: 5 in both runs, as the edge zones keep a
+single pass on this survey geometry.
+
     cd ~/ros2_ws/droneAfter
     python3 experiments/2026-10-19_registry_replay/replay.py \
       experiments/2026-10-19_live_map/survey_observe/missions/*
+    python3 experiments/2026-10-19_registry_replay/replay.py \
+      experiments/2026-10-19_live_map/survey_observe/missions/* --ungated

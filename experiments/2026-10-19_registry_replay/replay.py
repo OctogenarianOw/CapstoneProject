@@ -7,7 +7,11 @@ and the most recent map snapshot (maps/, every 10 s) run through the
 same detection as the manager. Passes are counted at 1 Hz, the map
 changes every 10 s. Prints the event timeline and the final registry.
 
-    python3 replay.py MISSION_DIR
+    python3 replay.py MISSION_DIR [--ungated]
+
+By default the detection is that of the manager, world_model.
+detect_landing, restricted to OBSERVED cells; --ungated runs the plain
+detection used before that gate, for comparison.
 """
 
 from collections import Counter
@@ -16,11 +20,13 @@ from pathlib import Path
 import sys
 
 import numpy as np
+from uav_core.observation import classify
 from uav_core.slz_detection import detect
 from uav_core.slz_registry import SlzRegistry
 from uav_core.terrain_analysis import analyse
-from uav_core.world_model import THRESHOLDS
+from uav_core.world_model import detect_landing, THRESHOLDS
 
+GATED = '--ungated' not in sys.argv
 run = Path(sys.argv[1])
 cycles = [json.loads(line) for line in (run / 'cycles.jsonl').open()]
 snaps = sorted((float(p.stem.split('_')[1]), p)
@@ -40,10 +46,15 @@ for c in cycles:
         m = np.load(current)
         origin = (float(m['origin_north']), float(m['origin_east']))
         res = float(m['resolution'])
-        landing = detect(analyse(m['elevation'], m['count'], res),
-                         m['elevation'], res, origin, footprint_m=1.5,
-                         **THRESHOLDS)
         var, cnt = m['variance'], m['count']
+        if GATED:
+            landing = detect_landing(analyse(m['elevation'], cnt, res),
+                                     m['elevation'], var,
+                                     classify(cnt, var), res, origin, 1.5)
+        else:
+            landing = detect(analyse(m['elevation'], cnt, res),
+                             m['elevation'], res, origin, footprint_m=1.5,
+                             **THRESHOLDS)
     events = reg.update(landing, var, cnt, res, origin,
                         c['vehicle_ned'][:2], t)
     for e in events:

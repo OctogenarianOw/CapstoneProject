@@ -8,7 +8,12 @@ no ROS, so a cycle can be replayed offline on any saved map.
 Order, each step reading only the steps before it:
   1. observation states (observation.py, S6)
   2. terrain layers, slope, roughness, step, validity (terrain_analysis)
-  3. candidate landing cells and zones (slz_detection, S8)
+  3. candidate landing cells and zones (slz_detection, S8), on OBSERVED
+     cells only: the variance gate S8 asks for, the link with I4. On map
+     v6 it changes nothing (recall 94.2 %, 0 severe, with or without);
+     it makes the registry criterion "every cell OBSERVED" hold by
+     construction instead of blocking zones on a border cell
+     (experiments/2026-10-19_observed_gate)
   4. traversable cells at cruise altitude (planner, S12, I3)
   5. path distance field from the vehicle (planner)
   6. frontier catalogue on that field (frontier_detection, S11)
@@ -27,7 +32,7 @@ import time
 import numpy as np
 
 from uav_core.frontier_detection import detect_frontiers
-from uav_core.observation import classify
+from uav_core.observation import classify, OBSERVED, VAR_MAX
 from uav_core.planner import (distance_field, nearest_traversable,
                               traversable_mask)
 from uav_core.slz_detection import detect
@@ -72,6 +77,15 @@ def area_mask(shape, resolution, origin_ne, half_m):
     return (np.abs(north) <= half_m) & (np.abs(east) <= half_m)
 
 
+def detect_landing(layers, elevation, variance, state, resolution,
+                   origin_ne, footprint_m):
+    """Landing detection restricted to OBSERVED cells."""
+    gated = np.where(state == OBSERVED, variance, np.inf)
+    return detect(layers, elevation, resolution, origin_ne,
+                  footprint_m=footprint_m, variance=gated,
+                  max_variance=VAR_MAX, **THRESHOLDS)
+
+
 def build_world(elevation, variance, count, resolution, origin_ne,
                 vehicle_ne, params, blacklist=None, now=0.0):
     """Run the perception chain on one map."""
@@ -87,8 +101,8 @@ def build_world(elevation, variance, count, resolution, origin_ne,
     state = classify(count, variance)
     layers = analyse(elevation, count, resolution)
     lap('analysis')
-    landing = detect(layers, elevation, resolution, origin_ne,
-                     footprint_m=params.footprint_m, **THRESHOLDS)
+    landing = detect_landing(layers, elevation, variance, state, resolution,
+                             origin_ne, params.footprint_m)
     lap('landing')
     traversable = traversable_mask(elevation, state, resolution,
                                    params.altitude_m,
