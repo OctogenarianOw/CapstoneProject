@@ -31,6 +31,7 @@ Each change is logged as an event, so a figure can mark it.
 
 from dataclasses import asdict
 import os
+import time
 
 from nav_msgs.msg import OccupancyGrid, Path
 from px4_msgs.msg import VehicleLocalPosition
@@ -259,16 +260,30 @@ class ExplorationManager(Node):
             self.act(self.fsm.step(self.inputs()))
 
     def on_map(self, msg):
-        """Run one decision cycle on a new map."""
+        """
+        Run one decision cycle on a new map.
+
+        The whole cycle is timed into the log, not only the world model:
+        in the first 190 m flight of 19 Oct the logged time, world model
+        alone, had a median of 179 ms while decisions took up to 18.7 s.
+        """
         if self.vehicle is None:
             return
         t = self.now_s()
+        t0 = time.perf_counter()
         elev, var, cnt, res, origin = msg_to_layers(msg)
+        t1 = time.perf_counter()
         world = build_world(elev, var, cnt, res, origin, self.vehicle[:2],
                             self.world_params, self.blacklist, t)
+        t2 = time.perf_counter()
         if self.mode == 'explore':
             self.act(self.fsm.step(self.inputs(world, res, origin)))
+        t3 = time.perf_counter()
         self.display(world, elev, res, origin)
+        t4 = time.perf_counter()
+        world.timings_ms.update(decode=1e3 * (t1 - t0),
+                                decision=1e3 * (t3 - t2),
+                                display=1e3 * (t4 - t3))
         self.record(t, world, elev, var, cnt, res, origin)
 
     def display(self, world, elev, res, origin):
