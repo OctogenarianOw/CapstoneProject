@@ -32,6 +32,7 @@ setup(
                             'survey_mission = uav_core.survey_mission:main',
                             'exploration_manager = '
                             'uav_core.exploration_manager:main',
+                            'energy_monitor = uav_core.energy_monitor:main',
         ],
     },
 )

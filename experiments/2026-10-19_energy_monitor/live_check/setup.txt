@@ -1,0 +1,17 @@
+date 2026-10-19T15:54:14+11:00
+duration 150
+run mon=ros2 run uav_core energy_monitor
+run rec=sleep 2; ros2 topic echo --csv /energy/state
+run probe=GZ_IP=127.0.0.1 python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_energy_calibration/scripts/energy_probe_v2.py . /x500_slz_0/command/motor_speed 200
+run fly=sleep 8; python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-19_energy_calibration/scripts/calibration_flight.py --path "0,0;20,0;20,20;0,20;0,0" --speed 5 --accel 3 --hold 30 --post 5 --alt 8; sleep 4; touch stop
+git 79aeab8603456e38231c4fae2d2734de15892dc7
+ M experiments/sim_session.sh
+ M src/uav_core/launch/exploration.launch.py
+ M src/uav_core/package.xml
+ M src/uav_core/setup.py
+ M src/uav_interfaces/CMakeLists.txt
+?? experiments/2026-10-19_energy_monitor/
+?? src/uav_core/test/test_rotor_energy.py
+?? src/uav_core/uav_core/energy_monitor.py
+?? src/uav_core/uav_core/rotor_energy.py
+?? src/uav_interfaces/msg/EnergyState.msg
