@@ -24,6 +24,6 @@ bash "$EXP/sim_session.sh" "$D" 400 \
   mon="ros2 run uav_core energy_monitor --ros-args -p capacity_j:=${BUDGET}000.0" \
   exe="ros2 run uav_core trajectory_executor" \
   mgr="ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=$A0 -p log_root:=$D/missions" \
-  watch="sleep 20; until grep -qs NAVIGATING missions/*/events.jsonl; do sleep 1; done; sleep $SW; ros2 param set /exploration_manager alpha $A1; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 4; touch stop"
+  watch="sleep 2; until grep -qs NAVIGATING missions/*/events.jsonl; do sleep 1; done; sleep $SW; ros2 param set /exploration_manager alpha $A1; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 4; touch stop"
 python3 "$EXP/analyse_mission.py" "$D"/missions/* 15 > "$D/analysis.txt" 2>&1
 python3 "$HERE/alpha_live.py" "$D" > "$D/alpha_live.txt" 2>&1
