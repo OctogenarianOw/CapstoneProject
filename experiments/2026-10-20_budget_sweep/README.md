@@ -34,7 +34,9 @@ by chance with a probability of 0.81^30, about 0.2 %.
 | time to the first zone, s | 21 n/a n/a 23 21 | 29 28 27 n/a 23 (-0.83) | **33 33 27 29 22 (-0.67)** |
 | min I1 margin, kJ | 0.85 0.79 0.68 0.94 0.69 | 0.61 0.88 0.88 0.60 2.09 | 0.99 0.82 1.32 2.13 1.10 |
 
-(n/a: no zone besides take-off confirmed in either mission of the cell.)
+(Time to the first zone: n/a when neither mission of the cell confirmed
+a zone besides take-off; at 16 kJ alpha 0 and 0.25, and at 14 kJ alpha
+0, only one of the two did, and the value is that mission's.)
 
 - **12 kJ is too tight**: about two frontiers per mission, coverage 50 %
   whatever alpha; there is no choice for C2 to make.
