@@ -1,0 +1,38 @@
+30 missions, 0 technical failures relaunched
+git ['ed52f8f']
+
+== safety, per budget
+budget   n with I1 violation reserve used max kJ emergency landed safe small confirmed overruns
+  12kJ  10                 0                0.00         0          10               0        0
+  14kJ  10                 0                0.00         0          10               0        0
+  16kJ  10                 0                0.00         0          10               0        0
+
+== budget 12 kJ: medians by alpha [0.0, 0.25, 0.5, 0.75, 1.0], Spearman of alpha
+coverage seen           0.50    0.51    0.51    0.51    0.52   rho +0.59 p 0.071
+coverage OBSERVED       0.47    0.48    0.48    0.48    0.49   rho +0.74 p 0.015
+mean dist to SLZ m      4.09    3.90    3.95    4.05    4.02   rho -0.10 p 0.787
+min I1 margin kJ        0.85    0.79    0.68    0.94    0.69   rho -0.15 p 0.684
+energy left kJ          2.92    2.67    2.52    2.92    2.50   rho -0.34 p 0.329
+cells per kJ          198.69  196.90  194.38  202.38  196.11   rho +0.17 p 0.634
+first SLZ s            21.18     nan     nan   23.18   21.23   rho +0.24 p 0.648
+duration s             37.95   40.55   40.10   40.60   40.15   rho +0.47 p 0.173
+
+== budget 14 kJ: medians by alpha [0.0, 0.25, 0.5, 0.75, 1.0], Spearman of alpha
+coverage seen           0.60    0.61    0.61    0.66    0.60   rho +0.42 p 0.227
+coverage OBSERVED       0.57    0.59    0.59    0.63    0.57   rho +0.42 p 0.227
+mean dist to SLZ m      6.22    6.02    6.13    6.26    9.18   rho +0.02 p 0.946
+min I1 margin kJ        0.61    0.88    0.88    0.60    2.09   rho +0.49 p 0.148
+energy left kJ          2.73    2.89    2.97    2.73    4.23   rho +0.57 p 0.088
+cells per kJ          192.40  198.77  199.92  211.05  220.55   rho +0.54 p 0.106
+first SLZ s            28.74   27.68   27.22     nan   22.69   rho -0.83 p 0.022
+duration s             45.85   45.55   45.00   46.15   40.80   rho -0.47 p 0.173
+
+== budget 16 kJ: medians by alpha [0.0, 0.25, 0.5, 0.75, 1.0], Spearman of alpha
+coverage seen           0.66    0.69    0.73    0.66    0.81   rho +0.52 p 0.126
+coverage OBSERVED       0.64    0.66    0.70    0.63    0.78   rho +0.52 p 0.126
+mean dist to SLZ m      7.60    7.81   10.39    6.70   12.00   rho +0.15 p 0.684
+min I1 margin kJ        0.99    0.82    1.32    2.13    1.10   rho +0.57 p 0.088
+energy left kJ          3.28    3.11    3.67    4.53    3.43   rho +0.57 p 0.088
+cells per kJ          187.22  193.13  213.67  207.97  231.27   rho +0.86 p 0.001
+first SLZ s            32.70   32.74   27.25   28.73   22.14   rho -0.67 p 0.071
+duration s             50.70   51.20   49.70   45.95   50.55   rho -0.30 p 0.407

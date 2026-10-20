@@ -1,0 +1,35 @@
+mission 2026-10-20_17-05-30: mode explore, policy c1_c2, alpha 0.75, reserve 0.1, git ed52f8f
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.6 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (11.5, 12.5)
+   18.8 s  NAVIGATING      -> SELECTING       arrived
+   18.8 s  SELECTING       -> RETURNING       none_admissible
+   24.8 s  RETURNING       -> COMMIT_LANDING  over zone 1, budget
+   39.2 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   12.9 s  path   1: 1 legs,  16.3 m, to N  +11.5 E  +12.5
+   18.8 s  path   2: 1 legs,  16.3 m, to N   +0.5 E   +0.5
+
+== return: 1
+   18.8 s  {'zone_id': 1, 'reason': 'none_admissible', 'length_m': 16.278820596099706, 'energy_j': 1481.301799719067}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF            3600      0         0     12.0     nan         0
+   15.9 NAVIGATING         2078   1522        16      8.9     2.6         1
+   31.8 COMMIT_LANDING     1764   1836        15      4.0     0.8         2
+   43.8 LANDED             1763   1837        15      2.8     0.8         2
+
+== result
+duration 43 s, coverage 51.0 % of the area, unknown left 1763 cells
+energy consumed 9.2 kJ, left 2.8 kJ
+I1 margin min 0.85 kJ, violations 0
+end: COMMIT_LANDING, over zone 1, budget
+final position N +0.5 E +0.4 D +0.0
+  confirmed zone 1: touchdown (0.0, 0.0), home, 0.6 m from the final position
+  confirmed zone 2: touchdown (-2.5, 0.5), 893 m2, 3.0 m from the final position
+cycle time median 20 ms, max 31 ms over 44 cycles
