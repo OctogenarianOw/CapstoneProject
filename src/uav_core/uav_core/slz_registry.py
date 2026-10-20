@@ -8,7 +8,9 @@ confirmed and shrinks when an observation invalidates one (S9.5).
 
 Lifecycle, criteria of S9:
   CANDIDATE  detected, not usable by C1
-  CONFIRMED  inscribed radius >= footprint / 2, every cell OBSERVED
+  CONFIRMED  inscribed radius >= footprint / 2, one whole footprint
+             element of landable cells inside the zone, every cell
+             OBSERVED
              (count >= n_min, variance <= var_confirm), and observed
              from at least two distinct passes (invariant I4)
   RETIRED    no longer detected; reported at once as an event, so the
@@ -55,6 +57,20 @@ Choices:
     not the centroid, which can fall outside a concave zone; once set,
     it moves only if another cell is clearer by more than one cell
     (inscribed_radius), since passes are counted around it
+  - a zone is confirmed only if it holds one whole footprint element
+    of landable cells, the footprint test applied to the landable
+    cells themselves. Without it, islands of 1 to 8 landable cells
+    inside the rough ground of W1 were confirmed in 15 of the 80
+    missions of 2026-10-20_campaign_w1_fix, and the return field
+    targets the nearest landable cell of any confirmed zone. The map
+    smooths 0.5 m steps there, and such islands held the severe
+    false accepts of 14 and 17 of the 80 last maps of the two W1
+    campaigns; with the rule, 0 and 0, recall unchanged
+    (experiments/2026-10-20_min_zone). Price: the smallest isolated
+    platform that can be confirmed grows from 5 to 7 m at the 1.5 m
+    footprint. Rejected: a minimum count of cells, chosen at 7 on
+    the first campaign, which let 2 severe cells through on the
+    second, and says nothing about shape (a one-cell-wide strip)
   - the take-off point enters as a provisional CONFIRMED zone (S15.3,
     policy a): the aircraft took off from it, so it can land there
 """
@@ -66,6 +82,7 @@ import numpy as np
 from scipy.ndimage import distance_transform_edt
 
 from uav_core.observation import N_MIN, VAR_MAX
+from uav_core.slz_detection import footprint_ok
 
 CANDIDATE = 'CANDIDATE'
 CONFIRMED = 'CONFIRMED'
@@ -84,6 +101,7 @@ class Zone:
     touchdown_ne: tuple = None
     area_m2: float = 0.0
     inscribed_radius_m: float = 0.0
+    holds_footprint: bool = False      # one whole element of landable
     n_observations: int = 0            # minimum over the cells
     max_variance: float = math.inf     # maximum over the cells
     n_passes: int = 0
@@ -195,6 +213,8 @@ class SlzRegistry:
     def _criteria(self, z):
         if z.inscribed_radius_m < self.footprint_m / 2.0:
             return 'inscribed radius below half the footprint'
+        if not z.holds_footprint:
+            return 'no whole footprint of landable cells'
         if z.n_observations < self.n_min or z.max_variance > self.var_confirm:
             return 'cells not all OBSERVED'
         if z.n_passes < self.min_passes:
@@ -242,6 +262,8 @@ class SlzRegistry:
         self.track.append((float(vehicle_ne[0]), float(vehicle_ne[1])))
         labels = landing['labels']
         distance = refused_distance(~landing['cell_ok'])
+        core = footprint_ok(landing['candidate'],
+                            landing['footprint_offsets'])
         new_cells = [np.argwhere(labels == k)
                      for k in range(1, int(labels.max()) + 1)]
         new_cells = [c for c in new_cells if len(c)]
@@ -267,6 +289,7 @@ class SlzRegistry:
             seen_ids.add(z.zone_id)
             self._measure(z, cells, distance, variance, count, resolution,
                           origin_ne, t)
+            z.holds_footprint = bool(core[cells[:, 0], cells[:, 1]].any())
 
         for z in self.zones.values():
             if (z.provisional or z.state == RETIRED

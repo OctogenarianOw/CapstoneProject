@@ -9,7 +9,7 @@ its identity while it is detected, is retired at once when it vanishes
 
 import numpy as np
 import pytest
-from uav_core.slz_detection import label_zones
+from uav_core.slz_detection import footprint_offsets, label_zones
 from uav_core.slz_registry import (CANDIDATE, CONFIRMED, inscribed_radius,
                                    refused_distance,
                                    RETIRED, SlzRegistry)
@@ -30,7 +30,8 @@ def landing(*boxes):
     ok = np.zeros((N, N), dtype=bool)
     for i0, i1, j0, j1 in boxes:
         ok[max(0, i0 - 1):i1 + 1, max(0, j0 - 1):j1 + 1] = True
-    return {'labels': labels, 'cell_ok': ok, 'candidate': cand}
+    return {'labels': labels, 'cell_ok': ok, 'candidate': cand,
+            'footprint_offsets': footprint_offsets(1.5, RES)}
 
 
 def step(reg, det, vehicle, t, var=GOOD_VAR):
@@ -147,6 +148,24 @@ def test_passes_counted_for_a_zone_stay_when_its_touchdown_moves():
     var[30, 30] = 1e-2
     step(reg, grown, (0.0, 19.5), 4.0, var)
     assert z.state == CANDIDATE and z.reason == 'cells not all OBSERVED'
+
+
+def test_island_without_a_whole_footprint_is_never_confirmed():
+    """
+    A 2 x 3 island, passes and OBSERVED cells: stays CANDIDATE.
+
+    No cell of it has its whole 3 x 3 footprint in landable cells, the
+    case of the rough ground of W1 (2026-10-20_min_zone). A 3 x 3
+    island next to it, the smallest that holds one, is confirmed.
+    """
+    reg = SlzRegistry()
+    island, block = (30, 32, 30, 33), (30, 33, 40, 43)
+    for t, v in enumerate([NEAR, FAR, NEAR]):
+        step(reg, landing(island, block), v, float(t))
+    by_size = {len(z.cells): z for z in reg.active()}
+    assert by_size[6].state == CANDIDATE
+    assert by_size[6].reason == 'no whole footprint of landable cells'
+    assert by_size[9].state == CONFIRMED
 
 
 def test_split_leaves_identity_to_the_larger_part():
