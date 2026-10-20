@@ -39,6 +39,18 @@ Choices:
     passes although the aircraft had flown over it twice: a zone only
     appears once its cells are well observed, so counting from detection
     drops exactly the passes that built the evidence
+  - the pass count of a known zone never decreases (I4, decided by
+    Dorian on 19 Oct). I4 asks for two passes over the zone; the
+    touchdown point is only where they are measured from. When a growing
+    zone moves its touchdown to a cell clearer by more than one cell,
+    the passes already flown over the zone stay flown, but recounting
+    around the new point dropped them: in 2026-10-19_registry_flicker
+    (after_r1, 30.8 s) a zone went from 2 passes to 1 and back to
+    CANDIDATE for 6 s with nothing observed against it. Safety is not
+    weakened: every cell must still be OBSERVED, and a zone no longer
+    detected is retired at once (S9.5). Left aside: counting passes
+    around the zone's cells rather than a point, which redefines a pass
+    for every zone where the maximum only stops the loss
   - the touchdown point is the zone cell farthest from refused ground,
     not the centroid, which can fall outside a concave zone; once set,
     it moves only if another cell is clearer by more than one cell
@@ -127,9 +139,10 @@ def inscribed_radius(zone_cells, distance, resolution, window=12,
     to CANDIDATE 2 to 5 times per mission; in the W1 campaign each of
     the 31 C1 missions that broke I1 did so within 3 s of such a
     demotion (experiments/2026-10-19_campaign_w1). One cell is the
-    resolution the distance is known to. Rejected: making the pass
-    count of a matched zone never decrease, which would change what I4
-    means rather than remove the cause.
+    resolution the distance is known to. Rejected as the fix of these
+    jumps: a pass count that never decreases, which would have hidden
+    the cause. It was adopted afterwards for what remains, a growing
+    zone whose touchdown genuinely moves (module docstring).
     """
     raw = distance[zone_cells[:, 0], zone_cells[:, 1]]
     capped = np.minimum(raw, float(window))
@@ -265,7 +278,10 @@ class SlzRegistry:
 
         track = np.asarray(self.track)
         for z in self.active():
-            z.n_passes = self.count_passes(track, z.touchdown_ne)
+            # Passes flown over a zone stay flown when its touchdown
+            # moves (module docstring, I4).
+            z.n_passes = max(z.n_passes,
+                             self.count_passes(track, z.touchdown_ne))
             missing = self._criteria(z)
             if z.state == CANDIDATE and not missing:
                 events.append(Event(z.zone_id, CANDIDATE, CONFIRMED,

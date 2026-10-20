@@ -123,6 +123,32 @@ def test_reappearing_zone_keeps_identity_and_passes():
     assert z.n_passes == 2 and len(reg.zones) == 1
 
 
+def test_passes_counted_for_a_zone_stay_when_its_touchdown_moves():
+    """
+    I4: a pass counted for a zone stays counted when its touchdown moves.
+
+    Confirmed with two passes around its first touchdown, the zone grows
+    a wide part about 18 m east, clearer by more than one cell, and the
+    touchdown moves there. The track holds one pass around the new point
+    only; the zone keeps its two and stays CONFIRMED. The other criteria
+    still apply: a cell short of OBSERVED demotes it.
+    """
+    reg = SlzRegistry()
+    for t, v in enumerate([NEAR, FAR, NEAR]):
+        step(reg, landing(ZONE), v, float(t))
+    (z,) = reg.confirmed()
+    first = z.touchdown_ne
+    grown = landing(ZONE, (28, 34, 34, 40), (16, 44, 40, 58))
+    ev = step(reg, grown, (0.0, 19.5), 3.0)
+    assert z.touchdown_ne[1] - first[1] > 10.0
+    assert reg.count_passes(np.asarray(reg.track), z.touchdown_ne) == 1
+    assert z.n_passes == 2 and z.state == CONFIRMED and ev == []
+    var = GOOD_VAR.copy()
+    var[30, 30] = 1e-2
+    step(reg, grown, (0.0, 19.5), 4.0, var)
+    assert z.state == CANDIDATE and z.reason == 'cells not all OBSERVED'
+
+
 def test_split_leaves_identity_to_the_larger_part():
     """A zone cut in two: the larger part keeps the id, the other is new."""
     reg = SlzRegistry()
