@@ -57,9 +57,10 @@ Measured reference figures (details and conditions in each experiment):
 |---|---|
 | elevation map error on flat ground, reference map v6 | RMS 0.240 m |
 | landing detection on v6, 1.5 m footprint | recall 94.2 %, 0 severe false accepts (one map) |
+| landing detection on the last map of 80 missions, 1.5 m | 14 maps hold one severe false accept, at two cells of the rough zone where the map smooths 0.5 m steps (open) |
 | energy model, P_hover / per-metre / per-leg | 285.64 W / -0.400 J/m / 65.2 J |
 | online energy monitor against the offline instrument | 0.000 % over a 21.9 kJ flight |
-| landing precision, 15 landings | p95 radial error 0.180 m, footprint 1.2 m by the rule of S16 (1.5 m in use, change approved, to be applied and measured) |
+| landing precision, 15 landings | p95 radial error 0.180 m, footprint 1.2 m by the rule of S16 (1.2 m measured offline and rejected: severe false accepts 0 -> 2 on v6, 14 -> 44 on 80 mission maps; 1.5 m kept) |
 | C1 under 5 s of injected decision latency, before and after charging the measured latency | I1 violations 2, 2, 1 -> 0, 0, 0 |
 
 ## Repository layout
@@ -153,6 +154,7 @@ runs the same nodes with RViz.
 | `2026-10-19_campaign_w1` | gates E and F, 80 missions | C1 violations all caused by the registry flicker; alpha effect on margin and energy |
 | `2026-10-19_registry_flicker` | the registry flicker | touchdown jumps over 5 m 5, 12 -> 0, 0 after the fix |
 | `2026-10-19_landing_p4` | landing precision, E_land | p95 0.180 m; E_land exact alone, +3 % inside missions |
+| `2026-10-20_footprint_p4` | footprint 1.2 against 1.5 m, offline | 1.2 m rejected, severe false accepts 0 -> 2 on v6, 14 -> 44 on mission maps; 1.5 m kept |
 
 Every campaign keeps its raw logs with a `MANIFEST.tsv` of SHA-256
 hashes, and its `setup.txt` records the git commit it flew.
