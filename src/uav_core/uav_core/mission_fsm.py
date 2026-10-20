@@ -290,7 +290,8 @@ class MissionFSM:
         b = inp.remaining_j
         reserve = self._reserve(inp)
         margin, zone_id, _ = invariant_margin(w, rfield, self.model, b,
-                                              reserve, res, origin)
+                                              reserve, res, origin,
+                                              self.overhead_s())
         self.last_margin = margin
         violated = margin is not None and margin < 0
         if violated:
@@ -395,9 +396,11 @@ class MissionFSM:
         back, _ = plan_return(w.traversable, rfield, vp, res, origin)
         if go is None or back is None:
             return False, math.inf
+        # One overhead at the frontier, one at the zone before the land
+        # command, as evaluate() charges them.
         need = (self.model.path_energy(go.waypoints_ne)
-                + self.model.hover_energy(self.overhead_s())
                 + self.model.path_energy(back.waypoints_ne)
+                + 2.0 * self.model.hover_energy(self.overhead_s())
                 + self.model.e_land_j)
         return need <= inp.remaining_j - self._reserve(inp), need
 

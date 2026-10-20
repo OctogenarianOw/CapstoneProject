@@ -127,3 +127,13 @@ def test_invariant_margin_at_home_is_budget_minus_landing():
                                       ORIGIN)
     assert zid == 1
     assert margin == 10000.0 - 500.0 - MODEL.e_land_j
+
+
+def test_invariant_margin_charges_the_decision_before_the_land_command():
+    """On the zone, a 5 s latency adds 5 s of hover to the need of I1."""
+    w = take_off_world()
+    rf = return_field(w.traversable, HOME, RES, ORIGIN)
+    margin, _, _ = invariant_margin(w, rf, MODEL, 10000.0, 500.0, RES,
+                                    ORIGIN, overhead_s=5.0)
+    assert np.isclose(margin, 10000.0 - 500.0 - MODEL.e_land_j
+                      - MODEL.hover_energy(5.0))

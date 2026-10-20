@@ -17,7 +17,12 @@ C1, energy feasibility invariant (S13): a frontier f is admissible iff
            the decision latency it measures (mission_fsm.overhead_s);
            a constant here broke I1 on 19 Oct when the latency grew
   E_return energy of the simplified path from the viewpoint to the
-           nearest CONFIRMED zone, the take-off point included (S15.3)
+           nearest CONFIRMED zone, the take-off point included (S15.3),
+           plus a hover of overhead_s: the return too leaves one decision
+           after the energy is read, and the land command one decision
+           after the arrival. Without it, 5 s decisions took 1.5 kJ of
+           a 2 kJ reserve at every landing of 19 Oct
+           (experiments/2026-10-19_decision_latency, reserve_use.py)
   E_land   calibrated descent and touchdown, energy_model.e_land_j
   slz* is the zone nearest along the return field, seeded on every
   landable cell of every confirmed zone: one pass for all frontiers.
@@ -49,8 +54,11 @@ Policies (spec 5.2), one name each for the logs:
 
 Invariant I1 (3.4): when the registry holds a confirmed zone, the energy
 left must cover the return from the current position and the landing,
-reserve included. margin = B - R - (E_return(vehicle) + E_land); a
-negative margin is a violation, always reported, never silent.
+reserve included. margin = B - R - (E_return(vehicle) + E_land), with
+E_return as above, its decision latency included; a negative margin is
+a violation, always reported, never silent. Before that term, I1 was
+B - R - (path energy + E_land); cycles.jsonl logs overhead_s with the
+margin, so the earlier definition can be recomputed from any log.
 """
 
 from dataclasses import dataclass, field
@@ -151,7 +159,7 @@ def plan_return(traversable, rfield, start, resolution, origin_ne):
 
 
 def invariant_margin(world, rfield, model, b_current, reserve_j,
-                     resolution, origin_ne):
+                     resolution, origin_ne, overhead_s=0.0):
     """I1 margin from the vehicle cell, the zone it relies on, the plan."""
     if world.vehicle_ij is None or not rfield.source_zone:
         return None, None, None
@@ -159,7 +167,8 @@ def invariant_margin(world, rfield, model, b_current, reserve_j,
                                 resolution, origin_ne)
     if plan is None:
         return -math.inf, None, None
-    need = model.path_energy(plan.waypoints_ne) + model.e_land_j
+    need = (model.path_energy(plan.waypoints_ne)
+            + model.hover_energy(overhead_s) + model.e_land_j)
     return b_current - reserve_j - need, zone_id, plan
 
 
@@ -181,7 +190,8 @@ def evaluate(world, rfield, model, b_current, params, resolution,
                 world.traversable, rfield, f.viewpoint_ij, resolution,
                 origin_ne)
             if c.plan_return is not None:
-                c.e_return = model.path_energy(c.plan_return.waypoints_ne)
+                c.e_return = (model.path_energy(c.plan_return.waypoints_ne)
+                              + model.hover_energy(params.overhead_s))
         c.e_total = c.e_go + c.e_return + model.e_land_j
         c.admissible = c.e_total <= budget
         cands.append(c)
