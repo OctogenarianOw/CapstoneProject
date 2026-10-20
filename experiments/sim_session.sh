@@ -1,8 +1,8 @@
 #!/bin/bash
 # Reusable simulation session for live measurements.
 #
-# Starts PX4 SITL on a fresh validation world, the XRCE-DDS agent and the
-# lidar bridge, then runs each NAME=COMMAND given after the duration in the
+# Starts PX4 SITL on a fresh world (W1, validation, by default), the
+# XRCE-DDS agent and the lidar bridge, then runs each NAME=COMMAND given after the duration in the
 # background with its log in OUT_DIR/NAME.log, waits DURATION seconds (or
 # until a file OUT_DIR/stop appears), and kills everything it started.
 # Same guarantees as the campaign scripts of 19 Oct: cleanup before launch
@@ -17,9 +17,12 @@
 #
 #   bash sim_session.sh OUT_DIR DURATION_S NAME=COMMAND [NAME=COMMAND ...]
 #   bash sim_session.sh /tmp/x 60 map="ros2 run uav_core cloud_world"
+#   WORLD=w2 bash sim_session.sh ...      another world, by its name in
+#                                         PX4 Tools/simulation/gz/worlds
 OUT=$1
 DURATION=$2
 shift 2
+WORLD=${WORLD:-validation}
 WS=~/ros2_ws/droneAfter
 mkdir -p "$OUT"
 OUT=$(cd "$OUT" && pwd)
@@ -60,6 +63,7 @@ rm -f "$PX4_ROOTFS/parameters.bson" "$PX4_ROOTFS/parameters_backup.bson"
   echo "date $(date -Is)"
   echo "duration $DURATION"
   echo "px4 parameters reset to the airframe defaults"
+  echo "world $WORLD"
   for spec in "$@"; do echo "run $spec"; done
   echo "git $(git -C "$WS" rev-parse HEAD)"
   git -C "$WS" status --short
@@ -67,7 +71,7 @@ rm -f "$PX4_ROOTFS/parameters.bson" "$PX4_ROOTFS/parameters_backup.bson"
 
 echo "[$(date +%T)] starting PX4"
 cd ~/PX4-Autopilot
-sleep 100000 | PX4_GZ_WORLD=validation HEADLESS=1 make px4_sitl gz_x500_slz \
+sleep 100000 | PX4_GZ_WORLD=$WORLD HEADLESS=1 make px4_sitl gz_x500_slz \
   > "$OUT/px4.log" 2>&1 &
 for i in $(seq 1 300); do
   grep -q "Ready for takeoff" "$OUT/px4.log" && break
@@ -78,7 +82,14 @@ if grep -q "gazebo already running" "$OUT/px4.log"; then
   echo "PX4 reused a running Gazebo world, refusing a non fresh run"
   exit 1
 fi
-echo "[$(date +%T)] PX4 ready after ${i}s, fresh Gazebo world"
+# A world name PX4 does not find must not turn into a flight on another
+# world: the bridge names the world it attached to.
+if ! grep -q "\[gz_bridge\] world: $WORLD," "$OUT/px4.log"; then
+  echo "PX4 is not on world $WORLD, refusing"
+  grep "gz_bridge\] world" "$OUT/px4.log"
+  exit 1
+fi
+echo "[$(date +%T)] PX4 ready after ${i}s, fresh Gazebo world $WORLD"
 
 MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1 &
 ros2 run ros_gz_bridge parameter_bridge \
