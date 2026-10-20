@@ -144,6 +144,30 @@ groups fly the same frontier sequences (`base_d5_r1` and `i1lat_d5_r1`
 the same two frontiers): the change did not alter a choice here, and
 the small difference is not attributed to it.
 
+## E_land at the p95 of mission landings (4840a82), 20 Oct
+
+Change: the manager plans with E_land 3387 J, the p95 of the 140
+committed headless landings of the two W1 campaigns, instead of the
+3199.5 J of the executor's descent alone (`energy_model`,
+PLANNING_2026_10_20). Same protocol, three flights:
+
+| flights | git | reserve used | landing, measured | I1 at the return decision | actual |
+|---|---|---|---|---|---|
+| `i1lat_d5_r1..3` | 4f7e635 | 1.47, 1.44, 1.47 kJ | 3.45 to 3.48 kJ | -0.90 to -1.09 kJ | -1.44 to -1.47 kJ |
+| `eland_d5_r1..3` | 4840a82 | 1.48, 1.47, 1.45 kJ | 3.42 to 3.50 kJ | -1.04 to -1.07 kJ | -1.45 to -1.48 kJ |
+
+As expected in this protocol, the reserve used does not move: the
+energy is committed before the latency is known (above). I1 carries
+the 0.19 kJ of the change; its remaining error, 0.38 to 0.43 kJ, comes
+from the landings of these loaded sessions (3.42 to 3.50 kJ, above the
+p95 of headless ones, as the loaded sessions of
+`2026-10-19_landing_p4` were) and from the charge of the return, whose
+measured overhead varies by 0.9 s between flights (14.2 to 15.1 s).
+Coverage 64.4, 55.8, 56.2 %: the second frontier of two flights lies
+in the other half of W1, a choice among symmetric frontiers seen in
+every group (`after_d5` 56 %); not attributed to the change on three
+flights. No failsafe, fresh world every time.
+
 ## Also observed
 
 - `before_d5` flights show 0 path resends: the retry fix 6bdc128
@@ -167,7 +191,8 @@ was started in these sessions.
 
     run.sh                 N flights of one label and injected delay
     before_d5_r*/          87a7035, after_d5_r*/ a4ac769,
-    base_d5_r*/            e029ebd, i1lat_d5_r*/ 4f7e635
+    base_d5_r*/            e029ebd, i1lat_d5_r*/ 4f7e635,
+    eland_d5_r*/           4840a82
       setup.txt px4.log *.log missions/<date>/ analysis.txt latency.txt
     overrun_series.py      U per visit and predictors, from events.jsonl
     reserve_use.py         end of mission against the reserve
