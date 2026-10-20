@@ -1,0 +1,150 @@
+/usr/lib/python3/dist-packages/scipy/stats/_stats_py.py:5445: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  warnings.warn(stats.ConstantInputWarning(warn_msg))
+80 missions, 0 technical failures relaunched
+git ['88893a9']
+
+== safety
+landed on registry: I5; landed safe: truth zone under the final position flat or 3 deg ramp
+config     n  missions with I1 violation  violations median [IQR] emergency on registry landed safe overruns
+B0        10                          10     26.00 [25.25, 26.00]        10           0           9        0
+B1        10                           6        3.50 [0.00, 4.00]         0          10           9        0
+B2        10                           0        0.00 [0.00, 0.00]         0          10          10        0
+B3a000    10                           0        0.00 [0.00, 0.00]         0          10          10        0
+B3a025    10                           0        0.00 [0.00, 0.00]         0          10          10        0
+B3a050    10                           0        0.00 [0.00, 0.00]         0          10          10        0
+B3a075    10                           0        0.00 [0.00, 0.00]         0          10          10        0
+B3a100    10                           0        0.00 [0.00, 0.00]         0          10          10        0
+
+== C1 missions with an I1 violation: cause of the first one
+
+== min I1 margin kJ, median [IQR]
+B0       -7.39 [-7.75, -7.26]
+B1       -0.61 [-0.94, 0.58]
+B2       1.74 [1.72, 1.76]
+B3a000   1.62 [0.80, 1.67]
+B3a025   2.58 [2.34, 2.62]
+B3a050   1.73 [1.47, 1.77]
+B3a075   1.68 [1.45, 1.76]
+B3a100   1.75 [1.73, 1.76]
+
+== reserve used kJ, median [IQR]
+B0       5.44 [5.42, 5.57]
+B1       0.68 [0.00, 0.79]
+B2       0.00 [0.00, 0.00]
+B3a000   0.00 [0.00, 0.00]
+B3a025   0.00 [0.00, 0.00]
+B3a050   0.00 [0.00, 0.00]
+B3a075   0.00 [0.00, 0.00]
+B3a100   0.00 [0.00, 0.00]
+
+== zone demotions on the pass count, median [IQR]
+B0       0.00 [0.00, 0.00]
+B1       0.00 [0.00, 0.00]
+B2       0.00 [0.00, 0.00]
+B3a000   0.00 [0.00, 0.00]
+B3a025   0.00 [0.00, 0.00]
+B3a050   0.00 [0.00, 0.00]
+B3a075   0.00 [0.00, 0.00]
+B3a100   0.00 [0.00, 0.00]
+
+== coverage seen, median [IQR]
+B0       1.00 [1.00, 1.00]
+B1       0.95 [0.95, 0.96]
+B2       0.95 [0.94, 0.95]
+B3a000   0.86 [0.82, 0.89]
+B3a025   0.96 [0.95, 0.96]
+B3a050   0.95 [0.95, 0.95]
+B3a075   0.95 [0.94, 0.95]
+B3a100   0.95 [0.95, 0.95]
+
+== coverage OBSERVED, median [IQR]
+B0       1.00 [1.00, 1.00]
+B1       0.93 [0.92, 0.93]
+B2       0.92 [0.92, 0.92]
+B3a000   0.83 [0.80, 0.87]
+B3a025   0.93 [0.93, 0.93]
+B3a050   0.92 [0.92, 0.92]
+B3a075   0.92 [0.91, 0.92]
+B3a100   0.92 [0.92, 0.92]
+
+== energy left kJ, median [IQR]
+B0       -3.44 [-3.57, -3.42]
+B1       1.32 [1.21, 2.52]
+B2       3.70 [3.66, 3.76]
+B3a000   3.45 [2.72, 3.66]
+B3a025   4.49 [4.31, 4.51]
+B3a050   3.65 [3.37, 3.75]
+B3a075   3.59 [3.37, 3.74]
+B3a100   3.74 [3.69, 3.75]
+
+== cells per kJ, median [IQR]
+B0       153.14 [152.45, 153.63]
+B1       183.29 [183.17, 196.06]
+B2       209.19 [207.80, 210.03]
+B3a000   188.08 [171.28, 192.62]
+B3a025   221.73 [218.55, 223.26]
+B3a050   208.54 [205.23, 210.73]
+B3a075   207.15 [205.05, 209.00]
+B3a100   209.50 [209.09, 210.15]
+
+== first SLZ s, median [IQR]
+B0       73.77 [73.77, 73.77]
+B1       22.24 [21.74, 30.71]
+B2       22.26 [21.73, 38.45]
+B3a000   45.75 [44.74, 48.27]
+B3a025   35.62 [29.65, 35.76]
+B3a050   22.28 [21.77, 32.49]
+B3a075   21.77 [21.74, 28.73]
+B3a100   22.73 [21.74, 29.49]
+
+== mean dist to SLZ m, median [IQR]
+B0       25.06 [24.30, 25.76]
+B1       16.09 [12.73, 17.32]
+B2       16.91 [16.82, 17.46]
+B3a000   11.07 [10.51, 12.25]
+B3a025   18.70 [17.41, 19.15]
+B3a050   17.69 [16.99, 17.99]
+B3a075   17.62 [17.38, 17.87]
+B3a100   17.20 [16.91, 17.35]
+
+== duration s, median [IQR]
+B0       88.15 [87.47, 88.20]
+B1       72.15 [68.12, 72.60]
+B2       64.15 [63.20, 64.27]
+B3a000   64.65 [63.75, 67.25]
+B3a025   61.35 [60.38, 61.62]
+B3a050   64.35 [64.10, 65.17]
+B3a075   64.35 [64.15, 64.95]
+B3a100   64.05 [63.40, 64.10]
+
+== gate E: C1 policies against the baselines, Mann-Whitney U
+effect r: rank-biserial, > 0 when the first is larger
+violations           B2 vs B0  p 0.0000  r -1.00
+violations           B2 vs B1  p 0.0059  r -0.60
+violations       B3a050 vs B0  p 0.0000  r -1.00
+violations       B3a050 vs B1  p 0.0059  r -0.60
+min_margin_kj        B2 vs B0  p 0.0002  r +1.00
+min_margin_kj        B2 vs B1  p 0.0002  r +1.00
+min_margin_kj    B3a050 vs B0  p 0.0002  r +1.00
+min_margin_kj    B3a050 vs B1  p 0.0002  r +1.00
+coverage_seen        B2 vs B0  p 0.0002  r -1.00
+coverage_seen        B2 vs B1  p 0.0008  r -0.90
+coverage_seen    B3a050 vs B0  p 0.0002  r -1.00
+coverage_seen    B3a050 vs B1  p 0.0081  r -0.71
+energy_left_kj       B2 vs B0  p 0.0002  r +1.00
+energy_left_kj       B2 vs B1  p 0.0002  r +1.00
+energy_left_kj   B3a050 vs B0  p 0.0002  r +1.00
+energy_left_kj   B3a050 vs B1  p 0.0002  r +1.00
+
+== gate F: alpha over the B3 missions, Spearman
+violations           rho +nan  p nan  medians by alpha 0.00 0.00 0.00 0.00 0.00
+min I1 margin kJ     rho +0.10  p 0.4813  medians by alpha 1.62 2.58 1.73 1.68 1.75
+reserve used kJ      rho +nan  p nan  medians by alpha 0.00 0.00 0.00 0.00 0.00
+zone demotions on the pass count rho +0.06  p 0.6812  medians by alpha 0.00 0.00 0.00 0.00 0.00
+coverage seen        rho +0.11  p 0.4621  medians by alpha 0.86 0.96 0.95 0.95 0.95
+coverage OBSERVED    rho +0.12  p 0.4138  medians by alpha 0.83 0.93 0.92 0.92 0.92
+energy left kJ       rho +0.06  p 0.6702  medians by alpha 3.45 4.49 3.65 3.59 3.74
+cells per kJ         rho +0.29  p 0.0439  medians by alpha 188.08 221.73 208.54 207.15 209.50
+first SLZ s          rho -0.64  p 0.0000  medians by alpha 45.75 35.62 22.28 21.77 22.73
+mean dist to SLZ m   rho +0.18  p 0.2027  medians by alpha 11.07 18.70 17.69 17.62 17.20
+duration s           rho -0.03  p 0.8288  medians by alpha 64.65 61.35 64.35 64.35 64.05

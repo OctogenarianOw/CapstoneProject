@@ -1,0 +1,37 @@
+{"t": 0.13155376800000002, "kind": "state", "old": "INIT", "new": "TAKEOFF", "why": "pose, energy and executor ready"}
+{"t": 0.13186187600000002, "kind": "action", "action": "takeoff", "path_id": 0, "waypoints": null}
+{"t": 11.331459800000001, "kind": "zone", "zone_id": 1, "old": "", "new": "CONFIRMED", "reason": "take-off point, S15.3 policy a"}
+{"t": 11.331459800000001, "kind": "state", "old": "TAKEOFF", "new": "BOOTSTRAP", "why": "at altitude"}
+{"t": 11.874842598, "kind": "zone", "zone_id": 2, "old": "", "new": "CANDIDATE", "reason": "new detection"}
+{"t": 11.874842598, "kind": "zone", "zone_id": 3, "old": "", "new": "CANDIDATE", "reason": "new detection"}
+{"t": 12.852731769, "kind": "state", "old": "BOOTSTRAP", "new": "SELECTING", "why": "first maps in"}
+{"t": 12.852731769, "kind": "state", "old": "SELECTING", "new": "NAVIGATING", "why": "frontier at (-11.5, -12.5)"}
+{"t": 12.859923724000001, "kind": "action", "action": "path", "path_id": 1, "waypoints": [[-0.5, -0.5], [-11.5, -12.5]]}
+{"t": 18.857224821000003, "kind": "zone", "zone_id": 3, "old": "CANDIDATE", "new": "RETIRED", "reason": "no longer detected"}
+{"t": 18.857224821000003, "kind": "state", "old": "NAVIGATING", "new": "SELECTING", "why": "arrived"}
+{"t": 18.857224821000003, "kind": "state", "old": "SELECTING", "new": "NAVIGATING", "why": "frontier at (-19.5, 1.5)"}
+{"t": 18.86803162, "kind": "action", "action": "path", "path_id": 2, "waypoints": [[-11.5, -12.5], [-19.5, 1.5]]}
+{"t": 18.868092554, "kind": "latency", "u_s": 1.034929999113393, "charged_s": 2.0, "planned_s": 4.9804307858866075, "next_charge_s": 2.0}
+{"t": 24.856324115000003, "kind": "state", "old": "NAVIGATING", "new": "SELECTING", "why": "arrived"}
+{"t": 24.856324115000003, "kind": "state", "old": "SELECTING", "new": "NAVIGATING", "why": "frontier at (-14.5, 16.5)"}
+{"t": 24.86844805, "kind": "action", "action": "path", "path_id": 3, "waypoints": [[-19.5, 1.5], [-14.5, 16.5]]}
+{"t": 24.868539522000003, "kind": "latency", "u_s": 1.0617449350139134, "charged_s": 2.0, "planned_s": 4.9495697659860864, "next_charge_s": 2.0}
+{"t": 30.860971414, "kind": "state", "old": "NAVIGATING", "new": "SELECTING", "why": "arrived"}
+{"t": 30.860971414, "kind": "state", "old": "SELECTING", "new": "NAVIGATING", "why": "frontier at (5.5, 16.5)"}
+{"t": 30.874427249000004, "kind": "action", "action": "path", "path_id": 4, "waypoints": [[-14.5, 16.5], [5.5, 16.5]]}
+{"t": 30.874550131000003, "kind": "latency", "u_s": 1.131281689164954, "charged_s": 2.0, "planned_s": 4.886944326835046, "next_charge_s": 2.0}
+{"t": 34.86447831, "kind": "zone", "zone_id": 4, "old": "", "new": "CANDIDATE", "reason": "new detection"}
+{"t": 35.863512344, "kind": "zone", "zone_id": 4, "old": "CANDIDATE", "new": "RETIRED", "reason": "no longer detected"}
+{"t": 36.862004002, "kind": "state", "old": "NAVIGATING", "new": "SELECTING", "why": "arrived"}
+{"t": 36.862004002, "kind": "state", "old": "SELECTING", "new": "NAVIGATING", "why": "frontier at (18.5, 7.5)"}
+{"t": 36.875750187, "kind": "action", "action": "path", "path_id": 5, "waypoints": [[5.5, 16.5], [18.5, 7.5]]}
+{"t": 36.875813657, "kind": "latency", "u_s": 0.29017557633333446, "charged_s": 2.0, "planned_s": 5.724666666666666, "next_charge_s": 2.0}
+{"t": 41.8655959, "kind": "state", "old": "NAVIGATING", "new": "SELECTING", "why": "arrived"}
+{"t": 41.8655959, "kind": "state", "old": "SELECTING", "new": "RETURNING", "why": "none_admissible"}
+{"t": 41.8655959, "kind": "return", "zone_id": 1, "reason": "none_admissible", "length_m": 20.615528128088304, "energy_j": 1727.311075227691}
+{"t": 41.87879583, "kind": "action", "action": "path", "path_id": 6, "waypoints": [[18.5, 7.5], [-0.5, -0.5]]}
+{"t": 41.878853657, "kind": "latency", "u_s": 0.1299053281649556, "charged_s": 2.0, "planned_s": 4.886944326835046, "next_charge_s": 2.0}
+{"t": 44.867291527000006, "kind": "zone", "zone_id": 2, "old": "CANDIDATE", "new": "CONFIRMED", "reason": "criteria met"}
+{"t": 47.868519603, "kind": "state", "old": "RETURNING", "new": "COMMIT_LANDING", "why": "over zone 1, budget"}
+{"t": 47.878251128, "kind": "action", "action": "land", "path_id": 0, "waypoints": null}
+{"t": 62.331218937, "kind": "state", "old": "COMMIT_LANDING", "new": "LANDED", "why": "budget"}
