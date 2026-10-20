@@ -1,0 +1,8 @@
+date 2026-10-20T17:55:59+11:00
+duration 900
+px4 parameters reset to the airframe defaults
+run display=bash open_display.sh
+run simwin=bash open_sim_window.sh
+run ros=sleep 25; ros2 launch uav_core exploration.launch.py bridge:=false rviz:=false slider:=true capacity_j:=16000.0 alpha:=0.5 log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-20_live_demo/missions
+git b35caa0cf379db2a99ecd6fe6d80291e14dfbf95
+?? experiments/2026-10-20_live_demo/
