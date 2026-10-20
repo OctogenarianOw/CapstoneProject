@@ -1,0 +1,77 @@
+mission 2026-10-20_19-34-58: mode explore, policy c1_c2, alpha 0.0, reserve 0.1, git 689eb54
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.7 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, 10.5)
+   18.9 s  NAVIGATING      -> SELECTING       arrived
+   18.9 s  SELECTING       -> NAVIGATING      frontier at (-16.5, -6.5)
+   24.9 s  NAVIGATING      -> SELECTING       arrived
+   24.9 s  SELECTING       -> NAVIGATING      frontier at (-7.5, -18.5)
+   29.9 s  NAVIGATING      -> SELECTING       arrived
+   29.9 s  SELECTING       -> NAVIGATING      frontier at (10.5, -12.5)
+   35.9 s  NAVIGATING      -> SELECTING       arrived
+   35.9 s  SELECTING       -> NAVIGATING      frontier at (-14.5, -33.5)
+   44.9 s  NAVIGATING      -> SELECTING       arrived
+   44.9 s  SELECTING       -> NAVIGATING      frontier at (27.5, -13.5)
+   56.9 s  NAVIGATING      -> SELECTING       arrived
+   56.9 s  SELECTING       -> NAVIGATING      frontier at (42.5, -6.5)
+   62.9 s  NAVIGATING      -> SELECTING       arrived
+   62.9 s  SELECTING       -> NAVIGATING      frontier at (-31.5, -35.5)
+   80.9 s  NAVIGATING      -> SELECTING       arrived
+   80.9 s  SELECTING       -> NAVIGATING      frontier at (-22.5, 23.5)
+   94.9 s  NAVIGATING      -> SELECTING       arrived
+   94.9 s  SELECTING       -> NAVIGATING      frontier at (-34.5, 34.5)
+  100.9 s  NAVIGATING      -> SELECTING       arrived
+  100.9 s  SELECTING       -> NAVIGATING      frontier at (38.5, 9.5)
+  123.9 s  NAVIGATING      -> SELECTING       arrived
+  123.9 s  SELECTING       -> NAVIGATING      frontier at (26.5, 20.5)
+  124.9 s  NAVIGATING      -> RETURNING       target no longer admissible
+  133.9 s  RETURNING       -> COMMIT_LANDING  over zone 2, invariant
+  148.9 s  COMMIT_LANDING  -> LANDED          invariant
+
+== paths sent
+   12.9 s  path   1: 1 legs,  15.6 m, to N  -12.5 E  +10.5
+   18.9 s  path   2: 1 legs,  17.5 m, to N  -16.5 E   -6.5
+   24.9 s  path   3: 1 legs,  15.0 m, to N   -7.5 E  -18.5
+   29.9 s  path   4: 1 legs,  19.0 m, to N  +10.5 E  -12.5
+   35.9 s  path   5: 1 legs,  32.6 m, to N  -14.5 E  -33.5
+   44.9 s  path   6: 1 legs,  46.5 m, to N  +27.5 E  -13.5
+   56.9 s  path   7: 1 legs,  16.6 m, to N  +42.5 E   -6.5
+   62.9 s  path   8: 1 legs,  79.5 m, to N  -31.5 E  -35.5
+   80.9 s  path   9: 1 legs,  59.7 m, to N  -22.5 E  +23.5
+   94.9 s  path  10: 1 legs,  16.3 m, to N  -34.5 E  +34.5
+  101.0 s  path  11: 3 legs,  84.8 m, to N  +38.5 E   +9.5
+  124.0 s  path  12: 1 legs,  16.3 m, to N  +26.5 E  +20.5
+  124.9 s  path  13: 1 legs,  34.0 m, to N   +5.5 E   +2.5
+
+== abort: 1
+  124.9 s  {'reason': 'target no longer admissible', 'need_j': 8546.90850776608, 'remaining_j': 13118.297812744946}
+
+== return: 1
+  124.9 s  {'zone_id': 2, 'reason': 'target no longer admissible', 'length_m': 33.95585369269929, 'energy_j': 2484.0703915964914}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF           14400      0         0     48.0     nan         0
+   16.8 NAVIGATING        12693   1707        16     44.6    34.5         1
+   31.8 NAVIGATING        11616   2784        20     40.2    29.8         1
+   47.8 NAVIGATING        10535   3865        29     35.5    24.4         1
+   63.8 NAVIGATING         9196   5204        35     30.8    19.1         1
+   79.8 NAVIGATING         8656   5744        35     26.2    14.3         1
+   95.8 NAVIGATING         7596   6804        39     21.6    10.4         1
+  110.8 NAVIGATING         6625   7775        44     17.3     7.7         2
+  126.8 RETURNING          6005   8395        42     12.5     1.6         2
+  142.8 COMMIT_LANDING     5997   8403        42      8.0     1.8         2
+  153.8 LANDED             5997   8403        42      7.1     1.8         2
+
+== result
+duration 153 s, coverage 58.4 % of the area, unknown left 5997 cells
+energy consumed 40.9 kJ, left 7.1 kJ
+I1 margin min 1.55 kJ, violations 0
+end: COMMIT_LANDING, over zone 2, invariant
+final position N +5.7 E +2.5 D +0.1
+  confirmed zone 1: touchdown (-0.0, 0.0), home, 6.2 m from the final position
+  confirmed zone 2: touchdown (-0.5, 0.5), 148 m2, 6.5 m from the final position
+cycle time median 94 ms, max 282 ms over 154 cycles
