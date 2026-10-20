@@ -12,14 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from pathlib import Path
+
 from ament_flake8.main import main_with_errors
 import pytest
+
+# The package, not the current directory: CLAUDE.md runs pytest from the
+# workspace root, where the default '.' also linted experiments/ and
+# tools/ (86 findings, none in the package) and failed on every run.
+PACKAGE = Path(__file__).resolve().parents[1]
 
 
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    rc, errors = main_with_errors(argv=[])
+    rc, errors = main_with_errors(argv=[str(PACKAGE)])
     assert rc == 0, \
         'Found %d code style errors / warnings:\n' % len(errors) + \
         '\n'.join(errors)
