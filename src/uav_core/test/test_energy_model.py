@@ -7,8 +7,11 @@ check that matters. Measured energies come from
 experiments/2026-10-19_energy_calibration/runs/results.json.
 """
 
+from dataclasses import replace
+
 import pytest
 from uav_core.energy_model import CALIBRATION_2026_10_19 as M
+from uav_core.energy_model import PLANNING_2026_10_20 as P
 
 
 def square(side):
@@ -63,3 +66,9 @@ def test_degenerate_paths_cost_nothing():
     """A single point or a zero-length leg costs no transit energy."""
     assert M.path_energy([(3, 4)]) == 0.0
     assert M.path_energy([(3, 4), (3, 4)]) == 0.0
+
+
+def test_planning_model_differs_from_calibration_by_e_land_only():
+    """The manager plans with the p95 landing, the rest as fitted."""
+    assert P.e_land_j == 3387.0 and M.e_land_j == 3199.5
+    assert P == replace(M, e_land_j=P.e_land_j)

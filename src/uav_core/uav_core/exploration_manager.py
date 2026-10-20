@@ -51,7 +51,7 @@ from rclpy.qos import (DurabilityPolicy, HistoryPolicy, QoSProfile,
 from sensor_msgs.msg import PointCloud2
 from std_msgs.msg import Empty, Header
 from uav_core import viz
-from uav_core.energy_model import CALIBRATION_2026_10_19
+from uav_core.energy_model import PLANNING_2026_10_20
 from uav_core.frontier_detection import Blacklist
 from uav_core.map_msg import msg_to_layers
 from uav_core.mission_fsm import Inputs, MissionFSM, MissionParams
@@ -111,7 +111,7 @@ class ExplorationManager(Node):
         if self.mode not in ('observe', 'explore'):
             raise SystemExit(f'unknown mode {self.mode}')
 
-        self.model = CALIBRATION_2026_10_19
+        self.model = PLANNING_2026_10_20
         self.blacklist = Blacklist()
         self.fsm = MissionFSM(MissionParams(**mission), self.model,
                               SlzRegistry(

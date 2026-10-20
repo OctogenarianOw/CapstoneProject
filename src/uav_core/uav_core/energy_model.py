@@ -27,7 +27,7 @@ needs another calibration. Units are rotor shaft joules, the quantity
 the instrument of 17 Oct measures, not battery joules.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import math
 
 
@@ -96,3 +96,20 @@ CALIBRATION_2026_10_19 = EnergyModel(
     accel_ms2=3.0,
     settle_s=0.058,
 )
+
+# What the manager plans with: the calibration, E_land raised to the
+# p95 of the landings the manager itself commanded. The calibrated
+# 3199.5 J is the descent as the executor flies it alone, matched
+# within 0.2 % on 15 such landings (2026-10-19_landing_p4). Inside
+# missions the same landing costs more: 3284 J mean, sd 64 J, p95
+# 3387 J, max 3460 J over the 140 committed headless landings of the
+# two W1 campaigns (2026-10-19_campaign_w1, 2026-10-20_campaign_w1_fix),
+# 130 of them (93 %) above 3199.5 J. Cause assumed, not measured: a delay
+# between the LAND command and the start of the descent that grows
+# with load. The p95 of the first campaign alone, 3379 J, held out of
+# sample on the second (7 of 70 landings above it). A mean would
+# leave one landing in two over E_land, paid from the reserve; at the
+# p95, 8 of the 140 are over it, by at most 73 J. Rejected: changing the
+# calibration itself, which would lose the measured descent and mix
+# what is measured with what is chosen.
+PLANNING_2026_10_20 = replace(CALIBRATION_2026_10_19, e_land_j=3387.0)

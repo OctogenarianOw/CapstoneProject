@@ -23,7 +23,9 @@ C1, energy feasibility invariant (S13): a frontier f is admissible iff
            after the arrival. Without it, 5 s decisions took 1.5 kJ of
            a 2 kJ reserve at every landing of 19 Oct
            (experiments/2026-10-19_decision_latency, reserve_use.py)
-  E_land   calibrated descent and touchdown, energy_model.e_land_j
+  E_land   landing energy, the p95 of the landings the manager
+           commanded (energy_model.PLANNING_2026_10_20), above the
+           calibrated descent of the executor alone
   slz* is the zone nearest along the return field, seeded on every
   landable cell of every confirmed zone: one pass for all frontiers.
   Every candidate cell of a zone passed the footprint test of S8, so
