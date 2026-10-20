@@ -49,7 +49,7 @@ class WorldParams:
     altitude_m: float = 8.0           # survey altitude, 4 m above the cube
     vertical_margin_m: float = 2.0    # chosen, map error and P2 shrink
     inflate_m: float = 1.25           # half-span + 0.90 m tracking, measured
-    footprint_m: float = 1.5          # estimated, P4 open
+    footprint_m: float = 1.5          # 3x3 cells; 1.2 m from P4 breaks S8
     sensor_radius_m: float = 18.0     # sqrt(20^2 - 8^2), geometry
     area_half_m: float = 30.0         # exploration area, validation world
 
