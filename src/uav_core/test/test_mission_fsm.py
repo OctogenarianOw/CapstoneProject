@@ -11,7 +11,8 @@ import numpy as np
 from uav_core.energy_model import CALIBRATION_2026_10_19 as MODEL
 from uav_core.frontier_detection import Blacklist
 from uav_core.mission_fsm import (BOOTSTRAP, COMMIT_LANDING, EMERGENCY,
-                                  EX_HOLDING, EX_IDLE, EX_LANDED, INIT,
+                                  EX_FOLLOWING, EX_HOLDING, EX_IDLE,
+                                  EX_LANDED, INIT,
                                   Inputs, LANDED, MissionFSM, MissionParams,
                                   NAVIGATING, RETURNING, SELECTING, TAKEOFF)
 from uav_core.slz_registry import SlzRegistry
@@ -156,10 +157,13 @@ def test_measured_latency_is_charged_by_c1():
 
 def test_budget_too_small_returns_home_and_lands():
     """
-    None admissible while I1 holds: end 'budget', commit, land.
+    None admissible while I1 holds: end 'budget', stop over home, land.
 
     15 kJ left, 10 kJ reserve: the landing (3.2 kJ) fits, so I1 holds at
-    home, but no round trip (6.5 kJ and more) fits in the 5 kJ left.
+    home, but no round trip (6.5 kJ and more) fits in the 5 kJ left. The
+    aircraft is over the home cell already: it still gets a path to the
+    cell, and LAND only once the executor reports arrival, at rest
+    (2026-10-20_landing_drift: LAND sent in flight drifted up to 9.2 m).
     """
     m = fsm()
     w = world()
@@ -169,8 +173,15 @@ def test_budget_too_small_returns_home_and_lands():
     actions = m.step(inputs(3, w=w, remaining=15000.0))
     assert m.last_margin > 0
     assert m.end_reason == 'budget'
+    assert m.state == RETURNING and [a.kind for a in actions] == ['path']
+    path = actions[0]
+    assert m.step(inputs(4, w=w, remaining=15000.0, path_id=path.path_id,
+                         ex_state=EX_FOLLOWING)) == []
+    assert m.state == RETURNING
+    actions = m.step(inputs(5, w=w, remaining=15000.0, path_id=path.path_id,
+                            arrived=True))
     assert m.state == COMMIT_LANDING and [a.kind for a in actions] == ['land']
-    m.step(inputs(4, ex_state=EX_LANDED))
+    m.step(inputs(6, ex_state=EX_LANDED))
     assert m.state == LANDED
 
 

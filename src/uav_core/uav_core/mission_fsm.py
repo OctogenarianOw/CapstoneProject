@@ -418,8 +418,12 @@ class MissionFSM:
         self._event(inp.t, 'return', zone_id=zone_id, reason=why,
                     length_m=plan.length_m,
                     energy_j=self.model.path_energy(plan.waypoints_ne))
-        if len(plan.cells) < 2:
-            return self._commit(inp)
+        # Even over a landable cell already, fly to its centre and commit
+        # only on arrival, which the executor reports at rest (under
+        # 0.5 m and 0.3 m/s). Committing at once sent LAND at up to
+        # 4.8 m/s: 13 of 154 committed landings of the W1 runs drifted
+        # 2 to 9.2 m past the cell, once into the rough zone
+        # (experiments/2026-10-20_landing_drift).
         return [self._path(plan.waypoints_ne)]
 
     def _returning(self, inp, rfield, retired_confirmed):
