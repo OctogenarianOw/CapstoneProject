@@ -219,7 +219,7 @@ cols = [('min_margin_kj', 'min I1 margin kJ'),
         ('duration_s', 'duration s')]
 print('\n== safety')
 print('landed on registry: I5; landed safe: truth zone under the final '
-      'position flat or 3 deg ramp')
+      'position on a flat pad')
 print(f'{"config":<8} {"n":>3} {"missions with I1 violation":>27} '
       f'{"violations median [IQR]":>24} {"emergency":>9} '
       f'{"on registry":>11} {"landed safe":>11} {"overruns":>8}')
