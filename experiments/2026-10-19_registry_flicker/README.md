@@ -66,20 +66,55 @@ case means deciding what a pass is for a zone that changes shape, a
 definition of I4, left to Dorian (counting passes around a point that
 never decreases, or around the zone's cells, are the two candidates).
 
-## Next
+## The W1 campaign with this fix, 20 Oct
 
-The W1 campaign again with this fix as the only change is the
-measurement of its effect on I1 under C1; not launched without
-Dorian's go.
+`2026-10-20_campaign_w1_fix`, the 80 missions of the first campaign with
+c7fc2aa as the only change: C1 missions breaking I1 31/60 -> 0/60,
+pass-count demotions 150 -> 5. The 5 left are the case above; one of
+them sent B1_r10 back to the take-off point and broke I1 7 times.
+
+## I4 option b (d115a97), 20 Oct
+
+Decided by Dorian on 19 Oct: the pass count of a known zone never
+decreases; a pass flown over a zone stays counted when its touchdown
+moves. A unit test reproduces the `after_r1` case (1 pass before the
+change, 2 after, and a cell short of OBSERVED still demotes the zone).
+
+Three flights, same protocol, code d115a97, `bash run.sh i4passes 3`,
+fresh world, 0 failsafes:
+
+| flights | git | touchdown moves | over 5 m | largest | pass-count demotions | coverage | I1 violations |
+|---|---|---|---|---|---|---|---|
+| `after_r1`, `after_r2` | c7fc2aa | 3, 4 | 0, 0 | 4.5, 1.4 m | 1, 0 | 100, 100 % | 0, 0 |
+| `i4passes_r1..3` | d115a97 | 2, 3, 4 | 0, 0, 0 | 1.0, 2.8, 2.0 m | 0, 0, 0 | 100, 100, 100 % | 0, 0, 0 |
+
+Did the change act in these flights? `counterfactual_passes.py`
+recomputes, from the 1 Hz log, the count the registry would have had
+before d115a97, around each logged touchdown over the track so far. On
+the four flights before the change it equals the logged count at all
+588 zone-cycles, which checks the script. On the three new flights it
+also equals it at all 578: no touchdown moved away from the passes
+already counted, so the change never acted and prevented no demotion.
+
+So these flights show no regression (full coverage, no violation, the
+same touchdown behaviour), not the effect. The effect rests on the unit
+test; its frequency in flight is 5 demotions in 80 missions of the
+campaign above, about one mission in sixteen, too rare to observe in
+three. The evaluation campaign (H) will count it.
 
 ## Files
 
-    run.sh               N missions of one label, W1, 200 kJ
-    before_r*/ after_r*/ setup.txt, px4.log, node logs, analysis.txt,
-                         missions/<date>/
-    live_flicker.py      touchdown moves and demotions as flown
-    replay_flicker.py    the registry replayed on map snapshots
-    live_flicker.txt     its output for the four flights
+    run.sh                    N missions of one label, W1, 200 kJ
+    before_r*/ after_r*/ i4passes_r*/
+                              setup.txt, px4.log, node logs, analysis.txt,
+                              missions/<date>/
+    live_flicker.py           touchdown moves and demotions as flown
+    replay_flicker.py         the registry replayed on map snapshots
+    counterfactual_passes.py  pass counts without I4 option b, from the log
+    live_flicker.txt          live_flicker output for the four flights of 19 Oct
+    live_flicker_20oct.txt    the same with the three I4 flights
+    counterfactual_passes.txt counterfactual_passes output, seven flights
 
     cd ~/ros2_ws/droneAfter/experiments/2026-10-19_registry_flicker
-    python3 live_flicker.py before_r*/missions/* after_r*/missions/*
+    python3 live_flicker.py before_r*/missions/* after_r*/missions/* i4passes_r*/missions/*
+    python3 counterfactual_passes.py before_r*/missions/* after_r*/missions/* i4passes_r*/missions/*
