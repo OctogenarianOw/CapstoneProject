@@ -1,0 +1,41 @@
+mission 2026-10-20_15-58-22: mode explore, policy c1_c2, alpha 0.5, reserve 0.1, git e029ebd
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   15.8 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   20.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   20.9 s  SELECTING       -> NAVIGATING      frontier at (-12.5, -11.5)
+   35.5 s  NAVIGATING      -> SELECTING       arrived
+   35.5 s  SELECTING       -> NAVIGATING      frontier at (12.5, -11.5)
+   40.5 s  NAVIGATING      -> RETURNING       target no longer admissible
+   55.6 s  RETURNING       -> COMMIT_LANDING  over zone 1, invariant
+   80.0 s  COMMIT_LANDING  -> LANDED          invariant
+
+== paths sent
+   25.9 s  path   1: 1 legs,  17.0 m, to N  -12.5 E  -11.5
+   40.5 s  path   2: 1 legs,  25.0 m, to N  +12.5 E  -11.5
+   45.5 s  path   3: 1 legs,  16.3 m, to N   -0.5 E   -0.5
+
+== abort: 1
+   40.5 s  {'reason': 'target no longer admissible', 'need_j': 10831.756602064124, 'remaining_j': 9936.51493985109}
+
+== return: 1
+   40.5 s  {'zone_id': 1, 'reason': 'target no longer admissible', 'length_m': 16.278820596099706, 'energy_j': 1481.301799719067}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF            3600      0         0     20.0     nan         0
+   15.8 BOOTSTRAP          2338   1262        12     17.2    12.0         1
+   30.9 NAVIGATING         1818   1782        16     12.8     6.2         1
+   50.5 RETURNING          1278   2322        17      6.9     1.7         1
+   70.0 COMMIT_LANDING     1277   2323        17      1.2     0.3         1
+   80.0 LANDED             1277   2323        17      0.5     0.3         1
+
+== result
+duration 79 s, coverage 64.5 % of the area, unknown left 1277 cells
+energy consumed 19.5 kJ, left 0.5 kJ
+I1 margin min 0.25 kJ, violations 0
+end: COMMIT_LANDING, over zone 1, invariant
+final position N -0.5 E -0.5 D +0.0
+  confirmed zone 1: touchdown (-0.1, -0.0), home, 0.6 m from the final position
+cycle time median 5021 ms, max 5032 ms over 17 cycles

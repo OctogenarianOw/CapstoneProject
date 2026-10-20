@@ -99,14 +99,60 @@ changes, each with its own measurement: I1 charging the measured latency, and
 E_land recalibrated on executor landings (with the landing precision
 experiment P4 of S16, which needs the same ten landings).
 
+## I1 and the return charge the latency (4f7e635), 20 Oct
+
+Change: E_return in C1 and the I1 need get one `overhead_s` of hover,
+the decision between the arrival over the zone and the LAND command.
+Same protocol, `inject_delay_s` 5, three flights before on the code of
+the day (e029ebd, which carries the registry fixes c7fc2aa and d115a97,
+so `after_d5` of 19 Oct is no longer the baseline) and three after:
+
+| flights | git | reserve used | coverage | I1 violations logged |
+|---|---|---|---|---|
+| `base_d5_r1..3` | e029ebd | 1.30, 1.46, 1.47 kJ | 64.3, 65.0, 64.5 % | 0, 0, 0 |
+| `i1lat_d5_r1..3` | 4f7e635 | 1.47, 1.44, 1.47 kJ | 62.7, 64.2, 61.8 % | 4, 4, 4 |
+
+**The reserve used did not fall.** In every flight the return starts at
+40.4 to 40.5 s with the same energy, both before and after. The energy
+was committed at 35.4 s, by the second decision, charged `dwell_s`
+(2 s) because the first visit's latency (U 14.5 to 15.1 s) is only
+measured when that visit closes. The change cannot act earlier than the
+measurement it uses. That is the first-visit gap noted below, and it is
+what the reserve pays for in this protocol.
+
+**What the change does: I1 tells the truth.** `i1_truth.py` takes, at
+the cycle the manager turns to RETURNING, the I1 margin under both
+definitions (computable on every flight, since `overhead_s` is logged
+with it), and the margin that actually remained, energy left at the end
+minus the reserve (`i1_truth.txt`):
+
+| flights | I1 before 4f7e635 | I1 from 4f7e635 | same, E_land p95 | actual |
+|---|---|---|---|---|
+| `after_d5_r1..3` | +3.15 to +3.22 kJ | -1.06 to -1.16 kJ | -1.24 to -1.35 kJ | -1.45 to -1.50 kJ |
+| `base_d5_r1..3` | +3.22 to +3.38 kJ | -0.88 to -1.10 kJ | -1.06 to -1.29 kJ | -1.30 to -1.47 kJ |
+| `i1lat_d5_r1..3` | +3.23 to +3.26 kJ | -0.90 to -1.09 kJ | -1.08 to -1.28 kJ | -1.44 to -1.47 kJ |
+
+Before, I1 said +3.2 kJ while the mission was about to eat 1.5 kJ of
+its reserve: a violation that happened and was never reported, against
+"always reported, never silent" (S13, 3.4). From 4f7e635 the sign is
+right and the error is 0.3 to 0.6 kJ, optimistic; the p95 E_land
+(PLANNING_2026_10_20) takes 0.19 kJ more of it. The 4 violations per
+flight are the cycles of the return and of the commit, true ones.
+
+Coverage is 61.8 to 64.2 % after, 64.3 to 65.0 % before, but the two
+groups fly the same frontier sequences (`base_d5_r1` and `i1lat_d5_r1`
+the same two frontiers): the change did not alter a choice here, and
+the small difference is not attributed to it.
+
 ## Also observed
 
 - `before_d5` flights show 0 path resends: the retry fix 6bdc128
   holds under 5 s decisions (20 resends in the first 190 m flight).
 - The first visit of a mission is always charged `dwell_s`, nothing
-  being measured yet. Here its 15 s were absorbed by the slack of a
-  full budget; a mission whose first decision is already tight would
-  not be protected. A seed from the bootstrap cycles is the candidate.
+  being measured yet. The flights of 20 Oct show it is what the reserve
+  pays here: the 1.3 to 1.5 kJ used by every flight under 5 s of
+  latency come from a decision taken before the latency was known. A
+  seed from the bootstrap cycles is the candidate, as its own change.
 
 ## Failed sessions
 
@@ -120,10 +166,13 @@ was started in these sessions.
 ## Files
 
     run.sh                 N flights of one label and injected delay
-    before_d5_r*/          87a7035, after_d5_r*/ a4ac769
+    before_d5_r*/          87a7035, after_d5_r*/ a4ac769,
+    base_d5_r*/            e029ebd, i1lat_d5_r*/ 4f7e635
       setup.txt px4.log *.log missions/<date>/ analysis.txt latency.txt
     overrun_series.py      U per visit and predictors, from events.jsonl
     reserve_use.py         end of mission against the reserve
+    i1_truth.py            I1 at the return decision against the outcome
+    i1_truth.txt           its output
     px4_params_drifted/    PX4 parameter files of the stuck sessions
     failed/                the stuck sessions
 
