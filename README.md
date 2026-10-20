@@ -38,7 +38,7 @@ obstacle, two distinct passes before a zone is confirmed, no landing
 outside the registry except a logged emergency) are listed in the
 specification, section 3.4.
 
-## Status, 19 October 2026
+## Status, 20 October 2026
 
 | gate | component | status |
 |---|---|---|
@@ -46,8 +46,8 @@ specification, section 3.4.
 | B | landing zone detection and dynamic registry | done; a flicker of large zones between CONFIRMED and CANDIDATE found in the campaign and fixed (c7fc2aa); in-flight invalidation scenario on a deceptive world (W3) to do |
 | C | energy model | done, within 1.0 % of unfitted flights from the plan, 0.26 % with the per-leg term |
 | D | frontier detection on the map | done |
-| E | C1 | **not passed yet**: in the 80-mission W1 campaign, 31 of 60 C1 missions broke I1, every one right after the registry flicker above; the campaign is to be flown again with the fix |
-| F | C2, effect of alpha | measured: minimum margin and energy left fall monotonically with alpha (Spearman -0.49, -0.50); the coverage side needs a world larger than the budget (W2) |
+| E | C1 | **passed** on 20 Oct: the same 80-mission W1 campaign with the registry fix alone, 0 of 60 C1 missions break I1 (31 of 60 before), against 10 of 10 B0 and 6 of 10 B1; no C1 mission touches its reserve |
+| F | C2, effect of alpha | met on one metric: the time to the first discovered zone falls with alpha (rho -0.64). The effect on margin and energy reported on 19 Oct was the registry artefact and is withdrawn. Coverage sits at the 95 % ceiling of W1 from alpha 0.25: the coverage side needs a world larger than the budget (W2) |
 | G | autonomous mission, take-off to landing on a confirmed zone | done, full coverage of W1 in 97 s |
 | H | full evaluation, 3 worlds, 240 missions | to do |
 
@@ -151,7 +151,8 @@ runs the same nodes with RViz.
 | `2026-10-19_live_demo`, `_live_demo_200kJ` | display for a live demonstration | why flat ground was refused at 20 kJ; full coverage at 200 kJ |
 | `2026-10-19_big_area` | C1 on a 190 m area | 7 violations from a decision latency C1 did not charge; 0 after the cycle fixes |
 | `2026-10-19_decision_latency` | C1 under 5 s of injected latency | violations 2, 2, 1 -> 0, 0, 0 with the measured charge |
-| `2026-10-19_campaign_w1` | gates E and F, 80 missions | C1 violations all caused by the registry flicker; alpha effect on margin and energy |
+| `2026-10-19_campaign_w1` | gates E and F, 80 missions | C1 violations all caused by the registry flicker; alpha effect on margin and energy, withdrawn on 20 Oct |
+| `2026-10-20_campaign_w1_fix` | gates E and F after the registry fix | C1 missions breaking I1 31/60 -> 0/60, gate E passed; alpha moves the time to the first zone only |
 | `2026-10-19_registry_flicker` | the registry flicker | touchdown jumps over 5 m 5, 12 -> 0, 0 after the fix |
 | `2026-10-19_landing_p4` | landing precision, E_land | p95 0.180 m; E_land exact alone, +3 % inside missions |
 | `2026-10-20_footprint_p4` | footprint 1.2 against 1.5 m, offline | 1.2 m rejected, severe false accepts 0 -> 2 on v6, 14 -> 44 on mission maps; 1.5 m kept |
