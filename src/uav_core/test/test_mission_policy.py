@@ -14,7 +14,7 @@ from types import SimpleNamespace
 import numpy as np
 from uav_core.energy_model import CALIBRATION_2026_10_19 as MODEL
 from uav_core.mission_policy import (evaluate, invariant_margin,
-                                     PolicyParams, return_field)
+                                     PolicyParams, rescale, return_field)
 from uav_core.world_model import build_world, WorldParams
 
 N, RES, ORIGIN = 60, 1.0, (-30.0, -30.0)
@@ -83,6 +83,31 @@ def test_alpha_moves_the_choice_from_margin_to_gain():
                                         for c in d.candidates)
     assert by_margin.e_total == min(c.e_total for c in d.candidates)
     assert max(c.g for c in d.candidates) == 1.0
+
+
+def test_rescale_spans_the_unit_interval():
+    """Min-max over the pool; a pool of equal values is all 1."""
+    assert rescale([2.0, 4.0, 6.0]) == [0.0, 0.5, 1.0]
+    assert rescale([3.0, 3.0]) == [1.0, 1.0]
+    assert rescale([5.0]) == [1.0]
+
+
+def test_g_and_m_both_span_the_pool():
+    """
+    G and M are rescaled over the admissible pool, in their raw order.
+
+    Before 20 Oct M was the share of the budget itself and spread about
+    0.12 between frontiers against 0.88 for G (2026-10-20_c2_balance).
+    """
+    w = take_off_world()
+    d = run(w, HOME, 2e4, alpha=0.5)
+    pool = [c for c in d.candidates if c.admissible]
+    assert min(c.g for c in pool) == 0.0 and max(c.g for c in pool) == 1.0
+    assert min(c.m for c in pool) == 0.0 and max(c.m for c in pool) == 1.0
+    by_share = sorted(pool, key=lambda c: c.m_share)
+    assert [c.m for c in by_share] == sorted(c.m for c in pool)
+    best = max(pool, key=lambda c: c.m_share)
+    assert np.isclose(best.m_share, 1.0 - best.e_total / 2e4)
 
 
 def test_return_goes_to_the_nearest_confirmed_zone():

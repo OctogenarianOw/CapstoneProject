@@ -106,8 +106,8 @@ Parmi les frontières admissibles, le classement se fait par :
 U(f) = alpha * G(f) + (1 - alpha) * M(f)
 ```
 
-- `G(f)` : gain d'information normalisé, nombre estimé de cellules inconnues qui deviendraient observées depuis `f`, divisé par le maximum sur l'ensemble des candidates du cycle.
-- `M(f)` : marge énergétique normalisée, `(B_current - R - E_total(f)) / (B_current - R)`, bornée à [0, 1].
+- `G(f)` : gain d'information, nombre estimé de cellules inconnues qui deviendraient observées depuis `f`, ramené à [0, 1] sur les candidates admissibles du cycle, `(x - min) / (max - min)`.
+- `M(f)` : marge énergétique, part du budget qui resterait, `(B_current - R - E_total(f)) / (B_current - R)` bornée à [0, 1], ramenée de la même façon à [0, 1] sur les candidates du cycle.
 - `alpha` dans [0, 1], paramètre d'étude. `alpha = 1` redonne une exploration purement informationnelle, `alpha = 0` une exploration purement conservatrice.
 
 C2 n'est pas une simple pondération cosmétique : elle encode l'arbitrage central du problème, aller chercher de l'information là où elle est, ou rester près d'un refuge confirmé.
@@ -648,14 +648,16 @@ pour chaque frontiere candidate f :
 **Rôle.** Classer les frontières admissibles.
 
 ```
-G(f) = cellules_inconnues_gagnees(f) / max sur les candidates
-M(f) = clip((B_current - R - E_total(f)) / (B_current - R), 0, 1)
+part(f) = clip((B_current - R - E_total(f)) / (B_current - R), 0, 1)
+G(f) = minmax(cellules_inconnues_gagnees(f)) sur les candidates du cycle
+M(f) = minmax(part(f)) sur les candidates du cycle
 U(f) = alpha * G(f) + (1 - alpha) * M(f)
+minmax(x) = (x - min) / (max - min), 1 pour toutes si toutes égales
 ```
 
 **Exigences.**
 
-- La normalisation de `G` se fait **sur l'ensemble des candidates du cycle courant**, pas sur une constante globale, sinon `alpha` n'a pas le même sens d'un cycle à l'autre.
+- La normalisation de `G` **et de `M`** se fait **sur l'ensemble des candidates du cycle courant**, pas sur une constante globale, sinon `alpha` n'a pas le même sens d'un cycle à l'autre. **Révisé le 20 octobre** (`experiments/2026-10-20_c2_balance`) : avec `G` divisé par son maximum et `M` égal à la part du budget, `G` s'étalait de 0.88 entre frontières et `M` de 0.12 (médianes sur 2225 décisions) ; `G` l'emportait dès `alpha` 0.10 et 92 % des décisions à `alpha` 0.5 étaient déjà le choix du gain pur, si bien que `alpha` n'agissait que sur [0, 0.2]. Les deux termes ramenés à [0, 1] par cycle, le choix quitte la marge pure à 0.35 et rejoint le gain pur à 0.55 (médianes), 52 % à 0.5. La part du budget reste journalisée (`m_share`). Coût accepté : quand toutes les marges se valent, une petite différence est amplifiée, mais entre frontières que C1 a toutes jugées sûres.
 - `alpha` est un paramètre ROS modifiable à chaud, pour permettre un balayage sans recompilation.
 - Les valeurs de `U`, `G`, `M` et `E_total` de **toutes** les candidates de chaque cycle sont journalisées, pas seulement celles de la gagnante. C'est ce qui permet de produire les figures d'analyse du comportement de sélection.
 

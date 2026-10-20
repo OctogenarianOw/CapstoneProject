@@ -378,7 +378,7 @@ class ExplorationManager(Node):
                 'gain': c.frontier.gain, 'path_dist_m': c.frontier.path_dist_m,
                 'e_go': c.e_go, 'e_return': c.e_return, 'e_total': c.e_total,
                 'zone_id': c.zone_id, 'admissible': c.admissible,
-                'g': c.g, 'm': c.m, 'u': c.u,
+                'g': c.g, 'm': c.m, 'm_share': c.m_share, 'u': c.u,
                 'chosen': c is d.best} for c in d.candidates]
         e = self.energy
         self.log.cycle(t, {

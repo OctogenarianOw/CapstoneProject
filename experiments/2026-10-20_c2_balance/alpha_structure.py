@@ -13,8 +13,9 @@ acts on a narrow band near 0, which is what the W1 campaigns show
 
 For every logged decision with at least two admissible candidates, this
 script takes the G and M the manager computed and re-ranks the pool for
-alpha from 0 to 1 by 0.05, twice: with M as logged, and with M rescaled
-per cycle like G, (M - min M) / (max M - min M) over the pool. It
+alpha from 0 to 1 by 0.05, three times: with G and M as logged, with M
+rescaled per cycle, (M - min M) / (max M - min M) over the pool, and
+with both G and M rescaled that way. It
 reports the spreads of G and M per decision, the alpha at which the
 choice leaves the pure-margin choice (alpha 0) and the alpha from which
 it equals the pure-gain choice (alpha 1), and, per alpha, the share of
@@ -54,12 +55,19 @@ def decisions(run_dirs):
                        np.array([x['path_dist_m'] for x in pool]))
 
 
+def minmax(x):
+    """Min-max over the pool, every candidate 1 when all are equal."""
+    span = x.max() - x.min()
+    return (x - x.min()) / span if span > 1e-12 else np.ones_like(x)
+
+
 def analyse(rows, rescale):
     leave, join, pure_gain = [], [], np.zeros(len(ALPHAS))
     for g, m, d in rows:
-        if rescale:
-            span = m.max() - m.min()
-            m = (m - m.min()) / span if span > 0 else np.zeros_like(m)
+        if rescale in ('m', 'both'):
+            m = minmax(m)
+        if rescale == 'both':
+            g = minmax(g)
         picks = [choice(g, m, d, a) for a in ALPHAS]
         pure_gain += [p == picks[-1] for p in picks]
         differ = [a for a, p in zip(ALPHAS, picks) if p != picks[0]]
@@ -81,10 +89,11 @@ def main():
     print(f'spread of M per decision: median {np.median(m_spread):.3f}, '
           f'IQR {np.percentile(m_spread, 25):.3f} to '
           f'{np.percentile(m_spread, 75):.3f}')
-    for rescale in (False, True):
+    labels = {'none': 'M as logged (share of the budget), G as logged',
+              'm': 'M rescaled per cycle (min-max), G as logged',
+              'both': 'G and M both rescaled per cycle (min-max)'}
+    for rescale, label in labels.items():
         leave, join, pure = analyse(rows, rescale)
-        label = ('M rescaled per cycle like G' if rescale
-                 else 'M as logged (share of the budget)')
         split = ~np.isnan(leave)
         print()
         print(label)

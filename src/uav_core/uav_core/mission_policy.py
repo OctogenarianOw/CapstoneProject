@@ -41,11 +41,32 @@ C1, energy feasibility invariant (S13): a frontier f is admissible iff
   map at f is unknowable (S13). The reserve R covers it.
 
 C2, energy margin utility (S14), among admissible frontiers only:
-    G(f) = gain(f) / max gain over the candidates of this cycle
-    M(f) = clip((B - R - E_total(f)) / (B - R), 0, 1)
+    share(f) = clip((B - R - E_total(f)) / (B - R), 0, 1)
+    G(f) = gain(f), rescaled over the pool of this cycle to [0, 1]
+    M(f) = share(f), rescaled over the pool of this cycle to [0, 1]
     U(f) = alpha G(f) + (1 - alpha) M(f)
-  normalised per cycle, so alpha means the same from one cycle to the
-  next (S14).
+  rescaled as (x - min) / (max - min) over the admissible frontiers,
+  every candidate 1 when all are equal. Both terms then span [0, 1] at
+  every decision, so alpha weighs the rank in information against the
+  rank in margin among the frontiers on offer, with the same meaning
+  from one cycle to the next (S14); share(f), the margin in budget
+  terms, is logged as m_share.
+  Until 20 Oct G was gain / max gain and M the share itself. Over the
+  2225 decisions of the 60 C1 missions of 2026-10-20_campaign_w1_fix,
+  G spread 0.88 between frontiers and the share 0.12 (medians), so G
+  took over at alpha 0.10 (median) and 92 % of the decisions at alpha
+  0.5 were already the pure-gain choice: alpha acted on [0, 0.2] only,
+  and the campaigns saw alpha 0 apart from the rest. Rescaled, the
+  choice leaves the pure-margin one at alpha 0.35 and joins the
+  pure-gain one at 0.55 (medians), 52 % at alpha 0.5
+  (experiments/2026-10-20_c2_balance). Rejected: rescaling M only,
+  which leaves G at 0.88 against 1 and alpha 0.5 off balance (49 %,
+  switch medians 0.40 and 0.65); a nonlinear map of alpha, which hides
+  the imbalance in the knob. Cost: where every frontier leaves almost
+  the same margin, the rescaling magnifies a small difference; C1 has
+  already removed every frontier that is not safe, so that choice is
+  between safe frontiers only. B1 and B2 rank by G alone, unchanged by
+  a rescaling that keeps the order.
 
 Policies (spec 5.2), one name each for the logs:
   nearest   B0, smallest path distance, no energy check
@@ -98,6 +119,7 @@ class Candidate:
     admissible: bool = False
     g: float = 0.0
     m: float = 0.0
+    m_share: float = 0.0        # margin as a share of the budget, before M
     u: float = -math.inf
 
 
@@ -174,6 +196,14 @@ def invariant_margin(world, rfield, model, b_current, reserve_j,
     return b_current - reserve_j - need, zone_id, plan
 
 
+def rescale(values):
+    """(x - min) / (max - min) over a pool, every value 1 if all equal."""
+    lo, hi = min(values), max(values)
+    if hi - lo <= 1e-12:
+        return [1.0 for _ in values]
+    return [(v - lo) / (hi - lo) for v in values]
+
+
 def evaluate(world, rfield, model, b_current, params, resolution,
              origin_ne):
     """Score every kept frontier and pick one, or say why none."""
@@ -207,11 +237,13 @@ def evaluate(world, rfield, model, b_current, params, resolution,
     if not pool:
         decision.reason = 'none_admissible'
         return decision
-    gmax = max(c.frontier.gain for c in pool) or 1
     for c in pool:
-        c.g = c.frontier.gain / gmax
-        c.m = (float(np.clip((budget - c.e_total) / budget, 0.0, 1.0))
-               if budget > 0 and math.isfinite(c.e_total) else 0.0)
+        c.m_share = (float(np.clip((budget - c.e_total) / budget, 0.0, 1.0))
+                     if budget > 0 and math.isfinite(c.e_total) else 0.0)
+    gs = rescale([c.frontier.gain for c in pool])
+    ms = rescale([c.m_share for c in pool])
+    for c, g, m in zip(pool, gs, ms):
+        c.g, c.m = g, m
         c.u = params.alpha * c.g + (1.0 - params.alpha) * c.m
     if params.policy == 'nearest':
         best = min(pool, key=lambda c: c.frontier.path_dist_m)
