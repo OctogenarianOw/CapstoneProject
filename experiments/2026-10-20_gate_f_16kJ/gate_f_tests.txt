@@ -1,0 +1,22 @@
+median [IQR] per alpha, 10 missions each
+coverage_seen        0.0: 0.67 [0.67, 0.68] | 0.25: 0.70 [0.69, 0.70] | 0.5: 0.71 [0.70, 0.74] | 0.75: 0.81 [0.80, 0.82] | 1.0: 0.67 [0.67, 0.77]
+cells_per_kj         0.0: 190.07 [186.01, 193.79] | 0.25: 194.31 [193.28, 195.17] | 0.5: 196.86 [195.99, 202.44] | 0.75: 230.51 [216.31, 234.13] | 1.0: 202.31 [200.76, 222.79]
+mean_dist_to_slz_m   0.0: 8.56 [8.41, 8.80] | 0.25: 7.81 [7.78, 8.28] | 0.5: 7.71 [7.69, 7.88] | 0.75: 11.71 [7.63, 13.24] | 1.0: 5.80 [5.74, 11.04]
+min_margin_kj        0.0: 0.83 [0.63, 0.97] | 0.25: 0.88 [0.74, 0.92] | 0.5: 0.80 [0.62, 0.89] | 0.75: 1.01 [0.75, 1.11] | 1.0: 1.61 [1.47, 1.72]
+energy_left_kj       0.0: 3.21 [2.89, 3.37] | 0.25: 3.12 [3.06, 3.19] | 0.5: 3.05 [2.92, 3.16] | 0.75: 3.37 [3.02, 3.57] | 1.0: 3.97 [3.79, 4.08]
+duration_s           0.0: 51.50 [50.75, 52.45] | 0.25: 51.25 [50.93, 52.27] | 0.5: 51.98 [51.60, 52.55] | 0.75: 50.55 [50.20, 52.00] | 1.0: 48.90 [48.05, 49.97]
+
+Mann-Whitney U, two sided, r > 0 when the first is larger
+coverage_seen        0.75 vs 1: p 0.0172 r +0.64   0.75 vs 0: p 0.0028 r +0.80   1 vs 0: p 0.4053 r -0.23
+cells_per_kj         0.75 vs 1: p 0.0312 r +0.58   0.75 vs 0: p 0.0002 r +1.00   1 vs 0: p 0.0002 r +1.00
+mean_dist_to_slz_m   0.75 vs 1: p 0.0312 r +0.58   0.75 vs 0: p 0.7913 r +0.08   1 vs 0: p 0.1041 r -0.44
+min_margin_kj        0.75 vs 1: p 0.0257 r -0.60   0.75 vs 0: p 0.2123 r +0.34   1 vs 0: p 0.0003 r +0.96
+energy_left_kj       0.75 vs 1: p 0.0539 r -0.52   0.75 vs 0: p 0.2730 r +0.30   1 vs 0: p 0.0006 r +0.92
+duration_s           0.75 vs 1: p 0.0539 r +0.52   0.75 vs 0: p 0.2123 r -0.34   1 vs 0: p 0.0017 r -0.84
+
+frontier choices per mission and reason of the return
+alpha 0.0   choices median 3.0 (min 3, max 4), returns {'none_admissible': 10}
+alpha 0.25  choices median 3.0 (min 3, max 4), returns {'none_admissible': 10}
+alpha 0.5   choices median 3.0 (min 3, max 4), returns {'none_admissible': 10}
+alpha 0.75  choices median 3.0 (min 3, max 4), returns {'none_admissible': 5, 'target no longer admissible': 5}
+alpha 1.0   choices median 2.0 (min 2, max 3), returns {'none_admissible': 9, 'target no longer admissible': 1}
