@@ -1,0 +1,45 @@
+mission 2026-10-20_16-21-14: mode explore, policy c1_gain, alpha 0.5, reserve 0.1, git 627c2b5
+
+== states
+    0.6 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   12.5 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   14.5 s  BOOTSTRAP       -> SELECTING       first maps in
+   14.5 s  SELECTING       -> NAVIGATING      frontier at (11.5, -12.5)
+   20.5 s  NAVIGATING      -> SELECTING       arrived
+   20.5 s  SELECTING       -> NAVIGATING      frontier at (-12.5, 11.5)
+   29.5 s  NAVIGATING      -> SELECTING       arrived
+   29.5 s  SELECTING       -> NAVIGATING      frontier at (11.5, 12.5)
+   36.6 s  NAVIGATING      -> SELECTING       arrived
+   36.6 s  SELECTING       -> NAVIGATING      frontier at (-12.5, -11.5)
+   45.6 s  NAVIGATING      -> SELECTING       arrived
+   45.6 s  SELECTING       -> RETURNING       none_admissible
+   45.6 s  RETURNING       -> COMMIT_LANDING  over zone 2, budget
+   60.5 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   14.5 s  path   1: 1 legs,  17.0 m, to N  +11.5 E  -12.5
+   20.5 s  path   2: 1 legs,  33.9 m, to N  -12.5 E  +11.5
+   29.5 s  path   3: 1 legs,  24.0 m, to N  +11.5 E  +12.5
+   36.6 s  path   4: 1 legs,  33.9 m, to N  -12.5 E  -11.5
+
+== return: 1
+   45.6 s  {'zone_id': 2, 'reason': 'none_admissible', 'length_m': 0, 'energy_j': 0.0}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    1.5 TAKEOFF            3600      0         0     20.0     nan         0
+   17.5 NAVIGATING         2082   1518        16     16.6     9.5         1
+   32.6 NAVIGATING         1052   2548        18     12.0     5.5         2
+   48.6 COMMIT_LANDING      248   3352        13      7.4     2.3         2
+   64.5 LANDED              233   3367        13      4.9     2.3         2
+   65.5 LANDED              233   3367        13      4.9     2.3         2
+
+== result
+duration 64 s, coverage 93.5 % of the area, unknown left 233 cells
+energy consumed 15.1 kJ, left 4.9 kJ
+I1 margin min 2.28 kJ, violations 0
+end: COMMIT_LANDING, over zone 2, budget
+final position N -12.4 E -11.6 D +0.0
+  confirmed zone 1: touchdown (-0.0, 0.0), home, 16.9 m from the final position
+  confirmed zone 2: touchdown (-2.5, 0.5), 1827 m2, 15.6 m from the final position
+cycle time median 24 ms, max 39 ms over 65 cycles

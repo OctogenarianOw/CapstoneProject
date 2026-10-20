@@ -67,6 +67,34 @@ the change and stays CANDIDATE after; a 3 x 3 block next to it is
 confirmed. In flight, the evaluation campaign will count the small
 confirmed zones, 15 and 28 in 80 before.
 
+## Flights with the rule (627c2b5), 20 Oct
+
+`bash campaign.sh 2`: the eight configurations of the W1 campaign, two
+missions each, 20 kJ, fresh world, 0 technical failures, 0 failsafes
+(`summary.txt`, `missions.csv`).
+
+| | campaign 2, no rule (80 missions) | with the rule (16 missions) |
+|---|---|---|
+| missions confirming a zone under 9 m2 | 15 (19 %) | **0** |
+| missions where such an island reached 2 passes and stayed CANDIDATE | 0 | 1 |
+| C1 missions with an I1 violation | 0 / 60 | 0 / 12 |
+
+At the rate of the second campaign, 0 in 16 would happen by chance
+with a probability of 0.81^16, about 3 %. One mission shows the rule
+acting: an island under 9 m2 with two passes, held as CANDIDATE.
+
+**Found in these flights, not caused by the rule.** B1_r1 landed in the
+rough zone, at N +24.2 E +3.4. Its battery threshold fired 2 s into a
+45 m leg, over a landable cell of the large zone; the return path was
+empty (length 0), so the LAND command left at once, at 4.8 m/s, and the
+aircraft landed 9.2 m further on. Over all 154 committed landings of
+the three W1 runs, 13 drifted more than 2 m (up to 9.2 m) between the
+LAND command and touchdown, every one after an empty return flown at
+3.2 to 4.8 m/s, C1 missions included (B3a025_r06 of the second
+campaign, 8.1 m). The landing precision of P4 (p95 0.18 m) holds for an
+aircraft stopped over its cell; this path skips the stop. A change of
+its own, measured separately.
+
     cd ~/ros2_ws/droneAfter
     python3 experiments/2026-10-20_min_zone/measure.py data_survey_v6.npz \
         --runs experiments/2026-10-19_campaign_w1/runs
@@ -80,3 +108,7 @@ Files:
     measure_campaign_w1_fix.txt        its output, second campaign
     confirmed_small.py                 small zones confirmed in flight
     confirmed_small_campaign_w1_fix.txt  its output, second campaign
+    campaign.sh, summarise.py          the flights, copies of the campaign ones
+    summary.txt, missions.csv          their summary
+    runs/<CONFIG>_rN/                  one directory per mission
+    MANIFEST.tsv                       SHA-256 and size of every file
