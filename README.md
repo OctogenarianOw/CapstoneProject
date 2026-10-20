@@ -47,7 +47,7 @@ specification, section 3.4.
 | C | energy model | done, within 1.0 % of unfitted flights from the plan, 0.26 % with the per-leg term |
 | D | frontier detection on the map | done |
 | E | C1 | **passed** on 20 Oct: the same 80-mission W1 campaign with the registry fix alone, 0 of 60 C1 missions break I1 (31 of 60 before), against 10 of 10 B0 and 6 of 10 B1; no C1 mission touches its reserve |
-| F | C2, effect of alpha | met on one metric: the time to the first discovered zone falls with alpha (rho -0.64). The effect on margin and energy reported on 19 Oct was the registry artefact and is withdrawn. Coverage sits at the 95 % ceiling of W1 from alpha 0.25: the coverage side needs a world larger than the budget (W2) |
+| F | C2, effect of alpha | **passed** on 20 Oct (W1, 16 kJ, 50 missions): alpha moves cells per kJ (Spearman +0.79), the minimum margin and the energy left (p < 0.001), with 0 violations; coverage peaks at alpha 0.75, 81 % against 67 % with pure information gain (the B2 ranking, p = 0.017) |
 | G | autonomous mission, take-off to landing on a confirmed zone | done, full coverage of W1 in 97 s |
 | H | full evaluation, 3 worlds, 240 missions | to do |
 
@@ -153,6 +153,7 @@ runs the same nodes with RViz.
 | `2026-10-19_decision_latency` | C1 under 5 s of injected latency | violations 2, 2, 1 -> 0, 0, 0 with the measured charge |
 | `2026-10-19_campaign_w1` | gates E and F, 80 missions | C1 violations all caused by the registry flicker; alpha effect on margin and energy, withdrawn on 20 Oct |
 | `2026-10-20_campaign_w1_fix` | gates E and F after the registry fix | C1 missions breaking I1 31/60 -> 0/60, gate E passed; alpha moves the time to the first zone only |
+| `2026-10-20_gate_f_16kJ` | gate F, 50 missions at 16 kJ | alpha moves cells per kJ, margin, energy left; coverage optimum at alpha 0.75, 81 % against 67 % at pure gain |
 | `2026-10-19_registry_flicker` | the registry flicker | touchdown jumps over 5 m 5, 12 -> 0, 0 after the fix |
 | `2026-10-19_landing_p4` | landing precision, E_land | p95 0.180 m; E_land exact alone, +3 % inside missions |
 | `2026-10-20_footprint_p4` | footprint 1.2 against 1.5 m, offline | 1.2 m rejected, severe false accepts 0 -> 2 on v6, 14 -> 44 on mission maps; 1.5 m kept |
