@@ -131,6 +131,8 @@ class CloudWorld(Node):
         self.px4_offset = ClockOffset()    # system minus PX4 clock
         self.scans_at_stamp = 0
         self.scans_latest = 0
+        self.fallback_why = {}
+        self.last_margins = None
 
         self.create_subscription(
             VehicleLocalPosition, '/fmu/out/vehicle_local_position_v1',
@@ -205,8 +207,29 @@ class CloudWorld(Node):
             if pose is not None:
                 self.scans_at_stamp += 1
                 return pose
+            self.diagnose(t_px4)
+        elif self.pose_at_scan:
+            self.fallback_why['no offset'] = (
+                self.fallback_why.get('no offset', 0) + 1)
         self.scans_latest += 1
         return self.position, self.attitude
+
+    def diagnose(self, t_px4):
+        """Count why a scan time was not covered, keep the margins."""
+        p, a = self.poses.pos_t, self.poses.att_t
+        if not p or not a:
+            why = 'empty buffer'
+        elif t_px4 > p[-1] + self.poses.max_extrapolation_s:
+            why = 'after last position'
+        elif t_px4 > a[-1] + self.poses.max_extrapolation_s:
+            why = 'after last attitude'
+        else:
+            why = 'before the buffer'
+        self.fallback_why[why] = self.fallback_why.get(why, 0) + 1
+        if p and a:
+            self.last_margins = (round(t_px4 - p[-1], 3),
+                                 round(t_px4 - a[-1], 3),
+                                 round(t_px4 - p[0], 3), len(p), len(a))
 
     def extract_xyz(self, msg):
         """Decode x, y, z from a PointCloud2, offsets read from its fields."""
@@ -266,7 +289,11 @@ class CloudWorld(Node):
                 f'{pts_ned.shape[0]} pts | {known} cells | '
                 f'mean map z {valid.mean():+.3f} '
                 f'| sd {valid.std():.3f} | pose at stamp '
-                f'{self.scans_at_stamp}, latest {self.scans_latest}')
+                f'{self.scans_at_stamp}, latest {self.scans_latest} '
+                f'| fallbacks {self.fallback_why} | margins t-last pos, '
+                f't-last att, t-first, n pos, n att {self.last_margins} '
+                f'| offsets sim {self.sim_offset.value} px4 '
+                f'{self.px4_offset.value}')
 
     def publish_map(self):
         """Publish the whole grid with its geometry."""
