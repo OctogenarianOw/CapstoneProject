@@ -1,0 +1,72 @@
+mission 2026-10-21_11-26-04: mode explore, policy c1_c2, alpha 1.0, reserve 0.1, git 24772ff
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.7 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (4.5, -17.5)
+   18.9 s  NAVIGATING      -> SELECTING       arrived
+   18.9 s  SELECTING       -> NAVIGATING      frontier at (-3.5, 17.5)
+   27.9 s  NAVIGATING      -> SELECTING       arrived
+   27.9 s  SELECTING       -> NAVIGATING      frontier at (3.5, -34.5)
+   40.9 s  NAVIGATING      -> SELECTING       arrived
+   40.9 s  SELECTING       -> NAVIGATING      frontier at (-17.5, 26.5)
+   55.9 s  NAVIGATING      -> SELECTING       arrived
+   55.9 s  SELECTING       -> NAVIGATING      frontier at (-32.5, 33.5)
+   61.9 s  NAVIGATING      -> SELECTING       arrived
+   61.9 s  SELECTING       -> NAVIGATING      frontier at (18.5, -41.5)
+   81.9 s  NAVIGATING      -> SELECTING       arrived
+   81.9 s  SELECTING       -> NAVIGATING      frontier at (34.5, -43.5)
+   87.9 s  NAVIGATING      -> SELECTING       arrived
+   87.9 s  SELECTING       -> NAVIGATING      frontier at (42.5, -29.5)
+   93.9 s  NAVIGATING      -> SELECTING       arrived
+   93.9 s  SELECTING       -> NAVIGATING      frontier at (-10.5, -42.5)
+  106.9 s  NAVIGATING      -> SELECTING       arrived
+  106.9 s  SELECTING       -> NAVIGATING      frontier at (11.5, 23.5)
+  122.9 s  NAVIGATING      -> SELECTING       arrived
+  122.9 s  SELECTING       -> NAVIGATING      frontier at (24.5, 33.5)
+  128.9 s  NAVIGATING      -> SELECTING       arrived
+  128.9 s  SELECTING       -> RETURNING       none_admissible
+  137.9 s  RETURNING       -> COMMIT_LANDING  over zone 2, budget
+  152.7 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   12.9 s  path   1: 1 legs,  18.7 m, to N   +4.5 E  -17.5
+   18.9 s  path   2: 1 legs,  35.9 m, to N   -3.5 E  +17.5
+   27.9 s  path   3: 1 legs,  52.5 m, to N   +3.5 E  -34.5
+   40.9 s  path   4: 1 legs,  64.5 m, to N  -17.5 E  +26.5
+   55.9 s  path   5: 1 legs,  16.6 m, to N  -32.5 E  +33.5
+   61.9 s  path   6: 1 legs,  90.7 m, to N  +18.5 E  -41.5
+   81.9 s  path   7: 1 legs,  16.1 m, to N  +34.5 E  -43.5
+   87.9 s  path   8: 1 legs,  16.1 m, to N  +42.5 E  -29.5
+   93.9 s  path   9: 1 legs,  54.6 m, to N  -10.5 E  -42.5
+  106.9 s  path  10: 1 legs,  69.6 m, to N  +11.5 E  +23.5
+  122.9 s  path  11: 1 legs,  16.4 m, to N  +24.5 E  +33.5
+  128.9 s  path  12: 1 legs,  33.0 m, to N   +5.5 E   +6.5
+
+== return: 1
+  128.9 s  {'zone_id': 2, 'reason': 'none_admissible', 'length_m': 33.015148038438355, 'energy_j': 2430.7067938061004}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF           14400      0         0     48.0     nan         0
+   16.8 NAVIGATING        12697   1703        18     44.6    34.4         1
+   32.8 NAVIGATING        11845   2555        21     39.9    31.2         2
+   48.8 NAVIGATING        10979   3421        25     35.3    26.0         2
+   64.8 NAVIGATING         9634   4766        33     30.6    19.7         2
+   79.8 NAVIGATING         9188   5212        35     26.4    15.3         2
+   95.8 NAVIGATING         7771   6629        36     21.6     9.5         2
+  110.8 NAVIGATING         7156   7244        35     17.3     6.7         2
+  126.8 NAVIGATING         6041   8359        43     12.7     1.6         2
+  142.8 COMMIT_LANDING     5856   8544        44      8.1     0.2         2
+  156.8 LANDED             5852   8548        44      6.1     0.2         2
+
+== result
+duration 156 s, coverage 59.4 % of the area, unknown left 5852 cells
+energy consumed 41.9 kJ, left 6.1 kJ
+I1 margin min 0.25 kJ, violations 0
+end: COMMIT_LANDING, over zone 2, budget
+final position N +5.7 E +6.5 D -0.0
+  confirmed zone 1: touchdown (-0.1, 0.0), home, 8.6 m from the final position
+  confirmed zone 2: touchdown (-0.5, 0.5), 129 m2, 8.6 m from the final position
+cycle time median 81 ms, max 123 ms over 157 cycles

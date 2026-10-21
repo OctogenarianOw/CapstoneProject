@@ -1,0 +1,12 @@
+date 2026-10-21T10:58:39+11:00
+duration 900
+px4 parameters reset to the airframe defaults
+world w2
+run map=ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0
+run mon=ros2 run uav_core energy_monitor --ros-args -p capacity_j:=48000.0
+run exe=ros2 run uav_core trajectory_executor
+run mgr=ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=0.5 -p area_half_m:=60.0 -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-21_campaign_w2/runs/.B3a050_r04.tmp/missions
+run watch=sleep 20; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 4; touch stop
+git 24772ff709d77e9b76f6371560ff18a9a97bf3c8
+?? experiments/2026-10-21_campaign_w2/campaign.log
+?? experiments/2026-10-21_campaign_w2/runs/

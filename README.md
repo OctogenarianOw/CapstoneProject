@@ -155,6 +155,7 @@ runs the same nodes with RViz.
 | `2026-10-20_campaign_w1_fix` | gates E and F after the registry fix | C1 missions breaking I1 31/60 -> 0/60, gate E passed; alpha moves the time to the first zone only |
 | `2026-10-20_gate_f_16kJ` | gate F, 50 missions at 16 kJ | alpha moves cells per kJ, margin, energy left; coverage optimum at alpha 0.75, 81 % against 67 % at pure gain |
 | `2026-10-20_w2_first` | W2, the world of rare landing zones | full coverage 97 kJ, 0 false accepts, three pads confirmed; alpha changed live acts on 7 of 8 and 12 of 12 later choices |
+| `2026-10-21_campaign_w2` | gates E and F on W2, 70 missions at 48 kJ | C1 missions breaking I1 0/50 (B0 10/10, B1 1/10); W1 coverage optimum replicated, alpha 0.75 at 67 % against 61 and 60 % at the ends; figures F9 to F12 |
 | `2026-10-19_registry_flicker` | the registry flicker | touchdown jumps over 5 m 5, 12 -> 0, 0 after the fix |
 | `2026-10-19_landing_p4` | landing precision, E_land | p95 0.180 m; E_land exact alone, +3 % inside missions |
 | `2026-10-20_footprint_p4` | footprint 1.2 against 1.5 m, offline | 1.2 m rejected, severe false accepts 0 -> 2 on v6, 14 -> 44 on mission maps; 1.5 m kept |
