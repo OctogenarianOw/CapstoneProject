@@ -1,0 +1,1347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <world name="pits2">
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <scene>
+      <grid>false</grid>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1 1</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>500 500</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+        <pose>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <pose>0 0 0 0 -0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <light name="sunUTC" type="directional">
+      <pose>0 0 500 0 -0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0.001 0.625 -0.78</direction>
+      <diffuse>0.904 0.904 0.904 1</diffuse>
+      <specular>0.271 0.271 0.271 1</specular>
+      <attenuation>
+        <range>2000</range>
+        <linear>0</linear>
+        <constant>1</constant>
+        <quadratic>0</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>47.397971057728974</latitude_deg>
+      <longitude_deg> 8.546163739800146</longitude_deg>
+      <elevation>0</elevation>
+    </spherical_coordinates>
+      <model name="pits2_terrain">
+      <static>true</static>
+      <link name="terrain">
+        <collision name="plate0_00_00_collision">
+          <pose>33.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_00_00_visual">
+          <pose>33.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_01_00_collision">
+          <pose>34.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_01_00_visual">
+          <pose>34.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_02_00_collision">
+          <pose>35.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_02_00_visual">
+          <pose>35.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_03_00_collision">
+          <pose>36.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_03_00_visual">
+          <pose>36.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_03_05_collision">
+          <pose>36.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_03_05_visual">
+          <pose>36.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_03_11_collision">
+          <pose>36.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_03_11_visual">
+          <pose>36.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_04_00_collision">
+          <pose>37.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_04_00_visual">
+          <pose>37.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_04_05_collision">
+          <pose>37.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_04_05_visual">
+          <pose>37.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_04_11_collision">
+          <pose>37.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_04_11_visual">
+          <pose>37.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_05_00_collision">
+          <pose>38.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_05_00_visual">
+          <pose>38.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_06_00_collision">
+          <pose>39.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_06_00_visual">
+          <pose>39.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_07_00_collision">
+          <pose>40.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_07_00_visual">
+          <pose>40.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_08_00_collision">
+          <pose>41.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_08_00_visual">
+          <pose>41.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_09_00_collision">
+          <pose>42.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_09_00_visual">
+          <pose>42.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_09_05_collision">
+          <pose>42.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_09_05_visual">
+          <pose>42.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_09_11_collision">
+          <pose>42.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_09_11_visual">
+          <pose>42.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_10_00_collision">
+          <pose>43.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_10_00_visual">
+          <pose>43.5000 -41.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_10_05_collision">
+          <pose>43.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_10_05_visual">
+          <pose>43.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_10_11_collision">
+          <pose>43.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_10_11_visual">
+          <pose>43.5000 -30.5000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_11_00_collision">
+          <pose>44.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_11_00_visual">
+          <pose>44.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_12_00_collision">
+          <pose>45.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_12_00_visual">
+          <pose>45.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate0_13_00_collision">
+          <pose>46.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate0_13_00_visual">
+          <pose>46.5000 -36.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_00_00_collision">
+          <pose>33.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_00_00_visual">
+          <pose>33.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_01_00_collision">
+          <pose>34.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_01_00_visual">
+          <pose>34.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_02_00_collision">
+          <pose>35.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_02_00_visual">
+          <pose>35.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_03_00_collision">
+          <pose>36.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_03_00_visual">
+          <pose>36.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_03_05_collision">
+          <pose>36.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_03_05_visual">
+          <pose>36.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_03_11_collision">
+          <pose>36.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_03_11_visual">
+          <pose>36.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_04_00_collision">
+          <pose>37.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_04_00_visual">
+          <pose>37.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_04_05_collision">
+          <pose>37.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_04_05_visual">
+          <pose>37.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_04_11_collision">
+          <pose>37.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_04_11_visual">
+          <pose>37.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_05_00_collision">
+          <pose>38.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_05_00_visual">
+          <pose>38.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_06_00_collision">
+          <pose>39.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_06_00_visual">
+          <pose>39.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_07_00_collision">
+          <pose>40.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_07_00_visual">
+          <pose>40.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_08_00_collision">
+          <pose>41.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_08_00_visual">
+          <pose>41.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_09_00_collision">
+          <pose>42.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_09_00_visual">
+          <pose>42.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_09_05_collision">
+          <pose>42.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_09_05_visual">
+          <pose>42.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_09_11_collision">
+          <pose>42.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_09_11_visual">
+          <pose>42.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_10_00_collision">
+          <pose>43.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_10_00_visual">
+          <pose>43.5000 -17.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_10_05_collision">
+          <pose>43.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_10_05_visual">
+          <pose>43.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_10_11_collision">
+          <pose>43.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_10_11_visual">
+          <pose>43.5000 -6.5000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 3.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_11_00_collision">
+          <pose>44.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_11_00_visual">
+          <pose>44.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_12_00_collision">
+          <pose>45.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_12_00_visual">
+          <pose>45.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate1_13_00_collision">
+          <pose>46.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate1_13_00_visual">
+          <pose>46.5000 -12.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_00_00_collision">
+          <pose>33.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_00_00_visual">
+          <pose>33.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_01_00_collision">
+          <pose>34.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_01_00_visual">
+          <pose>34.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_02_00_collision">
+          <pose>35.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_02_00_visual">
+          <pose>35.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_02_05_collision">
+          <pose>35.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_02_05_visual">
+          <pose>35.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_02_12_collision">
+          <pose>35.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_02_12_visual">
+          <pose>35.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_03_00_collision">
+          <pose>36.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_03_00_visual">
+          <pose>36.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_03_05_collision">
+          <pose>36.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_03_05_visual">
+          <pose>36.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_03_12_collision">
+          <pose>36.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_03_12_visual">
+          <pose>36.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_04_00_collision">
+          <pose>37.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_04_00_visual">
+          <pose>37.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_04_05_collision">
+          <pose>37.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_04_05_visual">
+          <pose>37.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_04_12_collision">
+          <pose>37.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_04_12_visual">
+          <pose>37.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_05_00_collision">
+          <pose>38.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_05_00_visual">
+          <pose>38.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_06_00_collision">
+          <pose>39.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_06_00_visual">
+          <pose>39.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_07_00_collision">
+          <pose>40.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_07_00_visual">
+          <pose>40.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_08_00_collision">
+          <pose>41.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_08_00_visual">
+          <pose>41.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_09_00_collision">
+          <pose>42.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_09_00_visual">
+          <pose>42.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_09_05_collision">
+          <pose>42.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_09_05_visual">
+          <pose>42.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_09_12_collision">
+          <pose>42.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_09_12_visual">
+          <pose>42.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_10_00_collision">
+          <pose>43.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_10_00_visual">
+          <pose>43.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_10_05_collision">
+          <pose>43.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_10_05_visual">
+          <pose>43.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_10_12_collision">
+          <pose>43.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_10_12_visual">
+          <pose>43.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_11_00_collision">
+          <pose>44.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_11_00_visual">
+          <pose>44.5000 6.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_11_05_collision">
+          <pose>44.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_11_05_visual">
+          <pose>44.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_11_12_collision">
+          <pose>44.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_11_12_visual">
+          <pose>44.5000 18.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_12_00_collision">
+          <pose>45.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_12_00_visual">
+          <pose>45.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate2_13_00_collision">
+          <pose>46.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+        </collision>
+        <visual name="plate2_13_00_visual">
+          <pose>46.5000 12.0000 0.4500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 1.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_00_00_collision">
+          <pose>33.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_00_00_visual">
+          <pose>33.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_01_00_collision">
+          <pose>34.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_01_00_visual">
+          <pose>34.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_02_00_collision">
+          <pose>35.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_02_00_visual">
+          <pose>35.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_02_05_collision">
+          <pose>35.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_02_05_visual">
+          <pose>35.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_02_12_collision">
+          <pose>35.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_02_12_visual">
+          <pose>35.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_03_00_collision">
+          <pose>36.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_03_00_visual">
+          <pose>36.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_03_05_collision">
+          <pose>36.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_03_05_visual">
+          <pose>36.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_03_12_collision">
+          <pose>36.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_03_12_visual">
+          <pose>36.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_04_00_collision">
+          <pose>37.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_04_00_visual">
+          <pose>37.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_04_05_collision">
+          <pose>37.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_04_05_visual">
+          <pose>37.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_04_12_collision">
+          <pose>37.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_04_12_visual">
+          <pose>37.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_05_00_collision">
+          <pose>38.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_05_00_visual">
+          <pose>38.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_06_00_collision">
+          <pose>39.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_06_00_visual">
+          <pose>39.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_07_00_collision">
+          <pose>40.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_07_00_visual">
+          <pose>40.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_08_00_collision">
+          <pose>41.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_08_00_visual">
+          <pose>41.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_09_00_collision">
+          <pose>42.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_09_00_visual">
+          <pose>42.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_09_05_collision">
+          <pose>42.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_09_05_visual">
+          <pose>42.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_09_12_collision">
+          <pose>42.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_09_12_visual">
+          <pose>42.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_10_00_collision">
+          <pose>43.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_10_00_visual">
+          <pose>43.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_10_05_collision">
+          <pose>43.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_10_05_visual">
+          <pose>43.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_10_12_collision">
+          <pose>43.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_10_12_visual">
+          <pose>43.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_11_00_collision">
+          <pose>44.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_11_00_visual">
+          <pose>44.5000 30.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_11_05_collision">
+          <pose>44.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_11_05_visual">
+          <pose>44.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 4.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_11_12_collision">
+          <pose>44.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_11_12_visual">
+          <pose>44.5000 42.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 2.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_12_00_collision">
+          <pose>45.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_12_00_visual">
+          <pose>45.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="plate3_13_00_collision">
+          <pose>46.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+        </collision>
+        <visual name="plate3_13_00_visual">
+          <pose>46.5000 36.0000 0.9500 0.00000 0.00000 0.00000</pose>
+          <geometry><box><size>1.0000 14.0000 2.1000</size></box></geometry>
+          <material>
+            <ambient>0.50 0.50 0.55 1</ambient>
+            <diffuse>0.50 0.50 0.55 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+</world>
+</sdf>
