@@ -25,6 +25,7 @@ for r in $(seq -w 1 "$N"); do
       map="ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0 -p map_path:=$T/elevation_map.npz" \
       exe="ros2 run uav_core trajectory_executor" \
       gtb="bash $HERE/gt_bridge.sh" \
+      gte="bash $HERE/gt_echo.sh" \
       rec="ros2 bag record -s mcap -o $B --topics $TOPICS & R=\$!; until [ -e drv/stop ]; do sleep 1; done; kill -TERM \$R; wait \$R; touch stop" \
       drv="python3 $EXP/2026-10-21_pit_calibration/pits_drive.py $T/drv $T/elevation_map.npz" \
       > "$T.out" 2>&1

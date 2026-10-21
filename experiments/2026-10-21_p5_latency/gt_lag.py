@@ -19,13 +19,21 @@ interpreted). tau > 0: the estimate is late on the truth; tau < 0: it
 is ahead. Also the along-track error at tau = 0, flying north and south,
 which must change sign with the direction if the shift is in time.
 
-Then the share of D* left to the lidar: with the pose used 0.03 s after
-the stamp, a scene older than its stamp by L, and the estimate late by
-tau, the map lag is D* = 0.03 + L - tau... written out in the README.
+Then the share of D* left to the lidar: the pose used is 0.03 s after
+the scan stamp; if the scene the lidar shows is older than its stamp by
+L and the estimate is late on the truth by tau, the pose that matches
+the scene was sampled D* = 0.03 + L + tau before the one used, so
+L = D* - 0.03 - tau.
 
     python3 gt_lag.py BAG_DIR [BAG_DIR ...]
+    python3 gt_lag.py BAG_DIR --truth runs/gN/truth.jsonl
+
+The truth of g1 is the bridged dynamic poses, without names or stamps,
+timed by their reception (an upper bound on their time); from g2 on,
+Gazebo's own echo with the simulation stamps (gt_echo.sh).
 """
 
+import json
 import sys
 
 import numpy as np
@@ -65,13 +73,15 @@ def read(path):
             odom.append((t, m.header.stamp.sec
                          + m.header.stamp.nanosec * 1e-9, p.x, p.y, p.z))
         elif topic == POSES:
+            # The bridge leaves the names empty and the stamps at zero
+            # (g1): the first transform is the model (checked: on the
+            # ground at the start, at 8 m over the transits), and the
+            # reception time stands for its time, the transport of this
+            # bridge being a few ms (/clock, same bridge).
             m = deserialize_message(data, TFMessage)
-            for tr in m.transforms:
-                if tr.child_frame_id == 'x500_slz_0':
-                    p = tr.transform.translation
-                    tf.append((t, tr.header.stamp.sec
-                               + tr.header.stamp.nanosec * 1e-9,
-                               p.x, p.y, p.z))
+            if m.transforms:
+                p = m.transforms[0].transform.translation
+                tf.append((t, np.nan, p.x, p.y, p.z))
     return (np.array(clock), np.array(px4), np.array(odom), np.array(tf))
 
 
@@ -86,14 +96,62 @@ def to_system(stamps, recv, clock):
     return out
 
 
+def read_echo(path):
+    """True model poses from gz topic -e --json-output, stamps kept."""
+    out = []
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line.startswith('{'):
+                continue
+            try:
+                m = json.loads(line)
+            except ValueError:
+                continue
+            stamp = m.get('header', {}).get('stamp', {})
+            s = float(stamp.get('sec', 0)) + float(stamp.get('nsec', 0)) * 1e-9
+            for p in m.get('pose', []):
+                if p.get('name') == 'x500_slz_0':
+                    q = p.get('position', {})
+                    out.append((np.nan, s, float(q.get('x', 0.0)),
+                                float(q.get('y', 0.0)),
+                                float(q.get('z', 0.0))))
+    return np.array(out)
+
+
+def stamps_to_system(stamps, clock):
+    """Simulation stamps to the system clock, offset local in sim time."""
+    order = np.argsort(clock[:, 1])
+    cs, ct = clock[order, 1], clock[order, 0]
+    out = np.empty(len(stamps))
+    for k, s in enumerate(stamps):
+        a, b = np.searchsorted(cs, [s - WINDOW_S, s + WINDOW_S])
+        out[k] = s + np.min(ct[a:b] - cs[a:b])
+    return out
+
+
 def main():
-    for path in sys.argv[1:]:
+    args = sys.argv[1:]
+    echo = None
+    if '--truth' in args:
+        k = args.index('--truth')
+        echo = read_echo(args[k + 1])
+        args = args[:k] + args[k + 2:]
+    for path in args:
         clock, px4, odom, tf = read(path)
         truth = odom if len(odom) else tf
         source = 'odometry' if len(odom) else 'dynamic poses'
+        if echo is not None and len(echo):
+            truth, source = echo, 'gz echo, simulation stamps'
         print(f'{path}: {len(px4)} PX4 positions, {len(truth)} true poses '
               f'({source}), {len(clock)} clock messages')
-        t_true = to_system(truth[:, 1], truth[:, 0], clock)
+        if np.isnan(truth[:, 1]).all():
+            t_true = truth[:, 0].copy()
+            print('  true poses without stamps: reception time used')
+        elif np.isnan(truth[:, 0]).all():
+            t_true = stamps_to_system(truth[:, 1], clock)
+        else:
+            t_true = to_system(truth[:, 1], truth[:, 0], clock)
         order = np.argsort(t_true)
         t_true = t_true[order]
         ned = np.stack([truth[order, 3], truth[order, 2], -truth[order, 4]],
@@ -128,6 +186,10 @@ def main():
               f'{np.median(along[north]):+.3f} m, flying south '
               f'{np.median(along[south]):+.3f} m (positive: estimate '
               f'ahead)')
+        speed_m = np.median(np.hypot(v[:, 0], v[:, 1]))
+        print(f'  time lead of the estimate, median along-track error over '
+              f'median speed {speed_m:.2f} m/s: '
+              f'{np.median(along) / speed_m:+.3f} s')
 
 
 if __name__ == '__main__':
