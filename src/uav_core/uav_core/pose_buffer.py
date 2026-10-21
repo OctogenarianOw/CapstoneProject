@@ -34,10 +34,23 @@ import numpy as np
 
 
 class ClockOffset:
-    """System time minus stamp time, lower envelope over a window."""
+    """
+    System time minus stamp time over a short window.
 
-    def __init__(self, window=500):
+    mode 'min', the lower envelope, the shortest transport seen: for a
+    stamp on another clock than the system's (simulation time), whose
+    offset jumps when the system clock is stepped. mode 'median': for a
+    stamp on the system clock itself (PX4 SITL), whose offset survives
+    a step, except for the message stamped just before it and received
+    just after, which a minimum would keep for the whole window.
+    Measured on 21 Oct (experiments/2026-10-21_p5_fix): WSL steps its
+    system clock back by about 0.7 s every 32 s, and with a minimum over
+    a long window 26 to 56 % of the scans fell back to the latest pose.
+    """
+
+    def __init__(self, window=500, mode='min'):
         self.samples = deque(maxlen=window)
+        self.mode = mode
 
     def update(self, received_s, stamp_s):
         """Add one message: when it arrived and what it was stamped."""
@@ -51,32 +64,53 @@ class ClockOffset:
     @property
     def value(self):
         """Offset in seconds, None before the first sample."""
-        return min(self.samples) if self.samples else None
+        if not self.samples:
+            return None
+        if self.mode == 'median':
+            return float(np.median(self.samples))
+        return min(self.samples)
 
 
 class PoseBuffer:
-    """Recent positions and attitudes on the PX4 clock, interpolated."""
+    """
+    Recent positions and attitudes on the PX4 clock, interpolated.
 
-    def __init__(self, horizon=400, max_extrapolation_s=0.03):
+    A stamp more than reset_s behind the last one means the PX4 clock
+    was stepped back (it is the system clock in SITL, see ClockOffset):
+    the buffer restarts on the new time base instead of refusing every
+    sample until the old base is caught up.
+    """
+
+    def __init__(self, horizon=400, max_extrapolation_s=0.03, reset_s=0.05):
         self.pos_t = deque(maxlen=horizon)
         self.pos = deque(maxlen=horizon)
         self.att_t = deque(maxlen=horizon)
         self.att = deque(maxlen=horizon)
         self.max_extrapolation_s = max_extrapolation_s
+        self.reset_s = reset_s
+        self.resets = 0
+
+    def _accept(self, times, values, t_s):
+        """Tell whether to append t_s, clearing on a step back."""
+        if times and t_s <= times[-1]:
+            if times[-1] - t_s <= self.reset_s:
+                return False
+            times.clear()
+            values.clear()
+            self.resets += 1
+        return True
 
     def add_position(self, t_s, xyz):
         """Add a NED position sampled at t_s (PX4 clock, seconds)."""
-        if self.pos_t and t_s <= self.pos_t[-1]:
-            return
-        self.pos_t.append(t_s)
-        self.pos.append(np.asarray(xyz, dtype=float))
+        if self._accept(self.pos_t, self.pos, t_s):
+            self.pos_t.append(t_s)
+            self.pos.append(np.asarray(xyz, dtype=float))
 
     def add_attitude(self, t_s, q):
         """Add a quaternion [w, x, y, z] sampled at t_s."""
-        if self.att_t and t_s <= self.att_t[-1]:
-            return
-        self.att_t.append(t_s)
-        self.att.append(np.asarray(q, dtype=float))
+        if self._accept(self.att_t, self.att, t_s):
+            self.att_t.append(t_s)
+            self.att.append(np.asarray(q, dtype=float))
 
     def _bracket(self, times, t):
         """Return the indices and weight of the samples around t, or None."""

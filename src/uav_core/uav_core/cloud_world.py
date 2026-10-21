@@ -127,8 +127,12 @@ class CloudWorld(Node):
         self.position = None
         self.attitude = None
         self.poses = PoseBuffer()
-        self.sim_offset = ClockOffset()    # system minus simulation clock
-        self.px4_offset = ClockOffset()    # system minus PX4 clock
+        # System minus simulation clock: minimum over the last ~0.3 s of
+        # /clock (about 250 Hz), so it follows a step of the system
+        # clock at once. System minus PX4 clock: median over ~2 s of
+        # poses (50 Hz), both clocks stepping together (pose_buffer).
+        self.sim_offset = ClockOffset(window=75)
+        self.px4_offset = ClockOffset(window=100, mode='median')
         self.scans_at_stamp = 0
         self.scans_latest = 0
         self.fallback_why = {}

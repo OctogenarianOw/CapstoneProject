@@ -43,11 +43,31 @@ def test_short_extrapolation_takes_the_last_sample():
     assert abs(p[0] - 5.0 * (last - 100.0)) < 1e-9
 
 
-def test_out_of_order_samples_are_dropped():
+def test_slightly_late_samples_are_dropped():
     b = filled()
     n = len(b.pos_t)
-    b.add_position(100.1, (0.0, 0.0, 0.0))
+    b.add_position(b.pos_t[-1] - 0.01, (0.0, 0.0, 0.0))
     assert len(b.pos_t) == n
+    assert b.resets == 0
+
+
+def test_clock_stepped_back_restarts_the_buffer():
+    b = filled()
+    step = b.pos_t[-1] - 0.7
+    b.add_position(step, (1.0, 2.0, -8.0))
+    b.add_attitude(step, (1.0, 0.0, 0.0, 0.0))
+    assert list(b.pos_t) == [step] and list(b.att_t) == [step]
+    assert b.resets == 2
+    p, _ = b.at(step)
+    assert np.allclose(p, (1.0, 2.0, -8.0))
+
+
+def test_median_offset_ignores_a_message_across_a_step():
+    c = ClockOffset(window=50, mode='median')
+    for k in range(40):
+        c.update(1000.0 + 0.02 * k + 0.005, 1000.0 + 0.02 * k)
+    c.update(1000.9 - 0.7, 1000.9)     # stamped before, received after
+    assert abs(c.value - 0.005) < 1e-9
 
 
 def test_quaternion_sign_flip_does_not_cancel():
