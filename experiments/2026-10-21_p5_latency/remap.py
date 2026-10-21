@@ -42,6 +42,7 @@ import numpy as np
 from rclpy.serialization import deserialize_message
 import rosbag2_py
 from px4_msgs.msg import VehicleAttitude, VehicleLocalPosition
+from rosgraph_msgs.msg import Clock
 from sensor_msgs.msg import PointCloud2
 
 from uav_core.cloud_world import quat_to_matrix
@@ -65,15 +66,18 @@ CRUISE = 3.0               # m/s, a cloud counts as north or south above
 
 
 def read_bag(path):
-    """Clouds, positions and attitudes with their reception times (s)."""
+    """Clouds, positions, attitudes, clock, with reception times (s)."""
     reader = rosbag2_py.SequentialReader()
     reader.open(rosbag2_py.StorageOptions(uri=str(path)),
                 rosbag2_py.ConverterOptions('', ''))
-    clouds, pos, att = [], [], []
+    clouds, pos, att, clock = [], [], [], []
     while reader.has_next():
         topic, data, t = reader.read_next()
         t = t * 1e-9
-        if topic == '/lidar/points':
+        if topic == '/clock':
+            m = deserialize_message(data, Clock)
+            clock.append((t, m.clock.sec + m.clock.nanosec * 1e-9))
+        elif topic == '/lidar/points':
             m = deserialize_message(data, PointCloud2)
             clouds.append((t, m.header.stamp.sec + m.header.stamp.nanosec
                            * 1e-9, decode(m)))
@@ -84,7 +88,7 @@ def read_bag(path):
         elif topic == '/fmu/out/vehicle_attitude':
             m = deserialize_message(data, VehicleAttitude)
             att.append((t, m.timestamp_sample * 1e-6, *m.q))
-    return clouds, np.array(pos), np.array(att)
+    return clouds, np.array(pos), np.array(att), np.array(clock)
 
 
 def decode(msg):
@@ -141,28 +145,36 @@ def spills(grid):
 
 def main():
     bag, run = Path(sys.argv[1]), Path(sys.argv[2])
-    clouds, pos, att = read_bag(bag)
+    clouds, pos, att, clock = read_bag(bag)
     print(f'{len(clouds)} clouds, {len(pos)} positions, {len(att)} '
-          f'attitudes')
+          f'attitudes, {len(clock)} clock messages')
+    print(f'pose reception - PX4 stamp: median '
+          f'{np.median(pos[:, 0] - pos[:, 1]):.4f} s (PX4 on the system '
+          f'clock if small and positive)')
+    if len(clock):
+        # Offset system - simulation clock: the lower envelope of the
+        # reception minus the stamp of /clock, whose transport is short.
+        t0 = np.percentile(clock[:, 0] - clock[:, 1], 5)
+        age = np.array([t - stamp for t, stamp, _ in clouds]) - t0
+        used = []
+        for t, stamp, _ in clouds:
+            i = np.searchsorted(pos[:, 0], t) - 1
+            if i >= 0:
+                used.append(pos[i, 1] - (stamp + t0))
+        print(f'cloud age at reception (system clock): median '
+              f'{np.median(age):.3f} s, IQR [{np.percentile(age, 25):.3f}, '
+              f'{np.percentile(age, 75):.3f}]')
+        print(f'latest pose sample - scan time (system clock): median '
+              f'{np.median(used):.3f} s, IQR '
+              f'[{np.percentile(used, 25):.3f}, '
+              f'{np.percentile(used, 75):.3f}]: the stamp lag')
 
-    # Clocks: stamp of the cloud (simulation) against the sample time of
-    # the latest pose received before it (PX4), and the reception lags.
-    lag_stamp, recv_cloud, recv_pose = [], [], []
-    for t, stamp, _ in clouds:
-        i = np.searchsorted(pos[:, 0], t) - 1
-        if i < 0:
-            continue
-        lag_stamp.append(pos[i, 1] - stamp)
-        recv_cloud.append(t - stamp)
-        recv_pose.append(t - pos[i, 0])
-    lag_stamp = np.array(lag_stamp)
-    print(f'latest pose sample time - cloud stamp: median '
-          f'{np.median(lag_stamp):+.3f} s, IQR '
-          f'[{np.percentile(lag_stamp, 25):+.3f}, '
-          f'{np.percentile(lag_stamp, 75):+.3f}]')
+    # Without /clock (r1), only the spread of reception minus stamp can
+    # be read: the offset between the two clocks is unknown.
+    recv_cloud = np.array([t - stamp for t, stamp, _ in clouds])
     q1, q3 = np.percentile(recv_cloud, [25, 75])
-    print(f'cloud reception - cloud stamp (system - sim clock): '
-          f'{np.median(recv_cloud):+.3f} s, IQR width {q3 - q1:.3f} s')
+    print(f'cloud reception - cloud stamp (system - sim clock), IQR '
+          f'width {q3 - q1:.3f} s')
 
     # Replay check at lag 0 against the map cloud_world wrote.
     full = build(clouds, pos, att, 0.0)

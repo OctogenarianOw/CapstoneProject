@@ -19,7 +19,10 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 EXP=$(cd "$HERE/.." && pwd)
 BAGS=~/uav_bags/2026-10-21_p5_latency
 N=${1:-3}
-TOPICS="/lidar/points /fmu/out/vehicle_local_position_v1 /fmu/out/vehicle_attitude"
+# /clock from r2 on (clock_bridge.sh): r1 showed PX4 stamps on the system
+# clock and lidar stamps on the simulation clock, so the stamp lag needs
+# the offset between the two.
+TOPICS="/lidar/points /fmu/out/vehicle_local_position_v1 /fmu/out/vehicle_attitude /clock"
 mkdir -p "$HERE/runs" "$HERE/failed" "$BAGS"
 for r in $(seq -w 1 "$N"); do
   D="$HERE/runs/r$r"
@@ -32,6 +35,7 @@ for r in $(seq -w 1 "$N"); do
     WORLD=pits bash "$EXP/sim_session.sh" "$T" 600 \
       map="ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0 -p map_path:=$T/elevation_map.npz" \
       exe="ros2 run uav_core trajectory_executor" \
+      clk="bash $HERE/clock_bridge.sh" \
       rec="ros2 bag record -s mcap -o $B --topics $TOPICS & R=\$!; until [ -e drv/stop ]; do sleep 1; done; kill -TERM \$R; wait \$R; touch stop" \
       drv="python3 $EXP/2026-10-21_pit_calibration/pits_drive.py $T/drv $T/elevation_map.npz" \
       > "$T.out" 2>&1
