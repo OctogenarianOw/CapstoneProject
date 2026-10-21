@@ -62,4 +62,44 @@ not merged and the failure is diagnosed before anything else changes.
 
 ## Results
 
-To be filled after the flights.
+12 sessions, all at the first attempt, 09:50 to 10:29 (`flights.log`,
+`results.txt`). The 60 s check passed. One step of the clock, +0.461 s
+(forward, unlike the backward steps of 21 Oct), 18.5 s into
+A_before_r1, during the take-off; none in the 11 other flights. By the
+rule above A_before_r1 does not count; it was not flown again, because
+the verdict rests on the after flights, all clean, and its values equal
+r2 and r3 to 0.001.
+
+| | before (3 runs) | after (3 runs) | criterion |
+|---|---|---|---|
+| scans at the scan time | 0 % | **100 %**, no fallback | > 95 %: met |
+| plates, A | +0.437, +0.437, +0.438 | **-0.248, -0.264, -0.237** | \|A\| < 0.1: **failed** |
+| W1 best ramp shift | (-1, 0) x 3 | **(0, 0) x 3** | (0, 0): met |
+| W1 ramp RMS at (0, 0) | 0.340 to 0.353 m | **0.173 to 0.183 m** | lower: met |
+| W1 flat RMS | 0.244 to 0.256 m | **0.300 to 0.311 m** | < 0.25 m: **failed** |
+| W1 recall | 93.7 to 93.9 % | **60.0 to 64.0 %** | >= 91.7 %: **failed** |
+| W1 severe false accepts | 2, 2, 4 | 0, 0, 0 | no more: met |
+
+**The fix fails on a stable clock, so it is not merged** (merge rule
+above). The clock was not the cause of the failure of 21 Oct: with no
+step and no fallback, every after flight fails the same three tests,
+more consistently than on 21 Oct (A from -0.24 to -0.26 against -0.01
+to -0.67, flat RMS 0.30 to 0.31 against 0.37 to 0.55 m).
+
+What stands, measured twice now: the pose taken at the scan time
+removes P5 on the ramps of W1, and with it the severe false accepts of
+fresh surveys (2, 2, 4 with the code of dronePropre, 0, 0, 0 with the
+fix). The S8 barrier fails on fresh surveys without it.
+
+What fails: the spill on the plates changes side and keeps about 57 %
+of its size, so the correction overshoots, by about 0.065 s if the
+spill scales with the lag (0.115 s gave +0.44); and the map gets worse
+on flat ground, where an along-track shift changes nothing. The second
+points to the attitude rather than the position. **Hypothesis, not
+measured**: the 0.085 s calibration term was measured on the position
+(the PX4 estimate ahead of the Gazebo truth), but the fix applies it to
+the attitude too. An attitude 0.085 s old during the accelerations of
+a survey tilts the scan by degrees, tens of centimetres at 15 m, which
+would raise the flat RMS and cut the recall. Next, offline, one change
+at a time, on the bags of 2026-10-21_p5_latency: the term on the
+position only, then the term set to zero.

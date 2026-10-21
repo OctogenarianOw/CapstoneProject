@@ -1,0 +1,15 @@
+[10:09:03] starting PX4
+[10:09:18] PX4 ready after 16s, fresh Gazebo world validation
+[10:09:26] start map: PYTHONPATH=/home/doria/uav_p5/src/uav_core:$PYTHONPATH ros2 run uav_core cloud_world --ros-args -p map_path:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/runs/.B_before_r2.tmp/elevation_map.npz -p pose_at_scan_time:=false 
+[10:09:26] start clk: bash /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/clock_bridge.sh
+[10:09:26] start clock: python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+[10:09:26] start drv: ros2 run uav_core survey_mission
+[10:09:26] start watch: sleep 20; until grep -qs 'Survey complete' drv.log; do sleep 1; done; sleep 25; touch survey_done; touch stop
+failsafe activations: 0
+[10:10:38] session end
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 64313 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 64315 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 64317 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 64319 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 64231 Killed                  ros2 run ros_gz_bridge parameter_bridge '/lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked' '/x500_slz_0/command/motor_speed@actuator_msgs/msg/Actuators[gz.msgs.Actuators' > "$OUT/bridge.log" 2>&1  (wd: ~/PX4-Autopilot)
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 64230 Killed                  MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1  (wd: ~/PX4-Autopilot)

@@ -1,0 +1,12 @@
+date 2026-10-22T10:17:02+11:00
+duration 600
+px4 parameters reset to the airframe defaults
+world pits
+run map=PYTHONPATH=/home/doria/uav_p5/src/uav_core:$PYTHONPATH ros2 run uav_core cloud_world --ros-args -p map_path:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/runs/.A_before_r3.tmp/elevation_map.npz -p pose_at_scan_time:=false -p grid_size:=200.0
+run clk=bash /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/clock_bridge.sh
+run clock=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+run exe=ros2 run uav_core trajectory_executor
+run drv=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/pits_drive.py /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/runs/.A_before_r3.tmp /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/runs/.A_before_r3.tmp/elevation_map.npz
+git 8230de0d5f58a886eaea52713cd96d4af74352ef
+?? experiments/2026-10-22_p5_stable_clock/flights.log
+?? experiments/2026-10-22_p5_stable_clock/runs/

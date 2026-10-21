@@ -1,0 +1,15 @@
+[10:10:42] starting PX4
+[10:10:57] PX4 ready after 16s, fresh Gazebo world pits
+[10:11:05] start map: PYTHONPATH=/home/doria/uav_p5/src/uav_core:$PYTHONPATH ros2 run uav_core cloud_world --ros-args -p map_path:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/runs/.A_after_r2.tmp/elevation_map.npz -p pose_at_scan_time:=true -p grid_size:=200.0
+[10:11:05] start clk: bash /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/clock_bridge.sh
+[10:11:05] start clock: python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+[10:11:05] start exe: ros2 run uav_core trajectory_executor
+[10:11:05] start drv: python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/pits_drive.py /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/runs/.A_after_r2.tmp /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/runs/.A_after_r2.tmp/elevation_map.npz
+failsafe activations: 0
+[10:15:19] session end
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 65710 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 65712 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 65714 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 65716 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 65628 Killed                  ros2 run ros_gz_bridge parameter_bridge '/lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked' '/x500_slz_0/command/motor_speed@actuator_msgs/msg/Actuators[gz.msgs.Actuators' > "$OUT/bridge.log" 2>&1  (wd: ~/PX4-Autopilot)
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 65627 Killed                  MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1  (wd: ~/PX4-Autopilot)
