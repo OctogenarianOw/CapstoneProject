@@ -45,4 +45,31 @@ the shallower pit. If none works, W3 is not built on pits.
 
 ## Results
 
-To be filled after the flights.
+Three flights, r1 to r3, 3 of 3 at the first attempt, 0 failsafes
+(`results.txt`, `pits2.csv`). **No geometry meets the criterion: pits
+2 m wide or more are seen as soon as the map observes them.**
+
+| pits | far readings hidden (>= 10 m from the edge) | step, 10 to 17 m | revealed after the hover | plate confirmable, any time |
+|---|---|---|---|---|
+| 2 m, 1.0 m deep | 0 of 30 | 0.46 to 0.52 m | 12 of 12 | never |
+| 2 m, 2.0 m deep | 0 of 30 | 0.29 to 0.43 m | 12 of 12 | never |
+| 3 m, 1.0 m deep | 0 of 27 | 0.86 to 1.04 m | 12 of 12 | never |
+| 3 m, 2.0 m deep | 0 of 26 | 0.59 to 0.68 m | 12 of 12 | never |
+
+Steps are medians over the pits and flights of the distance bin. Beyond
+17 m the step falls to about 0.1 m, but there the blocks are not yet
+OBSERVED, so the registry could not count them as landable anyway. In
+hover the full depth is read (0.99 to 2.00 m).
+
+**Conclusion with the first calibration.** In this mapping chain a pit
+is either too narrow to be seen at all (1 m: filled at every range,
+even overhead, 0 of 72 pits passed within 5 m revealed) or wide
+enough to be seen from as far as the map observes it (2 and 3 m:
+refused from 10 to 17 m already). There is no window in which a pit
+hides from afar and shows from close, so the deceptive pad of W3 cannot
+be built with pits in this simulator. W3 is not built on them, as the
+rule fixed before the flights says; another mechanism is Dorian's call.
+
+Two results for the thesis come out of it: one-cell negative obstacles
+are a blind spot of the chain (first calibration), and the edges of the
+plates show where the map puts its points (`2026-10-21_p5_latency`).
