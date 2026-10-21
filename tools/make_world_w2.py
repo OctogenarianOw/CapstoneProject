@@ -74,32 +74,40 @@ ZONE_NAMES = ['flat', 'slope']
 COLOUR = '0.55 0.47 0.37 1'
 
 
-def in_pad(x, y):
+def pad_box(pad):
+    """Centre and half sides of a pad given as (name, cx, cy[, sx, sy])."""
+    _name, cx, cy, *size = pad
+    sx, sy = size if size else (PAD, PAD)
+    return cx, cy, sx / 2.0, sy / 2.0
+
+
+def in_pad(x, y, pads=PADS):
     """Mask of the points inside a landing pad."""
     inside = np.zeros(np.shape(x), dtype=bool)
-    for _name, cx, cy in PADS:
-        inside |= ((np.abs(x - cx) <= PAD / 2.0)
-                   & (np.abs(y - cy) <= PAD / 2.0))
+    for pad in pads:
+        cx, cy, hx, hy = pad_box(pad)
+        inside |= (np.abs(x - cx) <= hx) & (np.abs(y - cy) <= hy)
     return inside
 
 
-def height_field(x, y):
+def height_field(x, y, pads=PADS):
     """Top surface height and zone id at points (x, y), Gazebo ENU."""
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
     u = np.mod(x + HALF, PERIOD)
     tri = np.where(u < STRIP, u, PERIOD - u)
     h = np.tan(np.radians(SLOPE_DEG)) * tri
-    field = (np.abs(x) <= HALF) & (np.abs(y) <= HALF) & ~in_pad(x, y)
+    field = (np.abs(x) <= HALF) & (np.abs(y) <= HALF) & ~in_pad(x, y, pads)
     h = np.where(field, h, 0.0)
     zone = np.where(field, 1, 0)
     return h, zone
 
 
-def y_segments(x0, x1):
+def y_segments(x0, x1, pads=PADS):
     """Intervals of y covered by the field over the strip [x0, x1]."""
-    cuts = sorted((cy - PAD / 2.0, cy + PAD / 2.0) for _n, cx, cy in PADS
-                  if cx - PAD / 2.0 < x1 and cx + PAD / 2.0 > x0)
+    boxes = [pad_box(p) for p in pads]
+    cuts = sorted((cy - hy, cy + hy) for cx, cy, hx, hy in boxes
+                  if cx - hx < x1 and cx + hx > x0)
     out, start = [], -HALF
     for lo, hi in cuts:
         if lo > start:
@@ -110,7 +118,7 @@ def y_segments(x0, x1):
     return out
 
 
-def build_parts():
+def build_parts(pads=PADS):
     """One pitched box per strip segment, as SDF fragments."""
     th = np.radians(SLOPE_DEG)
     top = STRIP * np.tan(th)
@@ -126,7 +134,7 @@ def build_parts():
         # strip (pitch -th), (sin, 0, cos) for a falling one (pitch +th).
         sx = -1.0 if rising else 1.0
         pitch = -th if rising else th
-        for s, (y0, y1) in enumerate(y_segments(x0, x0 + STRIP)):
+        for s, (y0, y1) in enumerate(y_segments(x0, x0 + STRIP, pads)):
             parts.append(box_pair(
                 f'strip_{k:02d}_{s}',
                 (cx - sx * THICK / 2.0 * np.sin(th),
@@ -138,14 +146,14 @@ def build_parts():
     return parts
 
 
-def build_sdf(parts):
+def build_sdf(parts, world_name=WORLD_NAME):
     """PX4's default world with the terrain injected before </world>."""
     src = (PX4_WORLDS / 'default.sdf').read_text()
     tag = '<world name="default">'
     if tag not in src:
         raise SystemExit(f'world tag not found in {PX4_WORLDS / "default.sdf"}')
-    src = src.replace(tag, f'<world name="{WORLD_NAME}">', 1)
-    block = ('    <model name="w2_terrain">\n'
+    src = src.replace(tag, f'<world name="{world_name}">', 1)
+    block = (f'    <model name="{world_name}_terrain">\n'
              '      <static>true</static>\n'
              '      <link name="terrain">\n'
              + ''.join(parts) +
@@ -155,17 +163,17 @@ def build_sdf(parts):
     return src[:cut] + block + src[cut:]
 
 
-def build_truth():
+def build_truth(pads=PADS):
     """Per cell ground truth, axis 0 east, axis 1 north, Gazebo ENU."""
     n = int(round(2 * HALF / RESOLUTION))
     m = SUBSAMPLES
     s = -HALF + (np.arange(n * m) + 0.5) * (RESOLUTION / m)
     sx, sy = np.meshgrid(s, s, indexing='ij')
-    h, _ = height_field(sx, sy)
+    h, _ = height_field(sx, sy, pads)
     h = h.reshape(n, m, n, m)
     centres = -HALF + (np.arange(n) + 0.5) * RESOLUTION
     cx, cy = np.meshgrid(centres, centres, indexing='ij')
-    _, zone = height_field(cx, cy)
+    _, zone = height_field(cx, cy, pads)
     return centres, h.mean(axis=(1, 3)), h.max(axis=(1, 3)), zone
 
 
