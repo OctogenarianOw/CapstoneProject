@@ -97,3 +97,27 @@ that restarts when the PX4 stamps go back), and every flight should
 record whether the clock stepped while it flew, since the decision
 latency that C1 charges is measured on that clock too. A backward step
 during a visit would make C1 charge 0.7 s too little.
+
+### v3: estimators that stand the steps (548aa15)
+
+Median over 2 s for the PX4 offset, minimum over 0.3 s for the
+simulation offset, buffer restarted when PX4 stamps go back. Replayed
+offline on bag r3 (steps present): 2487 of 2557 scans at the scan time
+against 2259 for the first version. In flight (`results_v3.txt`):
+
+| | scans at the scan time | plates, A | W1 ramp RMS (0,0), best shift | W1 flat RMS | W1 recall | severe |
+|---|---|---|---|---|---|---|
+| before | 0 % | +0.41 to +0.43 | 0.34 m, (-1,0) x 3 | 0.22 to 0.25 m | 93 to 94 % | 2, 3, 4 |
+| v3 | 94.7 to 97.4 % | -0.01, -0.49, -0.67 | 0.18 to 0.22 m, (0,0) x 2, (0,-1) | 0.37 to 0.55 m | 51 to 56 % | 0, 0, 0 |
+
+**P5 goes with the pose taken at the scan time**: on the ramps of W1
+the best shift becomes (0, 0) and the RMS at (0, 0) falls from 0.34 to
+0.18-0.22 m, which confirms the mechanism on the map that defined P5.
+**But the map gets worse elsewhere and the fix fails its criterion**:
+the flat RMS rises, the recall halves, and on the plates the spill
+turns to the other side of the flight and grows. Some scans are now
+placed with a pose too early, which the steps of the clock (and the 2 %
+drift between them) can explain: the 0.085 s term and the clock
+relation were measured under another clock regime. Not measured
+further. A fair test of the design needs a stable clock (WSL restarted,
+or the native Linux machine of the final demonstration). Not merged.
