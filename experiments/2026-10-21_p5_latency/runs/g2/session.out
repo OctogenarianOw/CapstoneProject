@@ -1,0 +1,16 @@
+[15:33:21] starting PX4
+[15:33:36] PX4 ready after 16s, fresh Gazebo world pits
+[15:33:44] start map: ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0 -p map_path:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/runs/.g2.tmp/elevation_map.npz
+[15:33:44] start exe: ros2 run uav_core trajectory_executor
+[15:33:44] start gtb: bash /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/gt_bridge.sh
+[15:33:44] start gte: bash /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/gt_echo.sh
+[15:33:44] start rec: ros2 bag record -s mcap -o /home/doria/uav_bags/2026-10-21_p5_latency/g2 --topics /fmu/out/vehicle_local_position_v1 /fmu/out/vehicle_attitude /clock /model/x500_slz_0/odometry_with_covariance /world/pits/dynamic_pose/info & R=$!; until [ -e drv/stop ]; do sleep 1; done; kill -TERM $R; wait $R; touch stop
+[15:33:44] start drv: python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/pits_drive.py /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/runs/.g2.tmp/drv /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/runs/.g2.tmp/elevation_map.npz
+failsafe activations: 0
+[15:37:59] session end
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 179475 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 179477 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 179479 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 179481 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 179396 Killed                  ros2 run ros_gz_bridge parameter_bridge '/lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked' '/x500_slz_0/command/motor_speed@actuator_msgs/msg/Actuators[gz.msgs.Actuators' > "$OUT/bridge.log" 2>&1  (wd: ~/PX4-Autopilot)
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 179395 Killed                  MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1  (wd: ~/PX4-Autopilot)

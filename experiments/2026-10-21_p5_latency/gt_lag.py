@@ -161,15 +161,22 @@ def main():
         keep = (speed > MOVING) & (t > t_true[0] + 0.3) \
             & (t < t_true[-1] - 0.3)
         p = px4[keep, 2:5]
-        rms = []
+        # Median, not RMS, of the horizontal error: about 10 % of the
+        # samples err by 2 to 3 m where the clock offset jumps (the
+        # simulation pauses), and they drove the RMS minimum to the
+        # wrong sign on g1 and g2 (+0.12 s against a median minimum at
+        # -0.09 to -0.12 s, and an along-track lead of +0.09 s).
+        rms, med = [], []
         for tau in SHIFTS:
             q = np.stack([np.interp(t[keep] - tau, t_true, ned[:, k])
                           for k in range(3)], axis=1)
             d = p[:, :2] - q[:, :2]
-            d -= d.mean(axis=0)
-            rms.append(np.sqrt((d ** 2).sum(axis=1).mean()))
-        rms = np.array(rms)
-        best = SHIFTS[np.argmin(rms)]
+            d -= np.median(d, axis=0)
+            e = np.hypot(d[:, 0], d[:, 1])
+            rms.append(np.sqrt((e ** 2).mean()))
+            med.append(np.median(e))
+        rms, med = np.array(rms), np.array(med)
+        best = SHIFTS[np.argmin(med)]
         q0 = np.stack([np.interp(t[keep], t_true, ned[:, k])
                        for k in range(3)], axis=1)
         offset = (p - q0).mean(axis=0)
@@ -177,9 +184,11 @@ def main():
         along = ((p[:, :2] - q0[:, :2] - offset[:2]) * v).sum(axis=1) \
             / np.hypot(v[:, 0], v[:, 1])
         north, south = v[:, 0] > MOVING, v[:, 0] < -MOVING
-        print(f'  tau = {best:+.3f} s (horizontal RMS {rms.min():.3f} m, '
-              f'{rms[SHIFTS == 0][0]:.3f} m at tau = 0), '
-              f'{int(keep.sum())} samples above {MOVING} m/s')
+        print(f'  tau = {best:+.3f} s at the minimum of the median '
+              f'horizontal error ({med.min():.3f} m, '
+              f'{med[SHIFTS == 0][0]:.3f} m at tau = 0; RMS there '
+              f'{rms[np.argmin(med)]:.3f} m), {int(keep.sum())} samples '
+              f'above {MOVING} m/s')
         print(f'  mean offset PX4 - truth: north {offset[0]:+.3f} m, east '
               f'{offset[1]:+.3f} m, down {offset[2]:+.3f} m')
         print(f'  along-track error at tau = 0: flying north '
