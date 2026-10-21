@@ -27,8 +27,22 @@ measurement on one map.
 Analysis runs on this map, never on the raw cloud, which is mostly
 noise: that was the supervisor's explicit request.
 
-Pose is the latest message received, not interpolated to the scan time:
-a candidate cause for the one-cell offset P5, untested.
+Pose at the time of the scan (pose_at_scan_time, default true), not the
+latest received. Measured (experiments/2026-10-21_p5_latency): with the
+latest pose the edges of raised structures spilled half a cell along
+the flight, removed by taking the pose 0.110 to 0.119 s earlier, the
+origin of the one-cell offset P5. Of that lag, 0.03 s is the latest
+pose being received after the scan, and varies with the load; the rest
+is a constant between time bases, the PX4 estimate being ahead of the
+true position by 0.09 to 0.11 s against Gazebo's truth. So the pose is
+interpolated at the scan stamp, put on the PX4 clock through offsets
+estimated online from /clock and from the poses (uav_core/pose_buffer),
+minus scan_time_offset_s, a temporal calibration term like the one
+between any sensor and an estimator: 0.085 s, the map lag minus the
+stamp lag on the two flights with /clock (0.082 and 0.087 s). When the
+buffer does not cover that time, or /clock is silent, the latest pose
+is used and counted, never silently. pose_at_scan_time false gives the
+previous behaviour, which is how the change is measured.
 
 No fusion below min_fuse_height_m, 2 m above the EKF origin. From the
 ground, at 0.37 m, the lidar sees the terrain at grazing angles: on the
@@ -47,12 +61,14 @@ from rclpy.qos import (
     DurabilityPolicy, HistoryPolicy, qos_profile_sensor_data, QoSProfile,
     ReliabilityPolicy,
 )
+from rosgraph_msgs.msg import Clock
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2
 from std_msgs.msg import Header
 
 from uav_core.elevation_grid import ElevationGrid
 from uav_core.map_msg import grid_to_msg
+from uav_core.pose_buffer import ClockOffset, PoseBuffer
 from uav_interfaces.msg import ElevationMap
 
 
@@ -82,7 +98,11 @@ class CloudWorld(Node):
         self.declare_parameter('map_path', '/tmp/elevation_map.npz')
         self.declare_parameter('map_publish_period_s', 1.0)
         self.declare_parameter('min_fuse_height_m', 2.0)
+        self.declare_parameter('pose_at_scan_time', True)
+        self.declare_parameter('scan_time_offset_s', 0.085)
         self.min_fuse_height = self.get_parameter('min_fuse_height_m').value
+        self.pose_at_scan = self.get_parameter('pose_at_scan_time').value
+        self.scan_time_offset = self.get_parameter('scan_time_offset_s').value
 
         self.min_range = self.get_parameter('min_range').value
         self.max_range = self.get_parameter('max_usable_range').value
@@ -106,6 +126,11 @@ class CloudWorld(Node):
 
         self.position = None
         self.attitude = None
+        self.poses = PoseBuffer()
+        self.sim_offset = ClockOffset()    # system minus simulation clock
+        self.px4_offset = ClockOffset()    # system minus PX4 clock
+        self.scans_at_stamp = 0
+        self.scans_latest = 0
 
         self.create_subscription(
             VehicleLocalPosition, '/fmu/out/vehicle_local_position_v1',
@@ -116,6 +141,8 @@ class CloudWorld(Node):
         self.create_subscription(
             PointCloud2, '/lidar/points',
             self.on_cloud, qos_profile_sensor_data)
+        self.create_subscription(
+            Clock, '/clock', self.on_clock, qos_profile_sensor_data)
 
         self.world_pub = self.create_publisher(
             PointCloud2, '/cloud_world', 10)
@@ -134,13 +161,40 @@ class CloudWorld(Node):
             self.get_parameter('map_publish_period_s').value,
             self.publish_map)
 
+    def now_s(self):
+        """System clock of the node, seconds."""
+        return self.get_clock().now().nanoseconds * 1e-9
+
     def on_position(self, msg):
-        """Keep the latest NED position."""
+        """Keep the latest NED position and buffer it on the PX4 clock."""
         self.position = np.array([msg.x, msg.y, msg.z])
+        t = msg.timestamp_sample * 1e-6
+        self.px4_offset.update(self.now_s(), msg.timestamp * 1e-6)
+        self.poses.add_position(t, self.position)
 
     def on_attitude(self, msg):
-        """Keep the latest attitude quaternion, [w, x, y, z]."""
+        """Keep the latest attitude, [w, x, y, z], and buffer it."""
         self.attitude = np.array(msg.q)
+        self.poses.add_attitude(msg.timestamp_sample * 1e-6, self.attitude)
+
+    def on_clock(self, msg):
+        """Track the offset between the system and simulation clocks."""
+        self.sim_offset.update(self.now_s(),
+                               msg.clock.sec + msg.clock.nanosec * 1e-9)
+
+    def scan_pose(self, msg):
+        """Position and attitude for a scan: at its stamp if possible."""
+        if self.pose_at_scan and self.sim_offset.ready \
+                and self.px4_offset.ready:
+            stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+            t_px4 = (stamp + self.sim_offset.value - self.px4_offset.value
+                     - self.scan_time_offset)
+            pose = self.poses.at(t_px4)
+            if pose is not None:
+                self.scans_at_stamp += 1
+                return pose
+        self.scans_latest += 1
+        return self.position, self.attitude
 
     def extract_xyz(self, msg):
         """Decode x, y, z from a PointCloud2, offsets read from its fields."""
@@ -175,8 +229,9 @@ class CloudWorld(Node):
         pts_frd = pts * np.array([1.0, -1.0, -1.0])
         pts_frd = pts_frd + self.sensor_offset
 
-        rot = quat_to_matrix(self.attitude)
-        pts_ned = pts_frd @ rot.T + self.position
+        position, attitude = self.scan_pose(msg)
+        rot = quat_to_matrix(attitude)
+        pts_ned = pts_frd @ rot.T + position
 
         # Vertical uncertainty: sensor noise plus angular error, which
         # grows with the observation distance.
@@ -198,7 +253,8 @@ class CloudWorld(Node):
             self.get_logger().info(
                 f'{pts_ned.shape[0]} pts | {known} cells | '
                 f'mean map z {valid.mean():+.3f} '
-                f'| sd {valid.std():.3f}')
+                f'| sd {valid.std():.3f} | pose at stamp '
+                f'{self.scans_at_stamp}, latest {self.scans_latest}')
 
     def publish_map(self):
         """Publish the whole grid with its geometry."""
