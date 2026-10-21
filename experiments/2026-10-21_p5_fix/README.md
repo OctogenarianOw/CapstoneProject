@@ -40,4 +40,60 @@ and nothing is merged in any case: merging is Dorian's decision.
 
 ## Results
 
-To be filled after the flights.
+18 sessions, all at the first attempt (`flights*.log`, `results_v1.txt`,
+`results_v2.txt`, runs listed by tag).
+
+### Before (pose_at_scan_time false, the behaviour of dronePropre)
+
+| | value, 3 runs |
+|---|---|
+| plates, A | +0.41, +0.43, +0.41 |
+| W1 ramp RMS at (0, 0), best shift | 0.34 m, (-1, 0) in 3 of 3: **P5 reproduced on fresh surveys** |
+| W1 flat RMS, recall | 0.22 to 0.25 m, 93 to 94 % |
+| W1 severe false accepts | **2, 3 and 4**, against 0 on v6 |
+
+The S8 barrier fails on the three fresh surveys flown today with the
+code of dronePropre: zero severe false accepts was a property of v6,
+not of the chain. Where they sit is not yet measured.
+
+### After: the fix does not pass, and the reason is the clock of WSL
+
+| version | scans at the scan time | plates, A | W1 best shift | W1 recall | W1 severe |
+|---|---|---|---|---|---|
+| v1 (e92a3e1) | 54 to 74 % | +0.25, +0.05, +0.31 | (-1,0), (0,0), (-1,0) | 63 to 77 % | 0, 1, 0 |
+| v2 (27a94ac) | 44 to 71 % | +0.03, +0.26, +0.32 | (-1,0), (-1,0), (0,-1) | 63 to 82 % | 0, 0, 0 |
+
+Neither meets the criterion, and the recall falls: a map mixing scans
+placed with two different lags is worse than a map with one. v2 was a
+guess (the callback waiting behind the fusion of a scan) made before
+measuring, and it changed nothing. The diagnosis (`0a0d5ed`, runs
+`*_diag_r1`) logged every fallback: all were "after the last position",
+by 0.53 to 0.60 s with a full buffer, and the offsets stepped. Then
+measured directly in WSL, outside any simulation:
+
+    13.8 s: realtime - monotonic stepped by -0.686 s
+    45.7 s: realtime - monotonic stepped by -0.706 s
+    total over 70 s: -1.392 s
+
+**The system clock of WSL is stepped back by about 0.7 s every 32 s**
+(the virtual machine's clock runs about 2 % fast and the host resets
+it). It started between 14:53 (bag r2 of the latency flights: no step)
+and 14:57 (r3: steps). PX4 SITL stamps on that clock and the simulation
+does not, so the offset between them jumps at every step, a message
+stamped before a step and received after it seems to come 0.7 s from
+the future, and the minimum over a window keeps that outlier for the
+length of the window: the fallbacks come in blocks of about 16 s.
+
+What it touched: this measurement of the fix, and the tail of 2 to 3 m
+errors of the ground-truth flights g1 and g2 (the medians stand). Not
+the W2 campaign (09:41 to 13:16): no cycle of its 8724 consumed the
+energy of a 1.7 s real cycle. Not the latency flights r1 and r2, whose
+lags agree with r3's. Not the old cloud_world, which never compares two
+clocks.
+
+What it means: the fix needs estimators that stand clock steps (a
+median over a short window rather than a minimum, and a pose buffer
+that restarts when the PX4 stamps go back), and every flight should
+record whether the clock stepped while it flew, since the decision
+latency that C1 charges is measured on that clock too. A backward step
+during a visit would make C1 charge 0.7 s too little.
