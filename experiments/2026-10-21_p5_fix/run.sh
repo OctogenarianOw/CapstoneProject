@@ -11,10 +11,18 @@
 # N runs (default 3) of each of the four, interleaved, fresh PX4 world
 # and reset parameters every time; failures kept under failed/.
 #   bash run.sh [N]
+# The first version of the fix (e92a3e1) took its clock offsets at
+# callback time and fell back to the latest pose for 26 to 46 % of the
+# scans (results_v1.txt); the second (27a94ac) takes them from the
+# middleware reception time. Its after runs only, as after2, the before
+# runs standing as they are:
+#   FIXES=true AFTER_TAG=after2 bash run.sh 3
 HERE=$(cd "$(dirname "$0")" && pwd)
 EXP=$(cd "$HERE/.." && pwd)
 DEV=/home/doria/uav_dev
 N=${1:-3}
+FIXES=${FIXES:-"false true"}
+AFTER_TAG=${AFTER_TAG:-after}
 CLK="bash $EXP/2026-10-21_p5_latency/clock_bridge.sh"
 mkdir -p "$HERE/runs" "$HERE/failed"
 
@@ -46,8 +54,8 @@ session() {  # name world fix extra-commands...
 }
 
 for r in $(seq 1 "$N"); do
-  for fix in false true; do
-    tag=$([ "$fix" = true ] && echo after || echo before)
+  for fix in $FIXES; do
+    tag=$([ "$fix" = true ] && echo "$AFTER_TAG" || echo before)
     MAP_ARGS="-p grid_size:=200.0" DONE=snap_line5.npz \
       session "A_${tag}_r$r" pits "$fix" \
       exe="ros2 run uav_core trajectory_executor" \
