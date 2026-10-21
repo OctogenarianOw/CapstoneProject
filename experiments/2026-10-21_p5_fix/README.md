@@ -54,7 +54,13 @@ and nothing is merged in any case: merging is Dorian's decision.
 
 The S8 barrier fails on the three fresh surveys flown today with the
 code of dronePropre: zero severe false accepts was a property of v6,
-not of the chain. Where they sit is not yet measured.
+not of the chain. All 9 sit in one place, north -7.5, east -19.5 to
+-16.5, on the edge of `ramp_ok` (truth slope 12.7 to 16.9 deg, step
+0.45 to 0.60 m, read as a step of 0.06 to 0.11 m), the cells where
+`2026-10-20_footprint_p4` already found P5 at work. None lies in a zone
+holding a whole footprint, so the min-zone rule keeps them out of the
+registry. With the pose at the scan time (v3) the three maps have 0:
+P5 is the cause of the severe false accepts of the cell test.
 
 ### After: the fix does not pass, and the reason is the clock of WSL
 
