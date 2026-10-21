@@ -7,9 +7,12 @@
 # the map offline with the pose taken at chosen lags. The bag, about
 # 1 GB a flight, is kept out of the repository under BAGS, with its
 # SHA-256 in the run directory (Annexe A.1). The driver writes into
-# drv/, and its end of flight stops the recorder with SIGINT before the
+# drv/, and its end of flight stops the recorder with SIGTERM before the
 # session is stopped: sim_session kills with SIGKILL, which would leave
-# the bag unfinished.
+# the bag unfinished. Not SIGINT: a command started with & in a
+# non-interactive shell ignores it, and the first three attempts of r1
+# (failed/) hung on it until the 600 s limit; SIGTERM was checked to
+# close the bag (metadata.yaml written) before these flights.
 #   bash run.sh [N]
 #   python3 remap.py BAGS/rN runs/rN      with ROS sourced
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -29,7 +32,7 @@ for r in $(seq -w 1 "$N"); do
     WORLD=pits bash "$EXP/sim_session.sh" "$T" 600 \
       map="ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0 -p map_path:=$T/elevation_map.npz" \
       exe="ros2 run uav_core trajectory_executor" \
-      rec="ros2 bag record -s mcap -o $B $TOPICS & R=\$!; until [ -e drv/stop ]; do sleep 1; done; kill -INT \$R; wait \$R; touch stop" \
+      rec="ros2 bag record -s mcap -o $B --topics $TOPICS & R=\$!; until [ -e drv/stop ]; do sleep 1; done; kill -TERM \$R; wait \$R; touch stop" \
       drv="python3 $EXP/2026-10-21_pit_calibration/pits_drive.py $T/drv $T/elevation_map.npz" \
       > "$T.out" 2>&1
     mv "$T.out" "$T/session.out" 2>/dev/null
