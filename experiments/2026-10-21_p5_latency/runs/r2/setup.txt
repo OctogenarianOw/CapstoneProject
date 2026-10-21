@@ -1,0 +1,12 @@
+date 2026-10-21T14:52:47+11:00
+duration 600
+px4 parameters reset to the airframe defaults
+world pits
+run map=ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0 -p map_path:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/runs/.r2.tmp/elevation_map.npz
+run exe=ros2 run uav_core trajectory_executor
+run clk=bash /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/clock_bridge.sh
+run rec=ros2 bag record -s mcap -o /home/doria/uav_bags/2026-10-21_p5_latency/r2 --topics /lidar/points /fmu/out/vehicle_local_position_v1 /fmu/out/vehicle_attitude /clock & R=$!; until [ -e drv/stop ]; do sleep 1; done; kill -TERM $R; wait $R; touch stop
+run drv=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/pits_drive.py /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/runs/.r2.tmp/drv /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/runs/.r2.tmp/elevation_map.npz
+git e4ccb7bc46db7ddfb228b6a6538c680c5a9537d6
+?? experiments/2026-10-21_p5_latency/runs/.r2.tmp.out
+?? experiments/2026-10-21_p5_latency/runs/.r2.tmp/
