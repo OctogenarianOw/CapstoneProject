@@ -161,15 +161,27 @@ class CloudWorld(Node):
             self.get_parameter('map_publish_period_s').value,
             self.publish_map)
 
-    def now_s(self):
-        """System clock of the node, seconds."""
-        return self.get_clock().now().nanoseconds * 1e-9
+    def received_s(self, info):
+        """
+        Return the reception time of a message by the middleware, s.
 
-    def on_position(self, msg):
+        Not the time its callback runs: the fusion of a scan holds this
+        single-threaded node for tens of milliseconds, the poses and
+        /clock wait behind it, and an offset taken at callback time was
+        biased by that wait. Measured on 21 Oct (2026-10-21_p5_fix,
+        first version): 46 % of the scans fell back to the latest pose,
+        in blocks of 16 s beating with the lidar rate. The middleware
+        stamps a message when it arrives; the node clock is the fallback
+        if it does not.
+        """
+        t = info.get('received_timestamp', 0) if info else 0
+        return t * 1e-9 if t else self.get_clock().now().nanoseconds * 1e-9
+
+    def on_position(self, msg, info):
         """Keep the latest NED position and buffer it on the PX4 clock."""
         self.position = np.array([msg.x, msg.y, msg.z])
         t = msg.timestamp_sample * 1e-6
-        self.px4_offset.update(self.now_s(), msg.timestamp * 1e-6)
+        self.px4_offset.update(self.received_s(info), msg.timestamp * 1e-6)
         self.poses.add_position(t, self.position)
 
     def on_attitude(self, msg):
@@ -177,9 +189,9 @@ class CloudWorld(Node):
         self.attitude = np.array(msg.q)
         self.poses.add_attitude(msg.timestamp_sample * 1e-6, self.attitude)
 
-    def on_clock(self, msg):
+    def on_clock(self, msg, info):
         """Track the offset between the system and simulation clocks."""
-        self.sim_offset.update(self.now_s(),
+        self.sim_offset.update(self.received_s(info),
                                msg.clock.sec + msg.clock.nanosec * 1e-9)
 
     def scan_pose(self, msg):
