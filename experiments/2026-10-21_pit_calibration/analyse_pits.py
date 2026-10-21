@@ -91,7 +91,11 @@ def judge(snapshot, pits, cells):
     m = np.load(snapshot)
     elev, var, count = m['elevation'], m['variance'], m['count']
     res = float(m['resolution'])
-    origin = (float(m['origin_north']), float(m['origin_east']))
+    # cloud_world writes origin_x, origin_y (north, east: elevation_grid),
+    # the manager's snapshots origin_north, origin_east.
+    keys = (('origin_north', 'origin_east') if 'origin_north' in m.files
+            else ('origin_x', 'origin_y'))
+    origin = (float(m[keys[0]]), float(m[keys[1]]))
     state = classify(count, var)
     layers = analyse(elev, count, res)
     found = detect(layers, elev, res, origin, footprint_m=1.5,

@@ -62,4 +62,39 @@ simulator and W3 is not built on it; that result is reported as it is.
 
 ## Results
 
-To be filled after the flights.
+Three flights, r1 to r3, 3 of 3 at the first attempt, 0 failsafes
+(`results.txt`, `pits.csv`). **No depth meets the criterion: no pit is
+revealed, at any depth, even passed directly overhead.**
+
+| depth | far readings hidden | pits passed within 5 m revealed | step / depth seen, passed within 2 m |
+|---|---|---|---|
+| 0.5 m | 17 of 30 | 0 of 18 | 0.18 / 0.17 m |
+| 1.0 m | 20 of 30 | 0 of 18 | 0.19 / 0.18 m |
+| 1.5 m | 17 of 30 | 0 of 18 | 0.14 / 0.13 m |
+| 2.0 m | 17 of 30 | 0 of 18 | 0.14 / 0.12 m |
+
+The far readings counted as not hidden are all blocks not yet OBSERVED
+after lines 1 and 2 (49 of 49); no far reading shows a step of 0.24 m
+or more. After the pass overhead (line 5) the plate still holds a whole
+footprint in 10 of 12 plate flights, and in 3 of 3 for the 2.0 m
+plate: a platform pierced by 2 m deep pits would be confirmed as a
+landing zone. Read on the raw map of r1, the plate tops sit at their
+true heights (1.96 to 2.01 m for 2.0 m, 0.96 to 1.00 m for 1.0 m) and
+the pits show as dips of 0.09 to 0.21 m at the right cells.
+
+Measured: the map fills 1 m pits whatever the range and the depth.
+Not measured, the likely cause: the plate-top points around a pit that
+the horizontal error of the pose (eph about 0.15 m) and of the attitude
+put into its cell outnumber the near-vertical rays that reach its floor,
+and the last oblique views after the pass weigh most in the filter.
+This is the mechanism of P2, and it agrees with the filled depressions
+of W1's rough zone (above).
+
+Consequences:
+- W3 is not built on 1 m pits (criterion above).
+- A safety limit to declare in the thesis (spec 6.4): negative
+  obstacles of one cell are not seen by this chain at 8 m. The zero
+  severe false accepts of S8 holds on the geometry of W1, not on pitted
+  ground.
+- The questions left, wider pits and a hover over the pad, are taken
+  by `2026-10-21_pit_calibration_2`.

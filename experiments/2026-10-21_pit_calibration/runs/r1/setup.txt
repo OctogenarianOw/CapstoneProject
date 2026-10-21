@@ -1,0 +1,10 @@
+date 2026-10-21T13:23:48+11:00
+duration 600
+px4 parameters reset to the airframe defaults
+world pits
+run map=ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0 -p map_path:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/runs/.r1.tmp/elevation_map.npz
+run exe=ros2 run uav_core trajectory_executor
+run drv=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/pits_drive.py /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/runs/.r1.tmp /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_pit_calibration/runs/.r1.tmp/elevation_map.npz
+git 48e50e90df71e19d36296a1ec3e5a7bf7f82f53c
+?? experiments/2026-10-21_pit_calibration/calibration.log
+?? experiments/2026-10-21_pit_calibration/runs/
