@@ -433,3 +433,29 @@ def test_return_turns_at_most_three_times():
     assert m._returning(inputs(10, w=w, vehicle=(0.5, 15.5)), rfield,
                         []) == []
     assert m.target_zone == home
+
+
+def test_commit_charges_the_landing_not_a_leg():
+    """
+    I1 at the arrival of a return: the landing alone, as it lands there.
+
+    The aircraft arrived 1 m east of the zone's landing cells (they are
+    recomputed every cycle). Planned from its cell, the need added a
+    one-cell leg, 411 J never flown; in B3a075_r2 that leg alone made a
+    violation of -377 J at the commit.
+    """
+    m = fsm()
+    airborne(m)
+    cells = np.array([(i, j) for i in range(29, 32) for j in range(39, 42)])
+    m.registry.zones[99] = Zone(zone_id=99, state=CONFIRMED, cells=cells,
+                                landing_cells=cells,
+                                touchdown_ne=(0.5, 10.5))
+    m.registry.update = lambda *a, **k: []
+    m.state, m.target_zone = RETURNING, 99
+    vehicle = (0.5, 12.5)
+    actions = m.step(inputs(10, w=world(vehicle), vehicle=vehicle,
+                            remaining=50000.0, path_id=m.path_id,
+                            arrived=True))
+    assert m.state == COMMIT_LANDING and [a.kind for a in actions] == ['land']
+    need = MODEL.hover_energy(m.overhead_s()) + MODEL.e_land_j
+    assert np.isclose(m.last_margin, 50000.0 - 0.1 * CAP - need)
