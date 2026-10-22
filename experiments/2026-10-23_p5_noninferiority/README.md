@@ -57,4 +57,22 @@ is merged and P5 stays a declared limitation.
 
 ## Results
 
-To be filled after the flights.
+6 surveys at the first attempt, 10:22 to 10:33, 0 clock steps, tick at
+10000 us (`flights.log`, `results.txt`).
+
+| | before (3) | after, v5 (3) | criterion |
+|---|---|---|---|
+| scans at the scan time | 0 % | 100 % | over 95 %: met |
+| best ramp shift | (-1, 0) x 3 | (0, 0) x 3 | (0, 0): met |
+| ramp RMS at (0, 0) | 0.338 to 0.341 m | 0.158 to 0.168 m | under the lowest before: met |
+| recall | 93.7 to 93.8 % | 94.4 to 95.7 % | 91.7 % or more: met |
+| severe false accepts | 3, 4, 3 | 0, 0, 0 | 3 or fewer: met |
+| flat RMS | 0.253, 0.255, 0.219 m (median 0.253) | 0.240, 0.207, 0.254 m (median 0.240) | median at most 0.273 m: met |
+
+**Every item holds: merged** (rule above). The flat is not degraded,
+its median is 13 mm lower with the fix. The absolute 0.25 m of S5,
+reported only: 1 of 3 before, 2 of 3 after; the code without the fix
+breaks it in 2 of its 3 flights, which confirms that the threshold sits
+inside the spread of the measure. Over the two days, the fix gives P5
+gone in 6 of 6 W1 surveys, the severe false accepts of fresh surveys
+gone in 6 of 6 (2 to 4 before), the recall kept or raised.

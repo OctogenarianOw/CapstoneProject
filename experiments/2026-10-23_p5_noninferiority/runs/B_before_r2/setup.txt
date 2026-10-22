@@ -1,0 +1,17 @@
+date 2026-10-23T10:26:39+11:00
+duration 600
+px4 parameters reset to the airframe defaults
+world validation
+run map=PYTHONPATH=/home/doria/uav_p5v5/src/uav_core:$PYTHONPATH ros2 run uav_core cloud_world --ros-args -p map_path:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-23_p5_noninferiority/runs/.B_before_r2.tmp/elevation_map.npz -p pose_at_scan_time:=false
+run clk=bash /home/doria/ros2_ws/droneAfter/experiments/2026-10-21_p5_latency/clock_bridge.sh
+run clock=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+run drv=ros2 run uav_core survey_mission
+run watch=sleep 20; until grep -qs 'Survey complete' drv.log; do sleep 1; done; sleep 25; touch survey_done; touch stop
+git 51db0b52fa44f1ebfb1e1590b2f9629863444d55
+?? experiments/2026-10-23_p5_noninferiority/flights.log
+?? experiments/2026-10-23_p5_noninferiority/runs/
+?? experiments/campaign_w3.done
+?? experiments/evening2.done
+?? experiments/evening3.done
+?? experiments/evening4.done
+?? experiments/night.done
