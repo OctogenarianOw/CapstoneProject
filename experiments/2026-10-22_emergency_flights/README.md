@@ -48,4 +48,33 @@ W3 campaign is flown on it. If it fails, nothing is merged.
 
 ## Results
 
-To be filled after the flights.
+6 missions at the first attempt, 18:34 to 19:00, no clock step (the
+WSL clock fixed at 18:33, trap 22). `results.txt`.
+
+| | before (e9c727f) | after (f96bfb9) |
+|---|---|---|
+| emergencies with energy above the reserve | 0 | **1** (w3_after_r2, 70 s, 53 kJ over) |
+| drift of that emergency landing | | 0.3 m (held 3.1 s, landed at rest) |
+| I1 violations (missions) | 1 (1) | 4 (2) |
+| landings on a severe cell | 0 | 0 |
+| coverage | 59.6, 66.8, 63.8 % | 67.9, 23.4, 65.8 % |
+
+**The criterion fails, so nothing is merged** (rule above). The hold
+works: the emergency landed at rest, 0.3 m from where LAND was sent,
+against 20 m before. The 10 m start search does not suffice: over a
+roof at 5 m whose units read over 6 m up close, it found a free cell
+cut off from every zone, `no confirmed zone reachable`, a margin of
+`-inf` counted as an I1 violation, and an emergency landing onto the
+building. Next, on top of this branch: the way out on a 1 m margin
+(`2026-10-22_escape_flights`).
+
+**The other violations are a finding of their own.** w3_after_r1 (3
+cycles, -231 to -260 J) and w3_before_r2 (1 cycle, -312 J) broke I1
+just after the return began, by about one second of hover: the last
+visit took 3.06 and 2.99 s beyond its plan when C1 charged 2.0 s (the
+charge, the largest of the last five visits, had decayed to its floor
+after fast visits of 1.2 to 1.4 s). Both landed with the reserve
+intact (w3_after_r1: 3.0 kJ over it). The reserve covers the overrun,
+as designed, but gate E counts it. Candidate, a change of its own to
+measure on more than three missions: charge the largest latency of the
+whole mission rather than of the last five visits.

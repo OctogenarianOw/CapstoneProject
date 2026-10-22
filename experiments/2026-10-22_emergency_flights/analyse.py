@@ -40,7 +40,8 @@ def row(run):
     em = [e for e in ev if e.get('kind') == 'emergency_landing']
     sent = [e for e in ev if e.get('kind') == 'emergency_land'] or em
     r.update(variant=variant, replans=sum(1 for e in ev
-                                          if e.get('kind') == 'replan'))
+                                          if e.get('kind') == 'replan'),
+             escapes=sum(1 for e in ev if e.get('kind') == 'escape'))
     r['emergencies'] = [e['reason'] for e in em]
     r['emergency_over_reserve'] = [
         round(min(cyc, key=lambda c: abs(c['t'] - e['t']))['remaining_j']
@@ -55,17 +56,20 @@ def row(run):
 
 
 def main():
-    rows = [row(p) for p in sorted(HERE.glob('runs/w3_*'))]
+    """Table of the runs of this directory, or of the one given."""
+    runs = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / 'runs'
+    rows = [row(p) for p in sorted(runs.glob('w3_*'))]
     print(f'{"mission":<14} {"end":<20} {"viol":>4} {"cover":>6} '
-          f'{"left-R":>7} {"replans":>7} {"drift m":>7}  emergencies '
-          '(J over the reserve)  landed on')
+          f'{"left-R":>7} {"replans":>7} {"escapes":>7} {"drift m":>7}  '
+          'emergencies (J over the reserve)  landed on')
     for r in rows:
         em = ', '.join(f'{w} ({j})' for w, j in
                        zip(r['emergencies'], r['emergency_over_reserve']))
         land = r['landing'] + (' SEVERE' if r['landing_severe'] else '')
         print(f'{r["run"]:<14} {r["end"]:<20} {r["violations"]:>4} '
               f'{r["coverage"]:5.1f}% {r["left_over_reserve"]:7.0f} '
-              f'{r["replans"]:>7} {r["drift_m"]:7.1f}  {em or "-"}  {land}')
+              f'{r["replans"]:>7} {r["escapes"]:>7} {r["drift_m"]:7.1f}  '
+              f'{em or "-"}  {land}')
     for v in ('before', 'after'):
         sel = [r for r in rows if r['variant'] == v]
         if sel:
