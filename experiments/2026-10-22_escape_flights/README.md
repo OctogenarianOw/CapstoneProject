@@ -46,4 +46,22 @@ If it fails, nothing is merged.
 
 ## Results
 
-To be filled after the flights.
+3 missions at the first attempt, 19:03 to 19:18, no clock step
+(`results.txt`).
+
+| | before (emergency, 3) | after (escape, 3) |
+|---|---|---|
+| emergencies with energy above the reserve | 1 | 0 |
+| I1 violations | 4 (2 missions) | 0 |
+| escapes | | 0 |
+| landings on a severe cell | 0 | 0 |
+| landed on | roof, building, parking | road, road, yard |
+| coverage | 67.9, 23.4, 65.8 % | 61.1, 64.4, 58.7 % |
+
+**The criterion holds, so `escape` is merged**, with the two commits of
+emergency under it. Honest scope: the closed-in case did not come in
+these three missions (it came once in six before), so the way out was
+not flown; it is covered by its unit test, and the hold before an
+emergency landing by the emergency flights (drift 0.3 m). The I1
+violations of the emergency flights at the last visit (a latency
+overrun) did not recur here, which three missions cannot settle.
