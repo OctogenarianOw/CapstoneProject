@@ -21,8 +21,9 @@ States (S15.1):
                   replan if that zone is retired on the way
   COMMIT_LANDING  descent commanded, no more re-evaluation (S15.2)
   LANDED          done
-  EMERGENCY       no confirmed zone reachable, or budget depleted: land
-                  where the aircraft is, logged (the I5 exception)
+  EMERGENCY       no confirmed zone reachable, or budget depleted: hold
+                  until at rest, then land where the aircraft is, logged
+                  (the I5 exception)
 
 Ends (S15.4), each logged distinctly: 'coverage' (no frontier left),
 'budget' (none admissible under C1, or the B1 threshold), 'commanded'.
@@ -71,9 +72,9 @@ confirm it, 20 resends, one restarting a path in flight.
 from dataclasses import dataclass, field
 import math
 
-from uav_core.mission_policy import (evaluate, invariant_margin,
-                                     plan_return, PolicyParams,
-                                     return_field)
+from uav_core.mission_policy import (escape_return, evaluate,
+                                     invariant_margin, plan_return,
+                                     PolicyParams, return_field)
 from uav_core.planner import plan_path
 
 INIT, TAKEOFF, BOOTSTRAP = 'INIT', 'TAKEOFF', 'BOOTSTRAP'
@@ -100,6 +101,14 @@ class MissionParams:
     bootstrap_cycles: int = 2
     energy_stale_s: float = 2.0
     command_retry_s: float = 2.0
+    # An emergency holds before it lands, as the return does since
+    # 2026-10-20_landing_drift: LAND sent at 5 m/s carried the aircraft
+    # 20 m on, into the W3 town (2026-10-22_reselect_flights). From
+    # 5 m/s at 3 m/s2 the stop takes 1.7 s; settle_s leaves the position
+    # loop time to come back to the hold point. Chosen. If the executor
+    # never reports holding, it lands after hold_max_s anyway.
+    emergency_settle_s: float = 3.0
+    emergency_hold_max_s: float = 10.0
 
 
 @dataclass
@@ -141,6 +150,9 @@ class MissionFSM:
     log: object = None          # mission_log.MissionLog, optional
     state: str = INIT
     end_reason: str = ''
+    emergency_t: float = None   # when the emergency was declared
+    held_since: float = None    # executor holding since, in an emergency
+    emergency_landing: bool = False
     path_id: int = 0
     target: object = None       # Candidate being flown to
     target_zone: int = None     # zone id of a return
@@ -270,6 +282,20 @@ class MissionFSM:
         if self.state == EMERGENCY:
             if inp.ex_state == EX_LANDED:
                 self._go(inp.t, LANDED, 'emergency landing')
+                return []
+            if self.emergency_landing:
+                return []
+            if inp.ex_state == EX_HOLDING and self.held_since is None:
+                self.held_since = inp.t
+            settled = (self.held_since is not None and inp.t - self.held_since
+                       >= self.params.emergency_settle_s)
+            if settled or (inp.t - self.emergency_t
+                           >= self.params.emergency_hold_max_s):
+                self.emergency_landing = True
+                self._event(inp.t, 'emergency_land',
+                            held_s=(None if self.held_since is None
+                                    else inp.t - self.held_since))
+                return [Action('land')]
             return []
         if inp.world is None:
             return []
@@ -294,6 +320,20 @@ class MissionFSM:
         margin, zone_id, _ = invariant_margin(w, rfield, self.model, b,
                                               reserve, res, origin,
                                               self.overhead_s())
+        if (margin is None or margin == -math.inf) and b is not None:
+            # The nominal map has no way back from here: I1 holds if the
+            # escape margin has one (escape_return), and the return
+            # flies it.
+            plan, zid = escape_return(w, self.registry.confirmed(), res,
+                                      origin)
+            if plan is not None:
+                margin = b - reserve - (
+                    self.model.path_energy(plan.waypoints_ne)
+                    + self.model.hover_energy(self.overhead_s())
+                    + self.model.e_land_j)
+                zone_id = zid
+                self._event(inp.t, 'escape_margin', margin_j=margin,
+                            zone_id=zid, length_m=plan.length_m)
         self.last_margin = margin
         violated = margin is not None and margin < 0
         if violated:
@@ -427,12 +467,21 @@ class MissionFSM:
 
     def _return(self, inp, rfield, why):
         w = inp.world
-        if w.vehicle_ij is None:
-            return self._emergency(inp, 'vehicle off the traversable map')
-        plan, zone_id = plan_return(w.traversable, rfield, w.vehicle_ij,
-                                    inp.resolution, inp.origin_ne)
+        plan = zone_id = None
+        if w.vehicle_ij is not None:
+            plan, zone_id = plan_return(w.traversable, rfield, w.vehicle_ij,
+                                        inp.resolution, inp.origin_ne)
         if plan is None:
-            return self._emergency(inp, 'no confirmed zone reachable')
+            # No nominal way back: the way out on the escape margin, rather
+            # than an emergency landing onto what closed in (a roof).
+            plan, zone_id = escape_return(w, self.registry.confirmed(),
+                                          inp.resolution, inp.origin_ne)
+            if plan is None:
+                return self._emergency(
+                    inp, 'vehicle off the traversable map'
+                    if w.vehicle_ij is None else 'no confirmed zone reachable')
+            self._event(inp.t, 'escape', reason=why, zone_id=zone_id,
+                        length_m=plan.length_m)
         self.target_zone = zone_id
         if self.state != RETURNING:
             self._go(inp.t, RETURNING, why)
@@ -471,4 +520,6 @@ class MissionFSM:
         self._go(inp.t, EMERGENCY, why)
         self._event(inp.t, 'emergency_landing', reason=why,
                     exception='I5, landing outside the registry')
-        return [Action('land')]
+        # Hold first; the EMERGENCY state lands once at rest.
+        self.emergency_t, self.held_since = inp.t, None
+        return [Action('hold')]

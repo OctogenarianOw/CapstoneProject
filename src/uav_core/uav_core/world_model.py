@@ -52,6 +52,26 @@ class WorldParams:
     footprint_m: float = 1.5          # 3x3 cells; 1.2 m from P4 breaks S8
     sensor_radius_m: float = 18.0     # sqrt(20^2 - 8^2), geometry
     area_half_m: float = 30.0         # exploration area, validation world
+    # Search radius for a free start cell when the aircraft's own cell is
+    # blocked. 2 m until 22 Oct, enough for the inflation alone: over a
+    # W3 roof at 5.3 m, units mapped at 6.3 m on approach blocked the cell
+    # under the aircraft, the nearest free one was 3.0 m away, and the
+    # mission ended in an emergency landing with 23 kJ above the reserve
+    # (2026-10-22_reselect_flights, w3_after_r2). On a roof whose units
+    # are inflated into one blocked patch, the way out is the roof edge:
+    # half the widest W3 building (18 m) plus a cell. Chosen. The aircraft
+    # is over that cell already, so its terrain is under the 8 m flight
+    start_search_m: float = 10.0
+    # Vertical margin of the way out, used only when the nominal map
+    # leaves no route (mission_fsm, I1 and the return). Over a W3 roof
+    # at 5 m, rooftop units read under 6 m from afar and over it up
+    # close, their inflated cells closed in around the aircraft, and an
+    # emergency landing came at 70 s with most of the budget left, onto
+    # the roof (2026-10-22_emergency_flights, w3_after_r2). The aircraft
+    # is at 8 m and every W3 obstacle under 7 m: with 1 m of margin the
+    # way out exists. Chosen: half the nominal 2 m, above the 0.8 m of
+    # height error the survey accepts (S4). Never used to explore
+    escape_margin_m: float = 1.0
 
 
 @dataclass
@@ -70,6 +90,8 @@ class WorldModel:
     catalogue: object        # frontier_detection.Catalogue
     explore_mask: np.ndarray
     timings_ms: dict
+    escape_traversable: np.ndarray = None   # the way out, escape margin
+    escape_ij: tuple = None                 # its start cell, None if none
 
 
 def area_mask(shape, resolution, origin_ne, half_m):
@@ -113,12 +135,19 @@ def build_world(elevation, variance, count, resolution, origin_ne,
                                    params.inflate_m)
     vi = int((vehicle_ne[0] - origin_ne[0]) / resolution)
     vj = int((vehicle_ne[1] - origin_ne[1]) / resolution)
-    start = nearest_traversable(traversable, (vi, vj),
-                                max_cells=int(np.ceil(2.0 / resolution)))
+    start = nearest_traversable(
+        traversable, (vi, vj),
+        max_cells=int(np.ceil(params.start_search_m / resolution)))
     if start is None:
         dist = np.full(state.shape, np.inf)
     else:
         dist = distance_field(traversable, [start]) * resolution
+    escape = traversable_mask(elevation, state, resolution,
+                              params.altitude_m, params.escape_margin_m,
+                              params.inflate_m)
+    escape_ij = nearest_traversable(
+        escape, (vi, vj),
+        max_cells=int(np.ceil(params.start_search_m / resolution)))
     lap('field')
     explore = area_mask(state.shape, resolution, origin_ne,
                         params.area_half_m)
@@ -132,4 +161,5 @@ def build_world(elevation, variance, count, resolution, origin_ne,
                       state=state, layers=layers, landing=landing,
                       traversable=traversable, vehicle_ij=start,
                       dist_m=dist, catalogue=catalogue,
-                      explore_mask=explore, timings_ms=timings)
+                      explore_mask=explore, timings_ms=timings,
+                      escape_traversable=escape, escape_ij=escape_ij)

@@ -70,7 +70,8 @@ LATCHED = QoSProfile(reliability=ReliabilityPolicy.RELIABLE,
                      history=HistoryPolicy.KEEP_LAST, depth=1)
 MISSION_PARAMS = ('policy', 'alpha', 'reserve_fraction',
                   'return_threshold_fraction', 'dwell_s', 'latency_window',
-                  'bootstrap_cycles', 'energy_stale_s')
+                  'bootstrap_cycles', 'energy_stale_s', 'emergency_settle_s',
+                  'emergency_hold_max_s')
 
 
 class ExplorationManager(Node):

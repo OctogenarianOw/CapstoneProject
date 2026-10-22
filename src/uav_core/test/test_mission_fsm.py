@@ -7,6 +7,8 @@ the executor is played by the test through the Inputs it reports. Each
 test is one rule of S15 or one safety case.
 """
 
+from types import SimpleNamespace
+
 import numpy as np
 from uav_core.energy_model import CALIBRATION_2026_10_19 as MODEL
 from uav_core.frontier_detection import Blacklist
@@ -225,6 +227,48 @@ def roofed(vp, vehicle=(0.0, 0.0)):
                        vehicle, WorldParams())
 
 
+def pocket(vehicle=(0.5, 15.5)):
+    """
+    Return a world where roofs at 6.5 m close in around the aircraft.
+
+    The whole grid observed and flat, but for a square ring of 6.5 m
+    roofs 4 to 12 cells around the aircraft, over the 6 m I3 ceiling
+    and under the 7 m of the escape margin; inflated, the ring leaves a
+    free pocket of 3 x 3 cells around the aircraft, cut off from home.
+    """
+    ii, jj = np.indices((N, N))
+    north, east = ORIGIN[0] + ii + 0.5, ORIGIN[1] + jj + 0.5
+    cheb = np.maximum(np.abs(north - vehicle[0]), np.abs(east - vehicle[1]))
+    elev = np.where((cheb >= 4) & (cheb <= 12), -6.5, 0.0)
+    count = np.full((N, N), 100, dtype=np.int32)
+    var = np.full((N, N), 4e-4, dtype=np.float32)
+    return build_world(elev.astype(np.float32), var, count, RES, ORIGIN,
+                       vehicle, WorldParams())
+
+
+def test_closed_in_aircraft_escapes_instead_of_landing():
+    """
+    No nominal way back: fly out on the escape margin, no emergency.
+
+    Over a W3 roof, units read over 6 m up close closed in around the
+    aircraft and it landed in an emergency at 70 s with most of its
+    budget. Here the return takes the escape margin, logged, I1 is
+    evaluated on it, and the mission returns instead of landing.
+    """
+    events = []
+    m = fsm()
+    airborne(m)
+    m.log = SimpleNamespace(
+        event=lambda t, kind, **data: events.append((kind, data)))
+    w = pocket()
+    assert w.vehicle_ij is not None and w.escape_ij is not None
+    actions = m.step(inputs(4, w=w, vehicle=(0.5, 15.5), stop=True))
+    assert m.state == RETURNING and [a.kind for a in actions] == ['path']
+    kinds = [k for k, _ in events]
+    assert 'escape' in kinds and 'emergency_landing' not in kinds
+    assert 'escape_margin' in kinds and np.isfinite(m.last_margin)
+
+
 def test_unreachable_target_is_replaced_not_the_end():
     """
     S12: a target no path reaches any more is blacklisted and replaced.
@@ -250,7 +294,33 @@ def test_depleted_budget_is_an_emergency_landing():
     m = fsm(policy='nearest')
     airborne(m)
     actions = m.step(inputs(4, w=world(), remaining=-1.0))
-    assert m.state == EMERGENCY and [a.kind for a in actions] == ['land']
+    assert m.state == EMERGENCY and [a.kind for a in actions] == ['hold']
+
+
+def test_emergency_lands_only_at_rest():
+    """
+    Hold in an emergency, land once the executor has held 3 s.
+
+    LAND sent in flight at 5 m/s carried the aircraft 20 m on, into the
+    W3 town; the return was fixed for this on 20 Oct, not the emergency.
+    If the executor never reports holding, land after 10 s anyway.
+    """
+    m = fsm(policy='nearest')
+    airborne(m)
+    first = m.step(inputs(4, ex_state=EX_FOLLOWING, w=world(),
+                          remaining=-1.0))
+    assert [a.kind for a in first] == ['hold']
+    assert m.step(inputs(4.5, ex_state=EX_FOLLOWING)) == []
+    assert m.step(inputs(5.0, ex_state=EX_HOLDING)) == []
+    assert m.step(inputs(7.9, ex_state=EX_HOLDING)) == []
+    land = m.step(inputs(8.0, ex_state=EX_HOLDING))
+    assert [a.kind for a in land] == ['land']
+    stuck = fsm(policy='nearest')
+    airborne(stuck)
+    stuck.step(inputs(4, ex_state=EX_FOLLOWING, w=world(), remaining=-1.0))
+    assert stuck.step(inputs(13.9, ex_state=EX_FOLLOWING)) == []
+    land = stuck.step(inputs(14.0, ex_state=EX_FOLLOWING))
+    assert [a.kind for a in land] == ['land']
 
 
 def test_executor_timeout_blacklists_the_frontier():
