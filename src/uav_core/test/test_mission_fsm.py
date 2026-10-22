@@ -17,7 +17,8 @@ from uav_core.mission_fsm import (BOOTSTRAP, COMMIT_LANDING, EMERGENCY,
                                   EX_LANDED, INIT,
                                   Inputs, LANDED, MissionFSM, MissionParams,
                                   NAVIGATING, RETURNING, SELECTING, TAKEOFF)
-from uav_core.slz_registry import SlzRegistry
+from uav_core.mission_policy import evaluate, PolicyParams, return_field
+from uav_core.slz_registry import CONFIRMED, SlzRegistry, Zone
 from uav_core.world_model import build_world, WorldParams
 
 N, RES, ORIGIN = 60, 1.0, (-30.0, -30.0)
@@ -340,3 +341,33 @@ def test_b1_returns_at_its_battery_threshold():
     m.step(inputs(4, w=world(), remaining=0.25 * CAP))
     assert m.state in (RETURNING, COMMIT_LANDING)
     assert m.end_reason == 'budget'
+
+
+def test_guarantee_without_its_zone_is_logged():
+    """
+    S9.5: a decision on a remote zone logs the need without that zone.
+
+    Home at the take-off point and a confirmed zone 10 m east; a target
+    on the east side returns to that zone. Without it the return goes
+    home: the logged need is larger, and the I1 margin without it is
+    the margin of a return home from where the aircraft is.
+    """
+    events = []
+    m = fsm()
+    airborne(m)
+    m.log = SimpleNamespace(
+        event=lambda t, kind, **data: events.append((kind, data)))
+    w = world()
+    cells = np.array([(i, j) for i in range(29, 32) for j in range(39, 42)])
+    m.registry.zones[99] = Zone(zone_id=99, state=CONFIRMED, cells=cells,
+                                landing_cells=cells,
+                                touchdown_ne=(0.5, 10.5))
+    rfield = return_field(w.traversable, m.registry.confirmed(), RES, ORIGIN)
+    p = PolicyParams(policy='c1_c2', alpha=0.5, reserve_j=0.1 * CAP,
+                     overhead_s=2.0)
+    d = evaluate(w, rfield, MODEL, CAP, p, RES, ORIGIN)
+    east = [c for c in d.candidates if c.zone_id == 99 and c.admissible]
+    m._log_guarantee(inputs(5, w=w), east[0], 2.0)
+    (kind, g), = [e for e in events if e[0] == 'guarantee']
+    assert g['zone_id'] == 99 and g['need_without_j'] > g['need_j']
+    assert np.isfinite(g['i1_without_j']) and not g['rests_on_zone']
