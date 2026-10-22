@@ -220,7 +220,8 @@ reading, not measured).
    the return itself makes the second pass over zones along its way,
    which get confirmed behind it. In B3a000_r5, I1 against zone 41
    read +376 J when it came back, so turning to it would have kept the
-   reserve (counterfactual, not flown). First to fly.
+   reserve (counterfactual, not flown). Flown and merged on 23 Oct
+   (`2026-10-23_return_switch_flights`).
 2. Registry: give a split zone's identity and confirmation to the part
    holding its landing cells. Addresses 5 of the 20 demotions and 1 of
    the 4 return targets lost; the shrunk zones need another remedy, not
