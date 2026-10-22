@@ -359,12 +359,57 @@ class MissionFSM:
                                else 'budget')
             return self._return(inp, rfield, d.reason)
         self.target = d.best
+        self._log_guarantee(inp, d.best, charged)
         self.decided = (inp.t,
                         self.model.path_time(d.best.plan_go.waypoints_ne),
                         charged)
         self._go(inp.t, NAVIGATING,
                  f'frontier at {d.best.frontier.viewpoint_ne}')
         return [self._path(d.best.plan_go.waypoints_ne)]
+
+    def _log_guarantee(self, inp, best, overhead_s):
+        """
+        Log what the guarantee of a new target rests on (S9.5, S17).
+
+        C1 admits a target on its best return zone. S9.5 asks what
+        happens if that zone goes, so each decision whose zone is not
+        the take-off point also logs the need through the best other
+        confirmed zone, and the I1 margin left without it from where the
+        aircraft is. Instrumentation, no decision reads it: one more
+        return field per such decision, 74 ms median on the 240 m grid
+        of W3. Read by the W3 depot trigger (experiments/w3_depot.py),
+        and for F13.
+        """
+        zones = self.registry.confirmed()
+        z = next((z for z in zones if z.zone_id == best.zone_id), None)
+        if z is None or z.provisional:
+            return
+        w, res, origin = inp.world, inp.resolution, inp.origin_ne
+        others = [o for o in zones if o.zone_id != z.zone_id]
+        budget = inp.remaining_j - self._reserve(inp)
+        hover = self.model.hover_energy(overhead_s)
+        # No other zone, or none reachable: nothing is left without it
+        need_without, i1_without = math.inf, -math.inf
+        if others:
+            rf = return_field(w.traversable, others, res, origin)
+            back, _ = plan_return(w.traversable, rf,
+                                  best.frontier.viewpoint_ij, res, origin)
+            if back is not None:
+                need_without = (best.e_go
+                                + self.model.path_energy(back.waypoints_ne)
+                                + hover + self.model.e_land_j)
+            if w.vehicle_ij is not None:
+                home, _ = plan_return(w.traversable, rf, w.vehicle_ij, res,
+                                      origin)
+                if home is not None:
+                    i1_without = budget - (
+                        self.model.path_energy(home.waypoints_ne) + hover
+                        + self.model.e_land_j)
+        self._event(inp.t, 'guarantee', zone_id=z.zone_id,
+                    viewpoint_ne=best.frontier.viewpoint_ne,
+                    need_j=best.e_total, need_without_j=need_without,
+                    budget_j=budget, i1_without_j=i1_without,
+                    rests_on_zone=bool(need_without > budget))
 
     def _navigate(self, inp, rfield, retired_confirmed):
         if self._arrived(inp) or self._gave_up(inp):
