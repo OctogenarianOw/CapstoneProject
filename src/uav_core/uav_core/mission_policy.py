@@ -201,6 +201,27 @@ def invariant_margin(world, rfield, model, b_current, reserve_j,
     return b_current - reserve_j - need, zone_id, plan
 
 
+def escape_return(world, zones, resolution, origin_ne):
+    """
+    Return path on the escape margin, when the nominal map has none.
+
+    The nominal map can close in around the aircraft: obstacles read
+    under the I3 ceiling from afar and over it up close (W3 rooftop
+    units), their inflated cells around a cell the aircraft is already
+    over. The escape mask (world_model, escape_margin_m) keeps the
+    obstacles the aircraft would hit and drops the extra margin, so a
+    way out to a confirmed zone exists where one physically does.
+    Returns (plan, zone id) or (None, None).
+    """
+    mask = getattr(world, 'escape_traversable', None)
+    if mask is None or world.escape_ij is None:
+        return None, None
+    rfield = return_field(mask, zones, resolution, origin_ne)
+    if not rfield.source_zone:
+        return None, None
+    return plan_return(mask, rfield, world.escape_ij, resolution, origin_ne)
+
+
 def rescale(values):
     """(x - min) / (max - min) over a pool, every value 1 if all equal."""
     lo, hi = min(values), max(values)

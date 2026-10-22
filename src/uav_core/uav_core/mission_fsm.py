@@ -72,9 +72,9 @@ confirm it, 20 resends, one restarting a path in flight.
 from dataclasses import dataclass, field
 import math
 
-from uav_core.mission_policy import (evaluate, invariant_margin,
-                                     plan_return, PolicyParams,
-                                     return_field)
+from uav_core.mission_policy import (escape_return, evaluate,
+                                     invariant_margin, plan_return,
+                                     PolicyParams, return_field)
 from uav_core.planner import plan_path
 
 INIT, TAKEOFF, BOOTSTRAP = 'INIT', 'TAKEOFF', 'BOOTSTRAP'
@@ -320,6 +320,20 @@ class MissionFSM:
         margin, zone_id, _ = invariant_margin(w, rfield, self.model, b,
                                               reserve, res, origin,
                                               self.overhead_s())
+        if (margin is None or margin == -math.inf) and b is not None:
+            # The nominal map has no way back from here: I1 holds if the
+            # escape margin has one (escape_return), and the return
+            # flies it.
+            plan, zid = escape_return(w, self.registry.confirmed(), res,
+                                      origin)
+            if plan is not None:
+                margin = b - reserve - (
+                    self.model.path_energy(plan.waypoints_ne)
+                    + self.model.hover_energy(self.overhead_s())
+                    + self.model.e_land_j)
+                zone_id = zid
+                self._event(inp.t, 'escape_margin', margin_j=margin,
+                            zone_id=zid, length_m=plan.length_m)
         self.last_margin = margin
         violated = margin is not None and margin < 0
         if violated:
@@ -453,12 +467,21 @@ class MissionFSM:
 
     def _return(self, inp, rfield, why):
         w = inp.world
-        if w.vehicle_ij is None:
-            return self._emergency(inp, 'vehicle off the traversable map')
-        plan, zone_id = plan_return(w.traversable, rfield, w.vehicle_ij,
-                                    inp.resolution, inp.origin_ne)
+        plan = zone_id = None
+        if w.vehicle_ij is not None:
+            plan, zone_id = plan_return(w.traversable, rfield, w.vehicle_ij,
+                                        inp.resolution, inp.origin_ne)
         if plan is None:
-            return self._emergency(inp, 'no confirmed zone reachable')
+            # No nominal way back: the way out on the escape margin, rather
+            # than an emergency landing onto what closed in (a roof).
+            plan, zone_id = escape_return(w, self.registry.confirmed(),
+                                          inp.resolution, inp.origin_ne)
+            if plan is None:
+                return self._emergency(
+                    inp, 'vehicle off the traversable map'
+                    if w.vehicle_ij is None else 'no confirmed zone reachable')
+            self._event(inp.t, 'escape', reason=why, zone_id=zone_id,
+                        length_m=plan.length_m)
         self.target_zone = zone_id
         if self.state != RETURNING:
             self._go(inp.t, RETURNING, why)
