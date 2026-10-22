@@ -212,6 +212,39 @@ def test_target_no_longer_admissible_aborts_to_return():
     assert actions
 
 
+def roofed(vp, vehicle=(0.0, 0.0)):
+    """Return the flat disc with a 7 m roof over a viewpoint (I3: 6 m)."""
+    ii, jj = np.indices((N, N))
+    north, east = ORIGIN[0] + ii + 0.5, ORIGIN[1] + jj + 0.5
+    disc = np.hypot(north, east) <= 18.0
+    roof = (np.abs(north - vp[0]) <= 1.5) & (np.abs(east - vp[1]) <= 1.5)
+    count = np.where(disc, 100, 0).astype(np.int32)
+    var = np.where(disc, 4e-4, np.inf).astype(np.float32)
+    elev = np.where(disc, np.where(roof, -7.0, 0.0), np.nan)
+    return build_world(elev.astype(np.float32), var, count, RES, ORIGIN,
+                       vehicle, WorldParams())
+
+
+def test_unreachable_target_is_replaced_not_the_end():
+    """
+    S12: a target no path reaches any more is blacklisted and replaced.
+
+    A roof read at 7 m over the viewpoint after the decision blocks it
+    (I3). Under C1 and under the baseline B1 alike, the mission selects
+    another frontier instead of returning: on the first W3 missions this
+    case ended them with 21 to 74 kJ left.
+    """
+    for policy in ('c1_c2', 'gain'):
+        m = fsm(policy=policy)
+        airborne(m)
+        vp = m.target.frontier.viewpoint_ne
+        actions = m.step(inputs(4, w=roofed(vp), path_id=1))
+        assert m.state == NAVIGATING and m.end_reason == ''
+        assert [a.kind for a in actions] == ['path']
+        assert m.target.frontier.viewpoint_ne != vp
+        assert m.blacklist.blocked(vp, 5.0)
+
+
 def test_depleted_budget_is_an_emergency_landing():
     """No energy left: land where the aircraft is, logged as I5."""
     m = fsm(policy='nearest')

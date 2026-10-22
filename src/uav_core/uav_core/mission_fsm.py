@@ -13,8 +13,10 @@ States (S15.1):
                   registry as a provisional zone (S15.3, policy a)
   BOOTSTRAP       a few map cycles so the first catalogue is meaningful
   SELECTING       catalogue -> C1 -> C2 (or a baseline), send the path
-  NAVIGATING      fly it; every cycle re-check the target under C1, the
-                  S9.5 reaction when the zone it relied on is retired
+  NAVIGATING      fly it; every cycle check that the target can still be
+                  reached, or select another (S12, every policy), and
+                  re-check it under C1, the S9.5 reaction when the zone
+                  it relied on is retired
   RETURNING       fly to the reachable confirmed zone of least energy;
                   replan if that zone is retired on the way
   COMMIT_LANDING  descent commanded, no more re-evaluation (S15.2)
@@ -377,8 +379,28 @@ class MissionFSM:
                             hold_s=hold, unchanged=None)
                 self._go(inp.t, SELECTING, 'executor arrival timeout')
             return self._select(inp, rfield)
+        w = inp.world
+        go = plan_path(w.traversable, w.dist_m,
+                       self.target.frontier.viewpoint_ij, inp.resolution,
+                       inp.origin_ne)
+        if go is None:
+            # The target can no longer be reached on the current map: an
+            # obstacle was mapped at the viewpoint or on the way since the
+            # decision, such as a roof read above the cruise ceiling as the
+            # aircraft closed in (W3). This is the replanning of S12, for
+            # every policy since it is I3, not C1: blacklist the viewpoint
+            # like an unreachable frontier and select again. Before, under
+            # C1 only, it counted as an inadmissible target and ended the
+            # mission: the first W3 missions stopped with 21 to 74 kJ left
+            # (2026-10-22_i4_cells_flights), never on W1 or W2.
+            f = self.target.frontier
+            hold = self.blacklist.record_failure(f.viewpoint_ne, inp.t)
+            self._event(inp.t, 'replan', reason='target unreachable',
+                        viewpoint_ne=f.viewpoint_ne, hold_s=hold)
+            self._go(inp.t, SELECTING, 'target unreachable')
+            return self._select(inp, rfield)
         if self.params.policy in C1_POLICIES:
-            ok, need = self._target_admissible(inp, rfield)
+            ok, need = self._target_admissible(inp, rfield, go)
             if not ok:
                 self.end_reason = 'invariant'
                 why = ('zone retired, target no longer admissible'
@@ -388,13 +410,12 @@ class MissionFSM:
                 return self._return(inp, rfield, why)
         return []
 
-    def _target_admissible(self, inp, rfield):
+    def _target_admissible(self, inp, rfield, go):
         """Re-check C1 for the frontier being flown to, from here."""
         w, res, origin = inp.world, inp.resolution, inp.origin_ne
         vp = self.target.frontier.viewpoint_ij
-        go = plan_path(w.traversable, w.dist_m, vp, res, origin)
         back, _ = plan_return(w.traversable, rfield, vp, res, origin)
-        if go is None or back is None:
+        if back is None:
             return False, math.inf
         # One overhead at the frontier, one at the zone before the land
         # command, as evaluate() charges them.
