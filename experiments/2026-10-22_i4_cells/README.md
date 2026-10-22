@@ -57,8 +57,9 @@ the missions stay those taken with the point rule.
 - **W1**: the point rule over-confirms. Two passes near the touchdown
   of the large flat zone confirmed all of it, while 538 of its 2465 m2
   had been passed twice; the rest was seen in one pass, which I4 does
-  not allow. The one severe cell the point rule confirmed (B2_r03) lay
-  in such a part.
+  not allow. The one severe cell the point rule confirmed (B2_r03) is
+  not confirmed per cell (whether it was passed once or fell outside a
+  whole footprint was not separated).
 
 The last map of the W3 flight holds no severe candidate cell: the
 short-lived landing fragments of the rock zone are safe ground in the
