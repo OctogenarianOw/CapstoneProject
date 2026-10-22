@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 from uav_core.slz_detection import footprint_offsets, label_zones
 from uav_core.slz_registry import (CANDIDATE, CONFIRMED, inscribed_radius,
-                                   refused_distance,
+                                   PassGrid, refused_distance,
                                    RETIRED, SlzRegistry)
 
 N = 60
@@ -63,15 +63,15 @@ def test_hysteresis_does_not_count_edge_hovering():
     """
     Count a pass only on entry within r_in after leaving the radius.
 
-    Enter at 10 m, wander up to 17.9 m: one pass. Leave beyond 18 m,
-    come back to 15 and 16 m, above r_in = 14.4 m: still one. Cross
-    r_in at 14 m: second pass.
+    One cell at the origin. Enter at 10 m, wander up to 17.9 m: one
+    pass. Leave beyond 18 m, come back to 15 and 16 m, above r_in =
+    14.4 m: still one. Cross r_in at 14 m: second pass.
     """
-    reg = SlzRegistry()
+    grid = PassGrid((1, 1), 1.0, (-0.5, -0.5), 14.4, 18.0)
     passes = []
-    for t, n in enumerate([10.0, 17.9, 13.0, 18.5, 15.0, 16.0, 14.0]):
-        step(reg, landing(ZONE), (n, 0.0), float(t))
-        passes.append(reg.active()[0].n_passes)
+    for n in [10.0, 17.9, 13.0, 18.5, 15.0, 16.0, 14.0]:
+        grid.add((n, 0.0))
+        passes.append(int(grid.passes[0, 0]))
     assert passes == [1, 1, 1, 1, 1, 1, 2]
 
 
@@ -124,15 +124,16 @@ def test_reappearing_zone_keeps_identity_and_passes():
     assert z.n_passes == 2 and len(reg.zones) == 1
 
 
-def test_passes_counted_for_a_zone_stay_when_its_touchdown_moves():
+def test_part_of_a_zone_seen_once_is_not_targeted():
     """
-    I4: a pass counted for a zone stays counted when its touchdown moves.
+    I4 per cell: C1 targets only the part of a zone passed twice.
 
-    Confirmed with two passes around its first touchdown, the zone grows
-    a wide part about 18 m east, clearer by more than one cell, and the
-    touchdown moves there. The track holds one pass around the new point
-    only; the zone keeps its two and stays CONFIRMED. The other criteria
-    still apply: a cell short of OBSERVED demotes it.
+    A zone grown where it was seen once stays confirmed on the part
+    passed twice. Confirmed with two passes, the zone grows a wide part east, out to
+    28 m, and its touchdown moves there; the aircraft at 19.5 m east
+    passes that part once. The zone keeps its two passes and stays
+    CONFIRMED, with landing cells within 14.4 m of where it flew twice.
+    The other criteria still apply: a cell short of OBSERVED demotes it.
     """
     reg = SlzRegistry()
     for t, v in enumerate([NEAR, FAR, NEAR]):
@@ -142,12 +143,32 @@ def test_passes_counted_for_a_zone_stay_when_its_touchdown_moves():
     grown = landing(ZONE, (28, 34, 34, 40), (16, 44, 40, 58))
     ev = step(reg, grown, (0.0, 19.5), 3.0)
     assert z.touchdown_ne[1] - first[1] > 10.0
-    assert reg.count_passes(np.asarray(reg.track), z.touchdown_ne) == 1
     assert z.n_passes == 2 and z.state == CONFIRMED and ev == []
+    east = ORIGIN[1] + z.landing_cells[:, 1] + 0.5
+    assert 0 < len(z.landing_cells) < len(z.cells) and east.max() < 14.4
     var = GOOD_VAR.copy()
     var[30, 30] = 1e-2
     step(reg, grown, (0.0, 19.5), 4.0, var)
     assert z.state == CANDIDATE and z.reason == 'cells not all OBSERVED'
+
+
+def test_long_zone_is_confirmed_where_it_was_passed_twice():
+    """
+    The road of the first W3 flight: a strip flown near twice at one end.
+
+    A 6 x 50 cell strip, east -25 to +25 m; the aircraft comes within
+    reach of its west end, leaves, comes back. Wherever its touchdown
+    falls along it, the strip is confirmed, and its landing cells are
+    the west end only, where every cell of a footprint was passed twice.
+    """
+    reg = SlzRegistry()
+    strip = (27, 33, 5, 55)
+    for t, v in enumerate([(0.0, -25.0), (0.0, -60.0), (0.0, -25.0)]):
+        step(reg, landing(strip), v, float(t))
+    (z,) = reg.active()
+    assert z.state == CONFIRMED and z.n_passes == 2
+    east = ORIGIN[1] + z.landing_cells[:, 1] + 0.5
+    assert east.min() < -20.0 and east.max() < -10.0
 
 
 def test_island_without_a_whole_footprint_is_never_confirmed():
