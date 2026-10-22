@@ -95,6 +95,7 @@ MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1 &
 ros2 run ros_gz_bridge parameter_bridge \
   '/lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked' \
   '/x500_slz_0/command/motor_speed@actuator_msgs/msg/Actuators[gz.msgs.Actuators' \
+  '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock' \
   > "$OUT/bridge.log" 2>&1 &
 sleep 8
 
