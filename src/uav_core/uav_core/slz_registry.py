@@ -11,8 +11,9 @@ Lifecycle, criteria of S9:
   CONFIRMED  inscribed radius >= footprint / 2, one whole footprint
              element of landable cells inside the zone, every cell
              OBSERVED
-             (count >= n_min, variance <= var_confirm), and observed
-             from at least two distinct passes (invariant I4)
+             (count >= n_min, variance <= var_confirm), and one whole
+             footprint of landable cells each observed from at least two
+             distinct passes (invariant I4); C1 targets only such cells
   RETIRED    no longer detected; reported at once as an event, so the
              manager re-evaluates I1 at the registry update, not at the
              next frontier selection (S9.5)
@@ -32,31 +33,30 @@ Choices:
     takes back its identity and its passes, as a CANDIDATE that must meet
     the criteria again. Flicker then does not erase the history of a
     zone, and safety is not weakened, since confirmation is re-checked
-  - a pass is an entry of the vehicle within r_in = 0.8 sensor radius of
-    the touchdown point after having been beyond the sensor radius. The
-    hysteresis keeps a vehicle hovering at the edge from counting passes.
-    Passes are counted over the whole trajectory history, recomputed at
-    every cycle, not from the detection onwards. Replaying the survey of
-    19 Oct with the latter, the 391 m2 zone first detected at 67 s had 0
-    passes although the aircraft had flown over it twice: a zone only
-    appears once its cells are well observed, so counting from detection
-    drops exactly the passes that built the evidence
-  - the pass count of a known zone never decreases (I4, decided by
-    Dorian on 19 Oct). I4 asks for two passes over the zone; the
-    touchdown point is only where they are measured from. When a growing
-    zone moves its touchdown to a cell clearer by more than one cell,
-    the passes already flown over the zone stay flown, but recounting
-    around the new point dropped them: in 2026-10-19_registry_flicker
-    (after_r1, 30.8 s) a zone went from 2 passes to 1 and back to
-    CANDIDATE for 6 s with nothing observed against it. Safety is not
-    weakened: every cell must still be OBSERVED, and a zone no longer
-    detected is retired at once (S9.5). Left aside: counting passes
-    around the zone's cells rather than a point, which redefines a pass
-    for every zone where the maximum only stops the loss
+  - passes are counted per cell (I4, 22 Oct): a cell is passed when the
+    aircraft enters within r_in = 0.8 sensor radius of it after having
+    been beyond the sensor radius; the hysteresis keeps a vehicle
+    hovering at the edge from counting passes. Counted from the first
+    cycle, not from the detection: a zone only appears once its cells
+    are well observed, so counting from detection drops exactly the
+    passes that built the evidence (a 391 m2 zone of the 19 Oct survey
+    had 0 passes after two overflights). Per cell a count only grows,
+    which keeps Dorian's decision of 19 Oct that passes flown stay
+    flown. A zone's n_passes is the passes of its best-observed
+    footprint: the largest, over its cells, of the fewest passes among
+    the cells of the footprint centred there. Its landing cells, the
+    only ones C1 may target (mission_policy.return_field), are the cells
+    whose whole footprint was passed min_passes times. Replaced: passes
+    counted around one touchdown point per zone. On the first W3 flight
+    the road's point fell 50 m west and was flown near once, so the road
+    was never confirmed; over the 60 C1 missions of the W1 campaign,
+    two passes near the point confirmed whole zones of which 538 m2 had
+    been passed twice, out of 2465 (medians, 2026-10-22_i4_cells)
   - the touchdown point is the zone cell farthest from refused ground,
     not the centroid, which can fall outside a concave zone; once set,
     it moves only if another cell is clearer by more than one cell
-    (inscribed_radius), since passes are counted around it
+    (inscribed_radius). Passes were counted around it until 22 Oct; it
+    now gives the inscribed radius and the zone's marker
   - a zone is confirmed only if it holds one whole footprint element
     of landable cells, the footprint test applied to the landable
     cells themselves. Without it, islands of 1 to 8 landable cells
@@ -104,7 +104,8 @@ class Zone:
     holds_footprint: bool = False      # one whole element of landable
     n_observations: int = 0            # minimum over the cells
     max_variance: float = math.inf     # maximum over the cells
-    n_passes: int = 0
+    n_passes: int = 0                  # passes of its best footprint
+    landing_cells: np.ndarray = None   # whole footprint passed twice
     provisional: bool = False
     first_seen: float = 0.0
     last_updated: float = 0.0
@@ -175,6 +176,44 @@ def inscribed_radius(zone_cells, distance, resolution, window=12,
         int(v) for v in zone_cells[best])
 
 
+class PassGrid:
+    """Passes per cell of the map: I4 applied to every cell."""
+
+    def __init__(self, shape, resolution, origin_ne, r_in, r_out):
+        i, j = np.indices(shape)
+        self.north = origin_ne[0] + (i + 0.5) * resolution
+        self.east = origin_ne[1] + (j + 0.5) * resolution
+        self.r_in, self.r_out = r_in, r_out
+        self.inside = np.zeros(shape, dtype=bool)
+        self.passes = np.zeros(shape, dtype=np.int32)
+
+    def add(self, vehicle_ne):
+        """Count an entry within r_in of each cell left beyond r_out."""
+        d = np.hypot(self.north - vehicle_ne[0], self.east - vehicle_ne[1])
+        enter = ~self.inside & (d < self.r_in)
+        self.passes[enter] += 1
+        self.inside = (self.inside | enter) & ~(d > self.r_out)
+
+
+def footprint_min(values, offsets):
+    """
+    Per cell, the smallest value over the footprint centred on it.
+
+    Cells outside the grid count as 0, as footprint_ok counts them as
+    failures.
+    """
+    out = values.copy()
+    h, w = values.shape
+    for di, dj in offsets:
+        if di == 0 and dj == 0:
+            continue
+        shifted = np.zeros_like(values)
+        shifted[max(0, di):h - max(0, -di), max(0, dj):w - max(0, -dj)] = \
+            values[max(0, -di):h - max(0, di), max(0, -dj):w - max(0, dj)]
+        out = np.minimum(out, shifted)
+    return out
+
+
 @dataclass
 class SlzRegistry:
     """Zones with stable identities, updated once per cycle."""
@@ -189,7 +228,7 @@ class SlzRegistry:
     revive_s: float = 30.0
     zones: dict = field(default_factory=dict)
     next_id: int = 1
-    track: list = field(default_factory=list)   # vehicle (n, e), 1 per cycle
+    grid: object = None                          # PassGrid, from 1st cycle
 
     def add_provisional(self, ne, t):
         """Register the take-off point as a provisional confirmed zone."""
@@ -259,11 +298,19 @@ class SlzRegistry:
         landing : output of slz_detection.detect on the current map
         Returns the list of Events of this cycle.
         """
-        self.track.append((float(vehicle_ne[0]), float(vehicle_ne[1])))
         labels = landing['labels']
+        cand = landing['candidate']
+        if self.grid is None or self.grid.passes.shape != cand.shape:
+            self.grid = PassGrid(cand.shape, resolution, origin_ne,
+                                 self.pass_hysteresis * self.sensor_radius_m,
+                                 self.sensor_radius_m)
+        self.grid.add(vehicle_ne)
         distance = refused_distance(~landing['cell_ok'])
-        core = footprint_ok(landing['candidate'],
-                            landing['footprint_offsets'])
+        core = footprint_ok(cand, landing['footprint_offsets'])
+        # Passes of the footprint centred on each cell: the fewest among
+        # its cells, 0 where it leaves the landable cells
+        fp_passes = footprint_min(np.where(cand, self.grid.passes, 0),
+                                  landing['footprint_offsets'])
         new_cells = [np.argwhere(labels == k)
                      for k in range(1, int(labels.max()) + 1)]
         new_cells = [c for c in new_cells if len(c)]
@@ -290,6 +337,9 @@ class SlzRegistry:
             self._measure(z, cells, distance, variance, count, resolution,
                           origin_ne, t)
             z.holds_footprint = bool(core[cells[:, 0], cells[:, 1]].any())
+            fp = fp_passes[cells[:, 0], cells[:, 1]]
+            z.n_passes = int(fp.max())
+            z.landing_cells = cells[fp >= self.min_passes]
 
         for z in self.zones.values():
             if (z.provisional or z.state == RETIRED
@@ -299,12 +349,7 @@ class SlzRegistry:
                                 'no longer detected'))
             z.state, z.retired_at, z.reason = RETIRED, t, 'no longer detected'
 
-        track = np.asarray(self.track)
         for z in self.active():
-            # Passes flown over a zone stay flown when its touchdown
-            # moves (module docstring, I4).
-            z.n_passes = max(z.n_passes,
-                             self.count_passes(track, z.touchdown_ne))
             missing = self._criteria(z)
             if z.state == CANDIDATE and not missing:
                 events.append(Event(z.zone_id, CANDIDATE, CONFIRMED,
@@ -333,17 +378,3 @@ class SlzRegistry:
         z.n_observations = int(count[cells[:, 0], cells[:, 1]].min())
         z.max_variance = float(variance[cells[:, 0], cells[:, 1]].max())
         z.last_updated = t
-
-    def count_passes(self, track, point_ne):
-        """Count entries within r_in after leaving r_out, over a track."""
-        if len(track) == 0:
-            return 0
-        d = np.hypot(track[:, 0] - point_ne[0], track[:, 1] - point_ne[1])
-        r_in = self.pass_hysteresis * self.sensor_radius_m
-        inside, passes = False, 0
-        for dk in d:
-            if not inside and dk < r_in:
-                inside, passes = True, passes + 1
-            elif inside and dk > self.sensor_radius_m:
-                inside = False
-        return passes

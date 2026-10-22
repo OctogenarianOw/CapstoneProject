@@ -142,16 +142,21 @@ class ReturnField:
 
 def return_field(traversable, zones, resolution, origin_ne):
     """
-    Seed the return field on every landable cell of the confirmed zones.
+    Seed the return field on the landing cells of the confirmed zones.
 
-    A zone without cells, the take-off point, seeds its touchdown point,
-    moved onto the nearest free cell within 2 m if it falls in the
-    inflation. Zone cells are flat by construction; those inside the
-    inflation of a neighbouring obstacle are left out.
+    The landing cells of a registry zone are those whose whole footprint
+    was observed from two passes (I4, slz_registry); a zone given with
+    cells only (tests, offline tools) seeds all of them. A zone without
+    cells, the take-off point, seeds its touchdown point, moved onto the
+    nearest free cell within 2 m if it falls in the inflation. Zone cells
+    are flat by construction; those inside the inflation of a
+    neighbouring obstacle are left out.
     """
     sources, owner = [], {}
     for z in zones:
-        cells = getattr(z, 'cells', None)
+        cells = getattr(z, 'landing_cells', None)
+        if cells is None:
+            cells = getattr(z, 'cells', None)
         if cells is not None and len(cells):
             free = traversable[cells[:, 0], cells[:, 1]]
             for i, j in cells[free]:

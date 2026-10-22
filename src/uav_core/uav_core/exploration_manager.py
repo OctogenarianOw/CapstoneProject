@@ -397,7 +397,9 @@ class ExplorationManager(Node):
             'zones': [{'id': z.zone_id, 'state': z.state,
                        'provisional': z.provisional,
                        'touchdown_ne': z.touchdown_ne,
-                       'area_m2': z.area_m2, 'passes': z.n_passes}
+                       'area_m2': z.area_m2, 'passes': z.n_passes,
+                       'landing_m2': (0 if z.landing_cells is None
+                                      else len(z.landing_cells)) * res ** 2}
                       for z in self.fsm.registry.zones.values()],
             'frontiers': [{'cluster': f.cluster, 'size': f.size,
                            'viewpoint_ne': f.viewpoint_ne, 'gain': f.gain,
