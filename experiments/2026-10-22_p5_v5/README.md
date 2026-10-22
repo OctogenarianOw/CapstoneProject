@@ -29,4 +29,30 @@ without it.
 
 ## Results
 
-To be filled after the flights.
+6 after sessions at the first attempt, 20:07 to 20:27, no clock step,
+tick at 10000 us (`flights.log`, `results.txt`, before sessions read
+from 2026-10-22_p5_v4).
+
+| | before (3, v4 experiment) | after, v5 (3) | criterion |
+|---|---|---|---|
+| plates, A | +0.443 to +0.445 | **+0.012, +0.051, +0.067** | under 0.1: met |
+| scans at the scan time | 0 % | 100 % | over 95 %: met |
+| W1 best shift | (-1, 0) x 3 | (0, 0) x 3 | (0, 0): met |
+| W1 ramp RMS at (0, 0) | 0.339 to 0.340 m | 0.162 to 0.165 m | lower: met |
+| W1 recall | 93.4 to 94.7 % | 94.8 to 95.3 % | 91.4 % or more: met |
+| W1 severe false accepts | 2, 3, 3 | 0, 0, 0 | no more: met |
+| W1 flat RMS | 0.243, 0.201, 0.231 m | 0.246, 0.236, **0.254** m | under 0.25 m in every flight: **failed by 4 mm** |
+
+**v5 fixes P5 on the plates and on W1, and fails the criterion as
+written, by one flight at 0.254 m of flat RMS. Not merged** (rule
+above), and the W3 campaign is flown without it.
+
+For Dorian, not decided here: the 0.25 m threshold of S5 lies inside
+the flight-to-flight spread of this metric. The code without the fix
+broke it too on 22 Oct (0.256 m in B_before_r1 of
+2026-10-22_p5_stable_clock, 0.250 m in its r3); its six flights of the
+day range 0.201 to 0.256 m, v5's three 0.236 to 0.254 m. A
+non-inferiority test against the before sessions would be the fitting
+criterion; changing it after the results is not for this experiment to
+do. Either a decision on these data, or a new series of W1 surveys with
+that criterion fixed before.
