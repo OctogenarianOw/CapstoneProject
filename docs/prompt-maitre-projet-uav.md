@@ -1115,8 +1115,10 @@ MicroXRCEAgent udp4 -p 8888
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-ros2 run ros_gz_bridge parameter_bridge /lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked
+ros2 run ros_gz_bridge parameter_bridge /lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked /clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock
 ```
+
+`/clock` sert à `cloud_world` pour prendre la pose à l'instant du balayage (P5, `experiments/2026-10-21_p5_latency`). Sans lui, `cloud_world` retombe sur la dernière pose reçue et le compte dans son journal.
 
 **Onglet 4, cartographie.**
 

@@ -54,7 +54,10 @@ def generate_launch_description():
              arguments=['/lidar/points@sensor_msgs/msg/PointCloud2'
                         '[gz.msgs.PointCloudPacked',
                         '/x500_slz_0/command/motor_speed'
-                        '@actuator_msgs/msg/Actuators[gz.msgs.Actuators'],
+                        '@actuator_msgs/msg/Actuators[gz.msgs.Actuators',
+                        # simulation clock, for cloud_world to take the
+                        # pose at the scan stamp (pose_buffer)
+                        '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
              condition=IfCondition(LaunchConfiguration('bridge')),
              output='screen'),
         Node(package='uav_core', executable='energy_monitor',

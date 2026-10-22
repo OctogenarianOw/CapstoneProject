@@ -27,8 +27,29 @@ measurement on one map.
 Analysis runs on this map, never on the raw cloud, which is mostly
 noise: that was the supervisor's explicit request.
 
-Pose is the latest message received, not interpolated to the scan time:
-a candidate cause for the one-cell offset P5, untested.
+Pose at the time of the scan (pose_at_scan_time, default true), not the
+latest received. Measured (experiments/2026-10-21_p5_latency): with the
+latest pose the edges of raised structures spilled half a cell along
+the flight, removed by taking the pose 0.110 to 0.119 s earlier, the
+origin of the one-cell offset P5. Of that lag, 0.03 s is the latest
+pose being received after the scan, and varies with the load; the rest
+is a constant between time bases, the PX4 estimate being ahead of the
+true position by 0.09 to 0.11 s against Gazebo's truth. So the
+position is interpolated at the scan stamp, put on the PX4 clock through
+offsets estimated online from /clock and from the poses
+(uav_core/pose_buffer), minus scan_time_offset_s, a temporal
+calibration term like the one between any sensor and an estimator. The
+attitude is the last received (scan_pose). 0.085 s, first estimated
+from the lags, overshot on a stable clock (the plate spill changed
+side, 2026-10-22_p5_stable_clock); replayed offline, the spill crosses
+zero near 0.045 to 0.050 s, and 0.050 s with the attitude last received
+removes P5 on W1's ramps with the recall kept
+(2026-10-22_p5_diagnosis). In flight 0.050 s left the plate spill at
++0.13 (2026-10-22_p5_v4); between that and -0.25 at 0.085 s (v3), it
+crosses zero at 0.060 to 0.062 s: 0.060 s. When the
+buffer does not cover that time, or /clock is silent, the latest pose
+is used and counted, never silently. pose_at_scan_time false gives the
+previous behaviour, which is how the change is measured.
 
 No fusion below min_fuse_height_m, 2 m above the EKF origin. From the
 ground, at 0.37 m, the lidar sees the terrain at grazing angles: on the
@@ -47,12 +68,14 @@ from rclpy.qos import (
     DurabilityPolicy, HistoryPolicy, qos_profile_sensor_data, QoSProfile,
     ReliabilityPolicy,
 )
+from rosgraph_msgs.msg import Clock
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2
 from std_msgs.msg import Header
 
 from uav_core.elevation_grid import ElevationGrid
 from uav_core.map_msg import grid_to_msg
+from uav_core.pose_buffer import ClockOffset, PoseBuffer
 from uav_interfaces.msg import ElevationMap
 
 
@@ -82,7 +105,11 @@ class CloudWorld(Node):
         self.declare_parameter('map_path', '/tmp/elevation_map.npz')
         self.declare_parameter('map_publish_period_s', 1.0)
         self.declare_parameter('min_fuse_height_m', 2.0)
+        self.declare_parameter('pose_at_scan_time', True)
+        self.declare_parameter('scan_time_offset_s', 0.060)
         self.min_fuse_height = self.get_parameter('min_fuse_height_m').value
+        self.pose_at_scan = self.get_parameter('pose_at_scan_time').value
+        self.scan_time_offset = self.get_parameter('scan_time_offset_s').value
 
         self.min_range = self.get_parameter('min_range').value
         self.max_range = self.get_parameter('max_usable_range').value
@@ -106,6 +133,17 @@ class CloudWorld(Node):
 
         self.position = None
         self.attitude = None
+        self.poses = PoseBuffer()
+        # System minus simulation clock: minimum over the last ~0.3 s of
+        # /clock (about 250 Hz), so it follows a step of the system
+        # clock at once. System minus PX4 clock: median over ~2 s of
+        # poses (50 Hz), both clocks stepping together (pose_buffer).
+        self.sim_offset = ClockOffset(window=75)
+        self.px4_offset = ClockOffset(window=100, mode='median')
+        self.scans_at_stamp = 0
+        self.scans_latest = 0
+        self.fallback_why = {}
+        self.last_margins = None
 
         self.create_subscription(
             VehicleLocalPosition, '/fmu/out/vehicle_local_position_v1',
@@ -116,6 +154,8 @@ class CloudWorld(Node):
         self.create_subscription(
             PointCloud2, '/lidar/points',
             self.on_cloud, qos_profile_sensor_data)
+        self.create_subscription(
+            Clock, '/clock', self.on_clock, qos_profile_sensor_data)
 
         self.world_pub = self.create_publisher(
             PointCloud2, '/cloud_world', 10)
@@ -134,13 +174,82 @@ class CloudWorld(Node):
             self.get_parameter('map_publish_period_s').value,
             self.publish_map)
 
-    def on_position(self, msg):
-        """Keep the latest NED position."""
+    def received_s(self, info):
+        """
+        Return the reception time of a message by the middleware, s.
+
+        Not the time its callback runs: the fusion of a scan holds this
+        single-threaded node for tens of milliseconds, the poses and
+        /clock wait behind it, and an offset taken at callback time was
+        biased by that wait. Measured on 21 Oct (2026-10-21_p5_fix,
+        first version): 46 % of the scans fell back to the latest pose,
+        in blocks of 16 s beating with the lidar rate. The middleware
+        stamps a message when it arrives; the node clock is the fallback
+        if it does not.
+        """
+        t = info.get('received_timestamp', 0) if info else 0
+        return t * 1e-9 if t else self.get_clock().now().nanoseconds * 1e-9
+
+    def on_position(self, msg, info):
+        """Keep the latest NED position and buffer it on the PX4 clock."""
         self.position = np.array([msg.x, msg.y, msg.z])
+        t = msg.timestamp_sample * 1e-6
+        self.px4_offset.update(self.received_s(info), msg.timestamp * 1e-6)
+        self.poses.add_position(t, self.position)
 
     def on_attitude(self, msg):
-        """Keep the latest attitude quaternion, [w, x, y, z]."""
+        """Keep the latest attitude, [w, x, y, z], and buffer it."""
         self.attitude = np.array(msg.q)
+        self.poses.add_attitude(msg.timestamp_sample * 1e-6, self.attitude)
+
+    def on_clock(self, msg, info):
+        """Track the offset between the system and simulation clocks."""
+        self.sim_offset.update(self.received_s(info),
+                               msg.clock.sec + msg.clock.nanosec * 1e-9)
+
+    def scan_pose(self, msg):
+        """
+        Position at the scan time if possible, attitude last received.
+
+        Only the position is taken back to the scan time: offline on two
+        W1 survey bags, taking the attitude back too (v3) cut the recall
+        from 93 to 61 %, as it did in flight, while the attitude last
+        received kept it at 95 % with the same position term
+        (experiments/2026-10-22_p5_diagnosis). Why the attitude does
+        harm was not measured.
+        """
+        if self.pose_at_scan and self.sim_offset.ready \
+                and self.px4_offset.ready:
+            stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+            t_px4 = (stamp + self.sim_offset.value - self.px4_offset.value
+                     - self.scan_time_offset)
+            pose = self.poses.at(t_px4)
+            if pose is not None:
+                self.scans_at_stamp += 1
+                return pose[0], self.attitude
+            self.diagnose(t_px4)
+        elif self.pose_at_scan:
+            self.fallback_why['no offset'] = (
+                self.fallback_why.get('no offset', 0) + 1)
+        self.scans_latest += 1
+        return self.position, self.attitude
+
+    def diagnose(self, t_px4):
+        """Count why a scan time was not covered, keep the margins."""
+        p, a = self.poses.pos_t, self.poses.att_t
+        if not p or not a:
+            why = 'empty buffer'
+        elif t_px4 > p[-1] + self.poses.max_extrapolation_s:
+            why = 'after last position'
+        elif t_px4 > a[-1] + self.poses.max_extrapolation_s:
+            why = 'after last attitude'
+        else:
+            why = 'before the buffer'
+        self.fallback_why[why] = self.fallback_why.get(why, 0) + 1
+        if p and a:
+            self.last_margins = (round(t_px4 - p[-1], 3),
+                                 round(t_px4 - a[-1], 3),
+                                 round(t_px4 - p[0], 3), len(p), len(a))
 
     def extract_xyz(self, msg):
         """Decode x, y, z from a PointCloud2, offsets read from its fields."""
@@ -175,8 +284,9 @@ class CloudWorld(Node):
         pts_frd = pts * np.array([1.0, -1.0, -1.0])
         pts_frd = pts_frd + self.sensor_offset
 
-        rot = quat_to_matrix(self.attitude)
-        pts_ned = pts_frd @ rot.T + self.position
+        position, attitude = self.scan_pose(msg)
+        rot = quat_to_matrix(attitude)
+        pts_ned = pts_frd @ rot.T + position
 
         # Vertical uncertainty: sensor noise plus angular error, which
         # grows with the observation distance.
@@ -198,7 +308,12 @@ class CloudWorld(Node):
             self.get_logger().info(
                 f'{pts_ned.shape[0]} pts | {known} cells | '
                 f'mean map z {valid.mean():+.3f} '
-                f'| sd {valid.std():.3f}')
+                f'| sd {valid.std():.3f} | pose at stamp '
+                f'{self.scans_at_stamp}, latest {self.scans_latest} '
+                f'| fallbacks {self.fallback_why} | margins t-last pos, '
+                f't-last att, t-first, n pos, n att {self.last_margins} '
+                f'| offsets sim {self.sim_offset.value} px4 '
+                f'{self.px4_offset.value}')
 
     def publish_map(self):
         """Publish the whole grid with its geometry."""
