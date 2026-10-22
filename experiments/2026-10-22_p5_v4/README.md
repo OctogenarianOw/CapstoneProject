@@ -47,4 +47,23 @@ limitation, and the campaign is flown without it.
 
 ## Results
 
-To be filled after the flights.
+12 sessions at the first attempt, 19:28 to 20:07, no clock step, tick
+at 10000 us (`flights.log`, `results.txt`).
+
+| | before (3) | after, v4 (3) | criterion |
+|---|---|---|---|
+| plates, A | +0.443 to +0.445 | **+0.126 to +0.135** | under 0.1: **failed** |
+| scans at the scan time | 0 % | 100 % | over 95 %: met |
+| W1 best shift | (-1, 0) x 3 | (0, 0) x 3 | (0, 0): met |
+| W1 ramp RMS at (0, 0) | 0.339 to 0.340 m | 0.170 to 0.181 m | lower: met |
+| W1 flat RMS | 0.201 to 0.243 m | 0.227 to 0.233 m | under 0.25 m: met |
+| W1 recall | 93.4 to 94.7 % | 94.8 to 96.0 % | 91.4 % or more: met |
+| W1 severe false accepts | 2, 3, 3 | 0, 0, 0 | no more: met |
+
+**Not merged** (rule above): only the plate spill fails, and steadily,
+a term short by about 0.01 s rather than noise. On W1 every test passes
+in flight, as offline: P5 goes, the recall rises a point, the severe
+false accepts of fresh surveys go. Between A = +0.13 at 0.050 s and
+-0.25 at 0.085 s (v3), A crosses zero at 0.060 to 0.062 s: v5 flies
+0.060 s (`2026-10-22_p5_v5`), against the before sessions of this
+experiment.
