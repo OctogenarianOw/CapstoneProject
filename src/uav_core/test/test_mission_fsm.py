@@ -371,3 +371,65 @@ def test_guarantee_without_its_zone_is_logged():
     (kind, g), = [e for e in events if e[0] == 'guarantee']
     assert g['zone_id'] == 99 and g['need_without_j'] > g['need_j']
     assert np.isfinite(g['i1_without_j']) and not g['rests_on_zone']
+
+
+def returning_east(zone_east):
+    """
+    Return home from 15.5 m east, with a zone confirmed near the way.
+
+    Returns the mission, its world, the return field and the events. The
+    zone of 3 x 3 landing cells is centred zone_east metres east of home.
+    """
+    events = []
+    m = fsm()
+    airborne(m)
+    m.log = SimpleNamespace(
+        event=lambda t, kind, **data: events.append((kind, data)))
+    vehicle = (0.5, 15.5)
+    w = world(vehicle)
+    home = m.registry.confirmed()[0].zone_id
+    m.state, m.target_zone = RETURNING, home
+    j = int(zone_east - ORIGIN[1])
+    cells = np.array([(i, jj) for i in range(29, 32)
+                      for jj in range(j - 1, j + 2)])
+    m.registry.zones[99] = Zone(zone_id=99, state=CONFIRMED, cells=cells,
+                                landing_cells=cells,
+                                touchdown_ne=(0.5, zone_east))
+    rfield = return_field(w.traversable, m.registry.confirmed(), RES, ORIGIN)
+    return m, w, rfield, events, home
+
+
+def test_return_turns_to_a_cheaper_zone():
+    """
+    A zone confirmed near the aircraft during the return is taken.
+
+    The return made the second pass over a zone 13 m east; going home
+    from 15.5 m east costs about 860 J more, over the 541 J of a stop
+    and restart: the return turns to it, logged with its saving. In
+    B3a000_r5 the aircraft flew past such a zone and used 1.63 kJ of
+    its reserve on the farther one.
+    """
+    m, w, rfield, events, home = returning_east(13.5)
+    actions = m._returning(inputs(10, w=w, vehicle=(0.5, 15.5)), rfield, [])
+    assert m.target_zone == 99 and m.return_switches == 1
+    assert [a.kind for a in actions] == ['path']
+    (kind, ret), = [e for e in events if e[0] == 'return']
+    assert ret['zone_id'] == 99 and 'cheaper by' in ret['reason']
+    assert m.switch_cost_j() > 500.0
+
+
+def test_return_keeps_its_zone_for_a_small_saving():
+    """A zone cheaper by less than a stop and restart is not worth it."""
+    m, w, rfield, events, home = returning_east(5.5)
+    assert m._returning(inputs(10, w=w, vehicle=(0.5, 15.5)), rfield,
+                        []) == []
+    assert m.target_zone == home and m.return_switches == 0
+
+
+def test_return_turns_at_most_three_times():
+    """The cap bounds flapping between flickering zones."""
+    m, w, rfield, events, home = returning_east(13.5)
+    m.return_switches = 3
+    assert m._returning(inputs(10, w=w, vehicle=(0.5, 15.5)), rfield,
+                        []) == []
+    assert m.target_zone == home
