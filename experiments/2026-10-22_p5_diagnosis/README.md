@@ -60,4 +60,38 @@ that experiment's criterion, before anything is merged.
 
 ## Results
 
-To be filled.
+Two W1 survey bags (`w1bag/runs/r1`, `r2`, 18:58 and 19:03, no clock
+step; bags out of the repository, SHA-256 in the run directories),
+swept offline (`w1bag/sweep_r1.txt`, `sweep_r2.txt`). The replay of
+latest equals the live map (same ramp RMS, shift, flat RMS, recall,
+severe count).
+
+| r1 / r2 | ramp RMS (0,0) | best shift | flat RMS | recall | severe |
+|---|---|---|---|---|---|
+| latest (dronePropre) | 0.341 / 0.340 | (-1, 0) | 0.246 / 0.245 | 93.4 / 92.9 % | 1 / 3 |
+| 0.085 s, attitude interpolated (v3) | 0.190 / 0.189 | (0, 0) | 0.311 / 0.311 | **60.7 / 60.6 %** | 0 / 0 |
+| 0.050 s, attitude interpolated | 0.182 / 0.181 | (0, 0) | 0.253 / 0.257 | 79.7 / 83.1 % | 0 / 0 |
+| **0.050 s, attitude latest** | **0.176 / 0.177** | **(0, 0)** | **0.237 / 0.238** | **94.8 / 95.8 %** | **0 / 0** |
+| 0.068 s, attitude latest | 0.163 / 0.165 | (0, 0) | 0.234 / 0.242 | 94.5 / 95.0 % | 0 / 0 |
+| 0.085 s, attitude latest | 0.154 / 0.154 | (0, 0) | 0.240 / 0.248 | 94.8 / 95.5 % | 0 / 0 |
+
+**On the W1 survey the interpolated attitude is what destroys the
+recall**: offline, v3 gives the 60.6 to 60.7 % it gave in flight (60 to
+64 %), and the same term with the attitude last received keeps the
+recall at 94.5 to 95.8 % and the flat RMS under 0.25 m, while P5 goes
+(shift (0, 0)) and the severe false accepts with it (1 and 3 -> 0). The
+plates, flown by another node (trajectory_executor), did not show it.
+Cause of the attitude effect not measured.
+
+**Choice of the term, a deviation from the rule above, stated.** The
+rule fixed before the flight picks the smallest ramp RMS, 0.085 s. But
+the flight validation that follows also asks |A| < 0.1 on the plates,
+and the plate bags predict, by the linear trend between no term
+(+0.391) and 0.085 s with the attitude last received (-0.339), A about
+-0.34 at 0.085 s and -0.19 at 0.068 s: both would fail, and A crosses
+zero near 0.045 s. At 0.050 s (predicted A about -0.04) W1 still passes
+every test of the rule on both bags. The plate spill measures the
+along-track shift directly; the ramp RMS mixes it with the shrinking of
+edges (P2). **Candidate v4: position at the scan stamp minus 0.050 s,
+attitude last received**, to be flown with the protocol and criterion
+of 2026-10-22_p5_stable_clock.
