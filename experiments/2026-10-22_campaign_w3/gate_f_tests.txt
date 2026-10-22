@@ -1,0 +1,31 @@
+median [IQR] per alpha, 5 missions each
+coverage_observed    0.0: 0.46 [0.43, 0.46] | 0.25: 0.57 [0.40, 0.68] | 0.5: 0.62 [0.61, 0.65] | 0.75: 0.64 [0.62, 0.64] | 1.0: 0.47 [0.47, 0.56]
+coverage_seen        0.0: 0.47 [0.44, 0.47] | 0.25: 0.59 [0.42, 0.71] | 0.5: 0.65 [0.64, 0.68] | 0.75: 0.67 [0.65, 0.67] | 1.0: 0.49 [0.49, 0.58]
+cells_per_kj         0.0: 163.93 [163.83, 173.47] | 0.25: 217.24 [160.45, 255.27] | 0.5: 246.22 [241.35, 250.41] | 0.75: 242.96 [237.94, 244.21] | 1.0: 214.00 [183.70, 215.68]
+t_first_slz_s        0.0: 31.78 [31.75, 35.79] | 0.25: 37.74 [33.77, 56.82] | 0.5: 28.81 [25.78, 39.86] | 0.75: 47.80 [22.76, 49.80] | 1.0: 34.77 [24.79, 39.79]
+mean_dist_to_slz_m   0.0: 25.76 [25.75, 25.87] | 0.25: 33.40 [30.41, 38.34] | 0.5: 36.44 [36.10, 38.00] | 0.75: 38.96 [36.86, 39.49] | 1.0: 32.01 [29.10, 32.69]
+min_margin_kj        0.0: 0.96 [0.12, 1.20] | 0.25: 1.80 [1.04, 2.16] | 0.5: 2.25 [0.86, 2.50] | 0.75: 1.12 [0.91, 1.16] | 1.0: 1.74 [0.54, 2.30]
+energy_left_kj       0.0: 10.11 [8.75, 10.12] | 0.25: 10.54 [9.79, 11.09] | 0.5: 11.44 [11.20, 11.55] | 0.75: 9.95 [9.76, 10.37] | 1.0: 10.61 [9.43, 11.18]
+duration_s           0.0: 244.70 [243.77, 248.50] | 0.25: 244.50 [241.80, 247.20] | 0.5: 241.20 [240.50, 243.00] | 0.75: 246.90 [245.50, 248.50] | 1.0: 246.60 [242.83, 250.90]
+
+Mann-Whitney U, two sided, r > 0 when the first is larger
+fixed by W1: alpha 0.75 against the ends
+coverage_observed    0.75 vs 1: p 0.0952 r +0.68   0.75 vs 0: p 0.0079 r +1.00   1 vs 0: p 0.0556 r +0.76
+coverage_seen        0.75 vs 1: p 0.0952 r +0.68   0.75 vs 0: p 0.0079 r +1.00   1 vs 0: p 0.0556 r +0.76
+cells_per_kj         0.75 vs 1: p 0.0317 r +0.84   0.75 vs 0: p 0.0079 r +1.00   1 vs 0: p 0.0317 r +0.84
+t_first_slz_s        0.75 vs 1: p 0.5476 r +0.28   0.75 vs 0: p 0.6905 r +0.20   1 vs 0: p 1.0000 r +0.04
+mean_dist_to_slz_m   0.75 vs 1: p 0.0952 r +0.68   0.75 vs 0: p 0.0079 r +1.00   1 vs 0: p 0.1508 r +0.60
+min_margin_kj        0.75 vs 1: p 0.6905 r -0.20   0.75 vs 0: p 0.8413 r +0.12   1 vs 0: p 0.2222 r +0.52
+energy_left_kj       0.75 vs 1: p 0.6905 r -0.20   0.75 vs 0: p 0.8413 r +0.12   1 vs 0: p 0.3095 r +0.44
+duration_s           0.75 vs 1: p 0.8413 r +0.12   0.75 vs 0: p 1.0000 r +0.04   1 vs 0: p 1.0000 r -0.04
+post hoc on W2: alpha 0.5, the best W2 median, against the ends
+coverage_observed    0.5 vs 1: p 0.0952 r +0.68   0.5 vs 0: p 0.0159 r +0.92
+coverage_seen        0.5 vs 1: p 0.0952 r +0.68   0.5 vs 0: p 0.0159 r +0.92
+cells_per_kj         0.5 vs 1: p 0.0317 r +0.84   0.5 vs 0: p 0.0079 r +1.00
+
+frontier choices per mission and reason of the return
+alpha 0.0   choices median 40.0 (min 39, max 42), returns {'target no longer admissible': 2, 'none_admissible': 3}
+alpha 0.25  choices median 36.0 (min 34, max 38), returns {'none_admissible': 3, 'zone retired, target no longer admissible': 1, 'target no longer admissible': 1}
+alpha 0.5   choices median 29.0 (min 21, max 32), returns {'none_admissible': 5}
+alpha 0.75  choices median 27.0 (min 25, max 31), returns {'target no longer admissible': 4, 'none_admissible': 1}
+alpha 1.0   choices median 20.0 (min 19, max 26), returns {'none_admissible': 2, 'target no longer admissible': 2, 'zone retired, target no longer admissible': 1}
