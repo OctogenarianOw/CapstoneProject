@@ -50,4 +50,34 @@ nothing is merged and the failure is diagnosed.
 
 ## Results
 
-To be filled after the flights.
+3 after missions at the first attempt, 11:48 to 12:01, no clock step
+(`flights.log`, `results.txt`).
+
+| | before (dronePropre) | after (reselect) |
+|---|---|---|
+| missions ended on an unreachable target | 3 of 3 | **0 of 3** |
+| replans | 0 | 7 (2, 4, 1) |
+| I1 violations | 0 | 0 |
+| landings on a severe cell | 0 | 0 |
+| end | invariant (unreachable) x 3 | invariant (energy), emergency, budget |
+| coverage | 63.7, 9.5, 65.0 % | 59.1, 45.0, 62.8 % |
+
+**The criterion holds, so `reselect` is merged** (rule above). The
+coverages are not a measure of the change: before, the missions ended
+whenever the first viewpoint was blocked, after, at the energy limit
+or, once, in an emergency.
+
+**A second defect, revealed by the longer missions (w3_after_r2).** At
+158.9 s, over the north edge of the rock zone (hills to 3.6 m carrying
+boulders to about 6 m, just under the I3 ceiling), the map put the
+aircraft's own cell above 6 m. The world model looks for a free start
+cell within 2 m only; none, so `vehicle off the traversable map`, an
+emergency landing, with 23 kJ above the reserve. And the LAND command
+left while the aircraft flew north at about 5 m/s: it came down 20 m
+further, in the town (town ground, not severe). The return had been
+fixed for this on 20 Oct (`2026-10-20_landing_drift`), not the
+emergency. Never seen on W1 and W2 (their emergencies were the budget
+depletions of B0). Next, on a branch of its own, two commits measured
+apart: the start cell searched further than 2 m (measured in flight by
+the count of such emergencies), and no emergency landing in motion
+(unit test, and the drift if an emergency happens).
