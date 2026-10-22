@@ -1,0 +1,79 @@
+mission 2026-10-22_23-32-33: mode explore, policy c1_c2, alpha 0.5, reserve 0.1, git 64629f9
+
+== states
+    0.2 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   15.9 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   17.7 s  BOOTSTRAP       -> SELECTING       first maps in
+   17.7 s  SELECTING       -> NAVIGATING      frontier at (11.5, 13.5)
+   24.8 s  NAVIGATING      -> SELECTING       arrived
+   24.8 s  SELECTING       -> NAVIGATING      frontier at (-11.5, 12.5)
+   32.7 s  NAVIGATING      -> SELECTING       arrived
+   32.7 s  SELECTING       -> RETURNING       none_admissible
+   36.7 s  RETURNING       -> COMMIT_LANDING  over zone 2, budget
+   54.6 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   17.7 s  path   1: 1 legs,  17.0 m, to N  +11.5 E  +13.5
+   24.8 s  path   2: 1 legs,  23.0 m, to N  -11.5 E  +12.5
+   32.7 s  path   3: 1 legs,   4.2 m, to N   -8.5 E   +9.5
+   33.7 s  path   4: 1 legs,   4.2 m, to N   -8.5 E   +9.5
+   35.7 s  path   5: 0 legs,   0.0 m, to N   -8.5 E   +9.5
+
+== return: 3
+   32.7 s  {'zone_id': 2, 'reason': 'none_admissible', 'length_m': 4.242640687119285, 'energy_j': 759.4535587269868}
+   33.7 s  {'zone_id': 7, 'reason': 'zone 2 retired en route', 'length_m': 4.242640687119285, 'energy_j': 759.4535587269868}
+   35.7 s  {'zone_id': 2, 'reason': 'zone 7 retired en route', 'length_m': 0, 'energy_j': 0.0}
+
+== invariant: 2
+   33.7 s  {'margin_j': 1375.0334617995504, 'zone_id': 7, 'remaining_j': 7692.759020526537, 'reserve_j': 1600.0, 'violated': False, 'retired': [2]}
+   35.7 s  {'margin_j': 1538.9423680114605, 'zone_id': 2, 'remaining_j': 7097.2143680114605, 'reserve_j': 1600.0, 'violated': False, 'retired': [7]}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.6 TAKEOFF            3600      0         0     16.0     nan         0
+   15.7 TAKEOFF            2334   1266        12     13.2     nan         0
+   31.6 NAVIGATING         1305   2295        16      8.3     2.0         2
+   46.7 COMMIT_LANDING     1261   2339        14      4.0     1.2         2
+   62.6 LANDED             1261   2339        14      2.8     1.2         2
+   77.6 LANDED             1261   2339        14      2.8     1.2         2
+   93.6 LANDED             1261   2339        14      2.8     1.2         2
+  109.6 LANDED             1261   2339        14      2.8     1.2         2
+  124.6 LANDED             1261   2339        14      2.8     1.2         2
+  140.6 LANDED             1261   2339        14      2.8     1.2         2
+  155.6 LANDED             1261   2339        14      2.8     1.2         2
+  171.6 LANDED             1261   2339        14      2.8     1.2         2
+  187.6 LANDED             1261   2339        14      2.8     1.2         2
+  203.6 LANDED             1261   2339        14      2.8     1.2         2
+  218.6 LANDED             1261   2339        14      2.8     1.2         2
+  234.6 LANDED             1261   2339        14      2.8     1.2         2
+  250.6 LANDED             1261   2339        14      2.8     1.2         2
+  266.6 LANDED             1261   2339        14      2.8     1.2         2
+  282.6 LANDED             1261   2339        14      2.8     1.2         2
+  297.6 LANDED             1261   2339        14      2.8     1.2         2
+  313.6 LANDED             1261   2339        14      2.8     1.2         2
+  329.6 LANDED             1261   2339        14      2.8     1.2         2
+  344.6 LANDED             1261   2339        14      2.8     1.2         2
+  360.6 LANDED             1261   2339        14      2.8     1.2         2
+  375.6 LANDED             1261   2339        14      2.8     1.2         2
+  390.6 LANDED             1261   2339        14      2.8     1.2         2
+  406.6 LANDED             1261   2339        14      2.8     1.2         2
+  422.6 LANDED             1261   2339        14      2.8     1.2         2
+  438.6 LANDED             1261   2339        14      2.8     1.2         2
+  453.6 LANDED             1261   2339        14      2.8     1.2         2
+  468.6 LANDED             1261   2339        14      2.8     1.2         2
+  484.6 LANDED             1261   2339        14      2.8     1.2         2
+  499.6 LANDED             1261   2339        14      2.8     1.2         2
+  515.6 LANDED             1261   2339        14      2.8     1.2         2
+  530.6 LANDED             1261   2339        14      2.8     1.2         2
+  545.6 LANDED             1261   2339        14      2.8     1.2         2
+  560.6 LANDED             1261   2339        14      2.8     1.2         2
+
+== result
+duration 560 s, coverage 65.0 % of the area, unknown left 1261 cells
+energy consumed 13.2 kJ, left 2.8 kJ
+I1 margin min 1.24 kJ, violations 0
+end: COMMIT_LANDING, over zone 2, budget
+final position N -8.7 E +9.6 D -0.0
+  confirmed zone 1: touchdown (0.0, 0.0), home, 13.0 m from the final position
+  confirmed zone 2: touchdown (-7.5, 5.5), 309 m2, 4.3 m from the final position
+cycle time median 30 ms, max 120 ms over 561 cycles

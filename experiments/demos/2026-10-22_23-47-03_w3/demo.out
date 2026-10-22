@@ -1,0 +1,12 @@
+demo on w3 (w3), policy c1_c2, alpha 0.75, reserve 0.10, budget 80 kJ, in /home/doria/ros2_ws/droneAfter/experiments/demos/2026-10-22_23-47-03_w3
+[23:47:06] starting PX4
+[23:47:21] PX4 ready after 16s, fresh Gazebo world w3
+[23:47:29] start display: bash open_display.sh
+[23:47:29] start ros: sleep 25; ros2 launch uav_core exploration.launch.py bridge:=false rviz:=false slider:=false policy:=c1_c2 capacity_j:=80000.0 alpha:=0.75 reserve_fraction:=0.10 grid_size_m:=240.0 area_half_m:=80.0 log_root:=/home/doria/ros2_ws/droneAfter/experiments/demos/2026-10-22_23-47-03_w3/missions
+failsafe activations: 0
+[23:50:09] session end
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 451480 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 451399 Killed                  ros2 run ros_gz_bridge parameter_bridge '/lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked' '/x500_slz_0/command/motor_speed@actuator_msgs/msg/Actuators[gz.msgs.Actuators' > "$OUT/bridge.log" 2>&1  (wd: ~/PX4-Autopilot)
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 451478 Killed                  setsid bash -c "$cmd" > "$OUT/$name.log" 2>&1
+/home/doria/ros2_ws/droneAfter/experiments/sim_session.sh: line 33: 451398 Killed                  MicroXRCEAgent udp4 -p 8888 > "$OUT/agent.log" 2>&1  (wd: ~/PX4-Autopilot)
+analysis in /home/doria/ros2_ws/droneAfter/experiments/demos/2026-10-22_23-47-03_w3/analysis.txt and /home/doria/ros2_ws/droneAfter/experiments/demos/2026-10-22_23-47-03_w3/alpha_live.txt
