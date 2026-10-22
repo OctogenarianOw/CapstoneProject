@@ -10,7 +10,7 @@
 # 2026-10-21_p5_latency.
 #   bash run.sh [N]
 HERE=$(cd "$(dirname "$0")" && pwd)
-EXP=$(cd "$HERE/.." && pwd)
+EXP=$(cd "$HERE/../.." && pwd)
 BAGS=~/uav_bags/2026-10-22_p5_w1bag
 N=${1:-2}
 TOPICS="/lidar/points /fmu/out/vehicle_local_position_v1 /fmu/out/vehicle_attitude /clock"
