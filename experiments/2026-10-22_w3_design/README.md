@@ -81,6 +81,57 @@ The terrain is the corrugated field of W2, from the same generator,
 now parametrised by its pad list (`make_world_w2.py` regenerates
 `w2.sdf` and `w2_truth.npz` identical to the byte).
 
+## Revised the same day: a large mixed world (Dorian, 22 Oct)
+
+Shown the corrugated W3 in Gazebo, Dorian asked for diversity of
+obstacles: a road, so that landing zones exist for sure, other landing
+zones, and rock, vegetation and buildings over the rest, on a large
+extent. `tools/make_world_w3.py` now builds that world (its docstring
+holds the layout and the reasons): 240 x 240 m, an east-west road and a
+north-south branch, a town of 3 to 7 m buildings, a forest, scrub, rock
+and hills, 231 592 triangles in 17 meshes, one per material. The
+mechanism above stays: pad Z (8 x 12 m, in the scrub, 39.6 m from the
+take-off) and its depot, now four vans that tile the pad.
+
+Two rules came out of building it:
+
+- **Every obstacle stays below 7 m in absolute height.** The aircraft
+  flies at 8 m above the take-off, not above the ground, and the
+  downward lidar never sees above itself: a thin obstacle taller than
+  the flight can be estimated below its top in the 2.5D map and hit.
+- **The truth is the top surface of the very triangles rendered**,
+  rasterised on 10 x 10 subsamples per cell (S2).
+
+Truth through the detection chain: 7 landable components with a whole
+footprint, every one intended (road with the sidewalk, 4 deg meadow,
+clearing, flat roof, walled parking lot, yard, pad Z), none elsewhere;
+with the depot, Z goes and the 6 others stay. Two fixes were needed to
+get there, each measured on the truth: a tussock meadow rough enough
+(at 0.12 m of vertex noise, meadow patches passed and joined the 4 deg
+meadow to the road), and walls around the parking lot (open, the flat
+alleys joined it to the road zone).
+
+First flight, live in RViz (`../w3_demo.sh`, run under
+`demos/2026-10-22_10-49_w3`, C1 and C2, alpha 0.75, 80 kJ, area
+160 m): lidar 9.9 Hz and real-time factor 1.02 at take-off, 213 s of
+exploration, landed on the yard. Three findings:
+
+- **The road was never confirmed**, nor the parking lot nor Z: one pass
+  each. I4 counts passes around one touchdown point per zone, and the
+  road's fell 50 m west of the take-off. C1 and C2 relied on the yard
+  alone, and the return went 52 m to it when the road was 26 m away.
+  Next: count passes per cell (Dorian agreed on 22 Oct to measure it).
+- **The reserve was dipped by 748 J, an artefact of the display.** The
+  PX4 descent ran at 0.52 m/s against 0.70 to 0.73 m/s in the headless
+  campaigns (0.61 m/s in the W2 demo with RViz and Gazebo), and the
+  landing cost 4456 J against 3207 to 3396 J: RViz rendering a large
+  map in software slowed the simulation, and energy_monitor integrates
+  on the system clock, so it charged the slower descent. The headless
+  campaigns are not affected; integrating on simulation time is a
+  change of its own, to measure.
+- **Short-lived landing fragments in the rock zone**, 1 to 6 cells,
+  never confirmed (whole footprint rule): to compare with the truth.
+
 ## Assumed, to be measured in flight
 
 - the detection delay, 2.5 s from the spawn to the retirement;

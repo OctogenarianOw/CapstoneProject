@@ -66,8 +66,11 @@ DEPOT_SDF = Path(__file__).resolve().parents[1] / 'worlds' / 'w3_depot.sdf'
 # Pads in NED: centre (north, east) and half extent of the landable
 # cell centres (north, east); from the truths of make_world_w2/_w3.
 PADS = {
-    'w3': {'home': ((0.0, 0.0), (5.5, 6.5)),
-           'pad_z': ((12.0, 28.0), (3.5, 2.5))},
+    # Only the yard and Z: in the mixed W3 the other zones (road,
+    # parking lot, roof, clearing, meadow) are fallbacks too, and are
+    # not described here yet, so the trigger under-counts them
+    'w3': {'home': ((0.0, 0.0), (6.5, 6.5)),
+           'pad_z': ((-28.0, 28.0), (4.5, 2.5))},
     'w2': {'home': ((0.0, 0.0), (5.5, 6.5)),
            'pad_ne': ((40.0, 48.0), (5.5, 6.5)),
            'pad_sw': ((-48.0, -40.0), (5.5, 6.5))},

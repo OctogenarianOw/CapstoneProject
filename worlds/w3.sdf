@@ -90,659 +90,122 @@
       <longitude_deg> 8.546163739800146</longitude_deg>
       <elevation>0</elevation>
     </spherical_coordinates>
-      <model name="w3_terrain">
+      <model name="w3_scene">
       <static>true</static>
-      <link name="terrain">
-        <collision name="strip_00_0_collision">
-          <pose>-85.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_00_0_visual">
-          <pose>-85.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+      <link name="scene">
+        <visual name="asphalt_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/asphalt.obj</uri></mesh></geometry>
+          <material><ambient>0.18 0.18 0.19 1</ambient><diffuse>0.18 0.18 0.19 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_01_0_collision">
-          <pose>-82.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="asphalt_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/asphalt.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_01_0_visual">
-          <pose>-82.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="boulders_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/boulders.obj</uri></mesh></geometry>
+          <material><ambient>0.42 0.41 0.39 1</ambient><diffuse>0.42 0.41 0.39 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_02_0_collision">
-          <pose>-77.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="boulders_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/boulders.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_02_0_visual">
-          <pose>-77.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="bushes_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/bushes.obj</uri></mesh></geometry>
+          <material><ambient>0.24 0.42 0.18 1</ambient><diffuse>0.24 0.42 0.18 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_03_0_collision">
-          <pose>-74.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <visual name="cars_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/cars.obj</uri></mesh></geometry>
+          <material><ambient>0.25 0.35 0.55 1</ambient><diffuse>0.25 0.35 0.55 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="cars_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/cars.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_03_0_visual">
-          <pose>-74.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="concrete_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/concrete.obj</uri></mesh></geometry>
+          <material><ambient>0.62 0.61 0.58 1</ambient><diffuse>0.62 0.61 0.58 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_04_0_collision">
-          <pose>-69.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="concrete_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/concrete.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_04_0_visual">
-          <pose>-69.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="dirt_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/dirt.obj</uri></mesh></geometry>
+          <material><ambient>0.52 0.42 0.30 1</ambient><diffuse>0.52 0.42 0.30 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_05_0_collision">
-          <pose>-66.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="dirt_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/dirt.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_05_0_visual">
-          <pose>-66.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="flat_roofs_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/flat_roofs.obj</uri></mesh></geometry>
+          <material><ambient>0.50 0.50 0.50 1</ambient><diffuse>0.50 0.50 0.50 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_06_0_collision">
-          <pose>-61.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="flat_roofs_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/flat_roofs.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_06_0_visual">
-          <pose>-61.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="foliage_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/foliage.obj</uri></mesh></geometry>
+          <material><ambient>0.16 0.38 0.14 1</ambient><diffuse>0.16 0.38 0.14 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_07_0_collision">
-          <pose>-58.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <visual name="garden_walls_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/garden_walls.obj</uri></mesh></geometry>
+          <material><ambient>0.66 0.60 0.50 1</ambient><diffuse>0.66 0.60 0.50 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="garden_walls_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/garden_walls.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_07_0_visual">
-          <pose>-58.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="grass_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/grass.obj</uri></mesh></geometry>
+          <material><ambient>0.33 0.50 0.24 1</ambient><diffuse>0.33 0.50 0.24 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_08_0_collision">
-          <pose>-53.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="grass_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/grass.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_08_0_visual">
-          <pose>-53.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="kerb_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/kerb.obj</uri></mesh></geometry>
+          <material><ambient>0.70 0.70 0.68 1</ambient><diffuse>0.70 0.70 0.68 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_09_0_collision">
-          <pose>-50.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="kerb_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/kerb.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_09_0_visual">
-          <pose>-50.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="rock_ground_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rock_ground.obj</uri></mesh></geometry>
+          <material><ambient>0.47 0.45 0.42 1</ambient><diffuse>0.47 0.45 0.42 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_10_0_collision">
-          <pose>-45.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="rock_ground_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rock_ground.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_10_0_visual">
-          <pose>-45.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="roofs_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/roofs.obj</uri></mesh></geometry>
+          <material><ambient>0.55 0.30 0.24 1</ambient><diffuse>0.55 0.30 0.24 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_11_0_collision">
-          <pose>-42.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="roofs_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/roofs.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_11_0_visual">
-          <pose>-42.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="rough_grass_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rough_grass.obj</uri></mesh></geometry>
+          <material><ambient>0.40 0.48 0.26 1</ambient><diffuse>0.40 0.48 0.26 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_12_0_collision">
-          <pose>-37.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="rough_grass_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rough_grass.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_12_0_visual">
-          <pose>-37.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="trunks_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/trunks.obj</uri></mesh></geometry>
+          <material><ambient>0.35 0.25 0.16 1</ambient><diffuse>0.35 0.25 0.16 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_13_0_collision">
-          <pose>-34.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="trunks_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/trunks.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_13_0_visual">
-          <pose>-34.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="units_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/units.obj</uri></mesh></geometry>
+          <material><ambient>0.70 0.72 0.74 1</ambient><diffuse>0.70 0.72 0.74 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_14_0_collision">
-          <pose>-29.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="units_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/units.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_14_0_visual">
-          <pose>-29.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
+        <visual name="walls_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/walls.obj</uri></mesh></geometry>
+          <material><ambient>0.78 0.74 0.66 1</ambient><diffuse>0.78 0.74 0.66 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
         </visual>
-        <collision name="strip_15_0_collision">
-          <pose>-26.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
+        <collision name="walls_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/walls.obj</uri></mesh></geometry>
         </collision>
-        <visual name="strip_15_0_visual">
-          <pose>-26.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_16_0_collision">
-          <pose>-21.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_16_0_visual">
-          <pose>-21.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_17_0_collision">
-          <pose>-18.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_17_0_visual">
-          <pose>-18.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_18_0_collision">
-          <pose>-13.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_18_0_visual">
-          <pose>-13.3160 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_19_0_collision">
-          <pose>-10.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_19_0_visual">
-          <pose>-10.6840 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_20_0_collision">
-          <pose>-5.3160 -48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_20_0_visual">
-          <pose>-5.3160 -48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_20_1_collision">
-          <pose>-5.3160 48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_20_1_visual">
-          <pose>-5.3160 48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_21_0_collision">
-          <pose>-2.6840 -48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_21_0_visual">
-          <pose>-2.6840 -48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_21_1_collision">
-          <pose>-2.6840 48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_21_1_visual">
-          <pose>-2.6840 48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_22_0_collision">
-          <pose>2.6840 -48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_22_0_visual">
-          <pose>2.6840 -48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_22_1_collision">
-          <pose>2.6840 48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_22_1_visual">
-          <pose>2.6840 48.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_23_0_collision">
-          <pose>5.3160 -48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_23_0_visual">
-          <pose>5.3160 -48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_23_1_collision">
-          <pose>5.3160 48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_23_1_visual">
-          <pose>5.3160 48.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 80.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_24_0_collision">
-          <pose>10.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_24_0_visual">
-          <pose>10.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_25_0_collision">
-          <pose>13.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_25_0_visual">
-          <pose>13.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_26_0_collision">
-          <pose>18.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_26_0_visual">
-          <pose>18.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_27_0_collision">
-          <pose>21.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_27_0_visual">
-          <pose>21.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_28_0_collision">
-          <pose>26.6840 -41.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 94.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_28_0_visual">
-          <pose>26.6840 -41.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 94.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_28_1_collision">
-          <pose>26.6840 53.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 70.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_28_1_visual">
-          <pose>26.6840 53.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 70.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_29_0_collision">
-          <pose>29.3160 -41.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 94.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_29_0_visual">
-          <pose>29.3160 -41.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 94.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_29_1_collision">
-          <pose>29.3160 53.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 70.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_29_1_visual">
-          <pose>29.3160 53.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 70.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_30_0_collision">
-          <pose>34.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_30_0_visual">
-          <pose>34.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_31_0_collision">
-          <pose>37.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_31_0_visual">
-          <pose>37.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_32_0_collision">
-          <pose>42.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_32_0_visual">
-          <pose>42.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_33_0_collision">
-          <pose>45.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_33_0_visual">
-          <pose>45.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_34_0_collision">
-          <pose>50.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_34_0_visual">
-          <pose>50.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_35_0_collision">
-          <pose>53.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_35_0_visual">
-          <pose>53.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_36_0_collision">
-          <pose>58.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_36_0_visual">
-          <pose>58.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_37_0_collision">
-          <pose>61.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_37_0_visual">
-          <pose>61.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_38_0_collision">
-          <pose>66.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_38_0_visual">
-          <pose>66.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_39_0_collision">
-          <pose>69.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_39_0_visual">
-          <pose>69.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_40_0_collision">
-          <pose>74.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_40_0_visual">
-          <pose>74.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_41_0_collision">
-          <pose>77.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_41_0_visual">
-          <pose>77.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_42_0_collision">
-          <pose>82.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_42_0_visual">
-          <pose>82.6840 0.0000 -1.1514 0.00000 -0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-        <collision name="strip_43_0_collision">
-          <pose>85.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-        </collision>
-        <visual name="strip_43_0_visual">
-          <pose>85.3160 0.0000 -1.1514 0.00000 0.34907 0.00000</pose>
-          <geometry><box><size>4.2567 176.0000 4.0000</size></box></geometry>
-          <material>
-            <ambient>0.55 0.47 0.37 1</ambient>
-            <diffuse>0.55 0.47 0.37 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
       </link>
     </model>
 </world>
