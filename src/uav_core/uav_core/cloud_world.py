@@ -44,7 +44,9 @@ from the lags, overshot on a stable clock (the plate spill changed
 side, 2026-10-22_p5_stable_clock); replayed offline, the spill crosses
 zero near 0.045 to 0.050 s, and 0.050 s with the attitude last received
 removes P5 on W1's ramps with the recall kept
-(2026-10-22_p5_diagnosis). When the
+(2026-10-22_p5_diagnosis). In flight 0.050 s left the plate spill at
++0.13 (2026-10-22_p5_v4); between that and -0.25 at 0.085 s (v3), it
+crosses zero at 0.060 to 0.062 s: 0.060 s. When the
 buffer does not cover that time, or /clock is silent, the latest pose
 is used and counted, never silently. pose_at_scan_time false gives the
 previous behaviour, which is how the change is measured.
@@ -104,7 +106,7 @@ class CloudWorld(Node):
         self.declare_parameter('map_publish_period_s', 1.0)
         self.declare_parameter('min_fuse_height_m', 2.0)
         self.declare_parameter('pose_at_scan_time', True)
-        self.declare_parameter('scan_time_offset_s', 0.050)
+        self.declare_parameter('scan_time_offset_s', 0.060)
         self.min_fuse_height = self.get_parameter('min_fuse_height_m').value
         self.pose_at_scan = self.get_parameter('pose_at_scan_time').value
         self.scan_time_offset = self.get_parameter('scan_time_offset_s').value
