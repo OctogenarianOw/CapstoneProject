@@ -18,7 +18,7 @@ EXP=$(cd "$HERE/.." && pwd)
 DEV=/home/doria/uav_p5v4
 N=${1:-3}
 CLK="bash $EXP/2026-10-21_p5_latency/clock_bridge.sh"
-WATCH="python3 $HERE/clock_watch.py"
+WATCH="python3 $EXP/2026-10-22_p5_stable_clock/clock_watch.py"
 mkdir -p "$HERE/runs" "$HERE/failed"
 
 echo "[$(date +%T)] clock check, 60 s"
