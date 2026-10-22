@@ -131,6 +131,74 @@ def first_within(path, centre, r):
     return None
 
 
+def num(x):
+    """A logged number, 'inf' and '-inf' strings included."""
+    return float(x)
+
+
+def guarantee_of(events, cycle, chosen):
+    """The manager's guarantee event of a decision, or None."""
+    for e in events:
+        if (e.get('kind') == 'guarantee'
+                and cycle['t'] - 0.01 <= e['t'] <= cycle['t'] + 2.0
+                and list(e['viewpoint_ne']) == list(chosen['viewpoint_ne'])):
+            return e
+    return None
+
+
+def evaluate_logged(cycle, chosen, path, guarantee, config, pads, targets):
+    """
+    Conditions of one decision from the manager's own guarantee event.
+
+    Since 2583e36 the manager logs, at each decision on a zone other
+    than the take-off point, the need through the best other confirmed
+    zone and the I1 margin left without it, on its own map and paths
+    (event 'guarantee'). That replaces the straight legs to known pads
+    of evaluate(), which the mixed W3 cannot use: its fallbacks are the
+    road, the parking lot, the roof, the clearing, the meadow, whatever
+    the registry confirmed. rests: need without Z over the budget by
+    MARGIN_J. reach: the I1 margin without Z at the decision, less twice
+    the energy flown to where the registry is expected to react (the
+    budget falls by it, and the way back may grow by as much), over
+    MARGIN_J. view: as in evaluate().
+    """
+    model = EnergyModel(**config['energy_model'])
+    zones = {z['id']: z for z in cycle['zones']}
+    z = zones.get(chosen['zone_id'])
+    out = {'t': cycle['t'], 'zone_id': chosen['zone_id'],
+           'viewpoint_ne': chosen['viewpoint_ne']}
+    pad = None if z is None or z['provisional'] else pad_of(
+        z['touchdown_ne'], pads)
+    out['pad'] = pad
+    out['relies'] = pad in targets
+    if not out['relies'] or guarantee is None:
+        out['rests'] = out['reach'] = out['view'] = None
+        return out
+    budget = num(guarantee['budget_j'])
+    need_wo = num(guarantee['need_without_j'])
+    i1_wo = num(guarantee['i1_without_j'])
+    out.update(b_j=cycle['remaining_j'], budget_j=budget,
+               need_j=num(guarantee['need_j']), need_without_j=need_wo,
+               i1_without_at_decision_j=i1_wo)
+    out['rests'] = need_wo - budget > MARGIN_J
+    p = tuple(cycle['vehicle_ned'][:2])
+    centre = pads[pad][0]
+    path = [p] + [tuple(w) for w in path] if path else [
+        p, tuple(chosen['viewpoint_ne'])]
+    s_obs = first_within(path, centre, R_VIEW_M[pad])
+    out['d_start_m'] = math.dist(p, centre)
+    out['view'] = s_obs is not None
+    if not out['view']:
+        out['reach'] = None
+        return out
+    s_react = s_obs + model.cruise_speed_ms * DETECTION_S
+    _, flown = along(path, s_react)
+    e_flown = model.path_energy(flown)
+    out.update(s_obs_m=s_obs, i1_without_j=i1_wo - 2.0 * e_flown)
+    out['reach'] = out['i1_without_j'] >= MARGIN_J
+    return out
+
+
 def evaluate(cycle, chosen, path, config, pads, targets):
     """All conditions of one decision, as a JSON-ready dict."""
     model = EnergyModel(**config['energy_model'])
@@ -279,7 +347,11 @@ def live(args):
         while seen < len(decs) and decs[seen][2] is not None:
             cy, ch, path = decs[seen]
             seen += 1
-            r = evaluate(cy, ch, path, config, pads, targets)
+            if args.world == 'w3':
+                r = evaluate_logged(cy, ch, path, guarantee_of(events, cy, ch),
+                                    config, pads, targets)
+            else:
+                r = evaluate(cy, ch, path, config, pads, targets)
             r.update(wall=time.time(), kind='decision')
             if not fired and fires(r, args.mode):
                 fired = True
@@ -300,6 +372,16 @@ def replay(args):
           .splitlines() if x.strip()]
     pads, targets = PADS[args.pads], TARGET[args.pads]
     for cy, ch, path in decisions(load, ev):
+        if args.pads == 'w3':
+            r = evaluate_logged(cy, ch, path, guarantee_of(ev, cy, ch),
+                                config, pads, targets)
+            if r['relies']:
+                print(f'{r["t"]:7.1f} need-budget '
+                      f'{r.get("need_without_j", math.nan) - r.get("budget_j", math.nan):8.0f} '
+                      f'rests {r["rests"]!s:5} view {r["view"]!s:5} '
+                      f'reach {r["reach"]!s:5} critical '
+                      f'{fires(r, "critical")!s:5} first {fires(r, "first")!s}')
+            continue
         r = evaluate(cy, ch, path, config, pads, targets)
         if not r['relies']:
             continue
