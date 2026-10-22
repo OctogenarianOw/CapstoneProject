@@ -17,10 +17,23 @@ measured on its own before being merged:
   point per zone;
 - the replanning on an unreachable target (`2026-10-22_reselect_flights`):
   without it every W3 mission ended on the first viewpoint a roof
-  blocked.
+  blocked;
+- the free start cell searched within 10 m, the hold before an
+  emergency landing, the escape on a 1 m margin when the nominal map
+  leaves no way back (`2026-10-22_emergency_flights`, `_escape_flights`);
+- the S9.5 guarantee logging (the need and the I1 margin without the
+  zone a decision relies on), instrumentation only.
 
-The W1 and W2 results stay as recorded, measured before these changes.
-The commit is in every mission's config.json.
+Not in it: the P5 fix, whose v5 failed its criterion on 22 Oct by
+4 mm of flat RMS (`2026-10-22_p5_v5`); if it is merged later, this
+campaign is flown again on it. The W1 and W2 results stay as recorded,
+measured before these changes. The commit is in every mission's
+config.json.
+
+Known before the flights, measured by this campaign: small I1
+violations at the last visit of some W3 missions, from a decision
+overrun when the latency charge had decayed to its 2 s floor
+(`2026-10-22_emergency_flights`, about 0.3 kJ, reserve intact).
 
 ## Set-up
 
