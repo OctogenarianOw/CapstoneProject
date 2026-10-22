@@ -48,3 +48,38 @@ def test_mission_log_writes_config_cycles_events(tmp_path):
     event = json.loads((run / 'events.jsonl').read_text())
     assert event['kind'] == 'state' and event['to'] == 'SELECTING'
     assert len(list((run / 'maps').iterdir())) == 1
+
+
+def roof_world(roof_half_m):
+    """
+    Return the world of an aircraft over the middle of a blocked roof.
+
+    A flat observed square, a roof at 6.5 m around the aircraft, above
+    the 6 m ceiling of I3.
+    """
+    n, res, origin = 60, 1.0, (-30.0, -30.0)
+    ii, jj = np.indices((n, n))
+    north, east = origin[0] + ii + 0.5, origin[1] + jj + 0.5
+    roof = (np.abs(north) <= roof_half_m) & (np.abs(east) <= roof_half_m)
+    elev = np.where(roof, -6.5, 0.0).astype(np.float32)
+    count = np.full((n, n), 100, dtype=np.int32)
+    var = np.full((n, n), 4e-4, dtype=np.float32)
+    return build_world(elev, var, count, res, origin, (0.0, 0.0),
+                       WorldParams())
+
+
+def test_aircraft_over_a_blocked_roof_still_has_a_start_cell():
+    """
+    Find a free start cell off a roof mapped above the ceiling.
+
+    Over a W3 roof whose units were mapped at 6.3 m on approach, the
+    nearest free cell was 3.0 m away and the search, 2 m then, found
+    none: an emergency landing. Within 10 m it is found, past the roof
+    edge and its inflation; a roof 24 m wide still has none.
+    """
+    world = roof_world(4.0)
+    assert world.vehicle_ij is not None
+    i, j = world.vehicle_ij
+    assert np.hypot(i - 30, j - 30) >= 5.0
+    assert np.isfinite(world.dist_m).any()
+    assert roof_world(12.0).vehicle_ij is None

@@ -52,6 +52,16 @@ class WorldParams:
     footprint_m: float = 1.5          # 3x3 cells; 1.2 m from P4 breaks S8
     sensor_radius_m: float = 18.0     # sqrt(20^2 - 8^2), geometry
     area_half_m: float = 30.0         # exploration area, validation world
+    # Search radius for a free start cell when the aircraft's own cell is
+    # blocked. 2 m until 22 Oct, enough for the inflation alone: over a
+    # W3 roof at 5.3 m, units mapped at 6.3 m on approach blocked the cell
+    # under the aircraft, the nearest free one was 3.0 m away, and the
+    # mission ended in an emergency landing with 23 kJ above the reserve
+    # (2026-10-22_reselect_flights, w3_after_r2). On a roof whose units
+    # are inflated into one blocked patch, the way out is the roof edge:
+    # half the widest W3 building (18 m) plus a cell. Chosen. The aircraft
+    # is over that cell already, so its terrain is under the 8 m flight
+    start_search_m: float = 10.0
 
 
 @dataclass
@@ -113,8 +123,9 @@ def build_world(elevation, variance, count, resolution, origin_ne,
                                    params.inflate_m)
     vi = int((vehicle_ne[0] - origin_ne[0]) / resolution)
     vj = int((vehicle_ne[1] - origin_ne[1]) / resolution)
-    start = nearest_traversable(traversable, (vi, vj),
-                                max_cells=int(np.ceil(2.0 / resolution)))
+    start = nearest_traversable(
+        traversable, (vi, vj),
+        max_cells=int(np.ceil(params.start_search_m / resolution)))
     if start is None:
         dist = np.full(state.shape, np.inf)
     else:
