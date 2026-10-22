@@ -34,12 +34,17 @@ the flight, removed by taking the pose 0.110 to 0.119 s earlier, the
 origin of the one-cell offset P5. Of that lag, 0.03 s is the latest
 pose being received after the scan, and varies with the load; the rest
 is a constant between time bases, the PX4 estimate being ahead of the
-true position by 0.09 to 0.11 s against Gazebo's truth. So the pose is
-interpolated at the scan stamp, put on the PX4 clock through offsets
-estimated online from /clock and from the poses (uav_core/pose_buffer),
-minus scan_time_offset_s, a temporal calibration term like the one
-between any sensor and an estimator: 0.085 s, the map lag minus the
-stamp lag on the two flights with /clock (0.082 and 0.087 s). When the
+true position by 0.09 to 0.11 s against Gazebo's truth. So the
+position is interpolated at the scan stamp, put on the PX4 clock through
+offsets estimated online from /clock and from the poses
+(uav_core/pose_buffer), minus scan_time_offset_s, a temporal
+calibration term like the one between any sensor and an estimator. The
+attitude is the last received (scan_pose). 0.085 s, first estimated
+from the lags, overshot on a stable clock (the plate spill changed
+side, 2026-10-22_p5_stable_clock); replayed offline, the spill crosses
+zero near 0.045 to 0.050 s, and 0.050 s with the attitude last received
+removes P5 on W1's ramps with the recall kept
+(2026-10-22_p5_diagnosis). When the
 buffer does not cover that time, or /clock is silent, the latest pose
 is used and counted, never silently. pose_at_scan_time false gives the
 previous behaviour, which is how the change is measured.
@@ -99,7 +104,7 @@ class CloudWorld(Node):
         self.declare_parameter('map_publish_period_s', 1.0)
         self.declare_parameter('min_fuse_height_m', 2.0)
         self.declare_parameter('pose_at_scan_time', True)
-        self.declare_parameter('scan_time_offset_s', 0.085)
+        self.declare_parameter('scan_time_offset_s', 0.050)
         self.min_fuse_height = self.get_parameter('min_fuse_height_m').value
         self.pose_at_scan = self.get_parameter('pose_at_scan_time').value
         self.scan_time_offset = self.get_parameter('scan_time_offset_s').value
@@ -201,7 +206,16 @@ class CloudWorld(Node):
                                msg.clock.sec + msg.clock.nanosec * 1e-9)
 
     def scan_pose(self, msg):
-        """Position and attitude for a scan: at its stamp if possible."""
+        """
+        Position at the scan time if possible, attitude last received.
+
+        Only the position is taken back to the scan time: offline on two
+        W1 survey bags, taking the attitude back too (v3) cut the recall
+        from 93 to 61 %, as it did in flight, while the attitude last
+        received kept it at 95 % with the same position term
+        (experiments/2026-10-22_p5_diagnosis). Why the attitude does
+        harm was not measured.
+        """
         if self.pose_at_scan and self.sim_offset.ready \
                 and self.px4_offset.ready:
             stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
@@ -210,7 +224,7 @@ class CloudWorld(Node):
             pose = self.poses.at(t_px4)
             if pose is not None:
                 self.scans_at_stamp += 1
-                return pose
+                return pose[0], self.attitude
             self.diagnose(t_px4)
         elif self.pose_at_scan:
             self.fallback_why['no offset'] = (
