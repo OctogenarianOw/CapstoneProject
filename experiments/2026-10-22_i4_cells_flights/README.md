@@ -50,4 +50,32 @@ fails, nothing is merged and the failure is diagnosed.
 
 ## Results
 
-To be filled after the flights.
+12 missions, all at the first attempt, 11:17 to 11:46, no clock step
+(`flights.log`, `results.txt`).
+
+| | W1 before | W1 after | W3 before | W3 after |
+|---|---|---|---|---|
+| I1 violations | 0, 0, 0 | 0, 0, 0 | 0, 0, 0 | 0, 0, 0 |
+| targets severe in the truth, any snapshot | 0 | 0 | 0 | 0 |
+| landing on a severe cell | 0 | 0 | 0 | 0 |
+| a zone besides the take-off confirmed | 1 of 3 | 3 of 3, at 22 s | 2 of 3 | 3 of 3, the road each time |
+| coverage | 66.4, 68.0, 81.6 % | 80.3, 81.4, 80.8 % | 63.7, 9.5, 65.0 % | 51.3, 25.4, 35.5 % |
+| smallest I1 margin | 1.8 to 2.1 kJ | 1.25 to 1.31 kJ | | |
+
+**The criterion holds, so `i4-cells` is merged** (rule above).
+
+- **W1, a clear gain.** With the point rule the large flat zone was
+  confirmed in one mission of three: in the two others the aircraft
+  never came back near its touchdown, C1 relied on the take-off point
+  alone, and both missions ended at about 28 s on a target that became
+  inadmissible (66 and 68 % covered). Per cell it is confirmed at 22 s
+  in all three, and every mission ends on its budget at 80 to 81 %,
+  with a smaller but positive margin and no violation.
+- **W3: the road is a landing zone now**, confirmed in all three after
+  missions (and the parking lot in one); w3_after_r3 landed on it.
+- **The W3 coverages compare nothing.** All six W3 missions, before and
+  after, ended on a target no path reached any more (an abort with an
+  energy need of `inf`, 21 to 75 kJ left), a defect of the state
+  machine W3 revealed and W1 and W2 never met (0 of their 30 aborts):
+  `2026-10-22_reselect_flights`. The coverage of W3 is measured again
+  once it is fixed.
