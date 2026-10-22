@@ -18,12 +18,32 @@ States (S15.1):
                   re-check it under C1, the S9.5 reaction when the zone
                   it relied on is retired
   RETURNING       fly to the reachable confirmed zone of least energy;
-                  replan if that zone is retired on the way
+                  replan if that zone is retired on the way, or if
+                  another one becomes cheaper by more than a stop
   COMMIT_LANDING  descent commanded, no more re-evaluation (S15.2)
   LANDED          done
   EMERGENCY       no confirmed zone reachable, or budget depleted: hold
                   until at rest, then land where the aircraft is, logged
                   (the I5 exception)
+
+A return turns to another confirmed zone when reaching it from where
+the aircraft is costs less than reaching the current target by more
+than one stop and restart (c_leg + P_hover v / a, 541 J at the
+calibration), at most return_switch_max times per return. Measured
+need (2026-10-22_campaign_w3): the return itself makes the second pass
+over zones along its way, which get confirmed behind it, and a target
+lost en route and confirmed again 3 s later was flown past, 30 m on to
+a farther zone, with 1.63 kJ of the reserve used (B3a000_r5). On those
+logs the rule would have fired in 10 returns of 9 missions, saving 0.6
+to 5.7 kJ. The threshold is the switch's own cost, so no switch costs
+more than it saves under the model; the cap bounds flapping between
+zones whose confirmation flickers (17 of the 20 pass-count demotions
+of that campaign came within 10 s of the confirmation). Rejected: a
+minimum age of 10 s for the new zone, which filters that flicker but
+would have turned too late in B3a000_r5 (zone 41 back at 230 s, the
+aircraft over the far zone at 242 s). Both energies are planned the
+same way from the same cell, so the conservative start ramp of a plan
+from a moving aircraft cancels out of the comparison.
 
 Ends (S15.4), each logged distinctly: 'coverage' (no frontier left),
 'budget' (none admissible under C1, or the B1 threshold), 'commanded'.
@@ -109,6 +129,8 @@ class MissionParams:
     # never reports holding, it lands after hold_max_s anyway.
     emergency_settle_s: float = 3.0
     emergency_hold_max_s: float = 10.0
+    # Turns to a cheaper zone per return, against flapping (header).
+    return_switch_max: int = 3
 
 
 @dataclass
@@ -159,6 +181,7 @@ class MissionFSM:
     check_visit: object = None  # frontier cells to check after arrival
     cycles_in_state: int = 0
     return_attempts: int = 0
+    return_switches: int = 0    # turns to a cheaper zone, this return
     pending: object = None      # (Action, time sent), until confirmed
     violations: int = 0
     last_margin: float = None
@@ -529,6 +552,7 @@ class MissionFSM:
                         length_m=plan.length_m)
         self.target_zone = zone_id
         if self.state != RETURNING:
+            self.return_switches = 0
             self._go(inp.t, RETURNING, why)
         self._event(inp.t, 'return', zone_id=zone_id, reason=why,
                     length_m=plan.length_m,
@@ -547,6 +571,10 @@ class MissionFSM:
                                 f'zone {self.target_zone} retired en route')
         if self._arrived(inp):
             return self._commit(inp)
+        cheaper = self._cheaper_return(inp, rfield)
+        if cheaper:
+            self.return_switches += 1
+            return self._return(inp, rfield, cheaper)
         if self._gave_up(inp):
             self.return_attempts += 1
             if self.return_attempts > 2:
@@ -555,6 +583,41 @@ class MissionFSM:
                 return self._commit(inp)
             return self._return(inp, rfield, 'return arrival timeout')
         return []
+
+    def switch_cost_j(self):
+        """One stop and restart: two half ramps and a leg's fixed cost."""
+        m = self.model
+        return m.c_leg_j + m.p_hover_w * m.cruise_speed_ms / m.accel_ms2
+
+    def _cheaper_return(self, inp, rfield):
+        """Why to turn to another confirmed zone (header), or None."""
+        w = inp.world
+        if (w is None or w.vehicle_ij is None
+                or self.return_switches >= self.params.return_switch_max):
+            return None
+        best, zone_id = plan_return(w.traversable, rfield, w.vehicle_ij,
+                                    inp.resolution, inp.origin_ne)
+        if best is None or zone_id == self.target_zone:
+            return None
+        current = [z for z in self.registry.confirmed()
+                   if z.zone_id == self.target_zone]
+        plan = None
+        if current:
+            plan, _ = plan_return(w.traversable,
+                                  return_field(w.traversable, current,
+                                               inp.resolution,
+                                               inp.origin_ne),
+                                  w.vehicle_ij, inp.resolution,
+                                  inp.origin_ne)
+        if plan is None:
+            return (f'zone {zone_id}, zone {self.target_zone} no longer '
+                    f'reachable')
+        saving = (self.model.path_energy(plan.waypoints_ne)
+                  - self.model.path_energy(best.waypoints_ne))
+        if saving <= self.switch_cost_j():
+            return None
+        return (f'zone {zone_id} cheaper by {saving:.0f} J than zone '
+                f'{self.target_zone}')
 
     def _commit(self, inp):
         self._go(inp.t, COMMIT_LANDING,
