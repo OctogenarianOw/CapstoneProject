@@ -53,6 +53,16 @@ except in EMERGENCY.
 Invariant I1 is evaluated every cycle from the vehicle position and
 logged with its margin; a negative margin is a violation, counted and
 never silent. Under a C1 policy it also triggers an immediate return.
+At the arrival of a return, the step that commits, the need is the
+landing alone: the aircraft lands where it is. Planned from the vehicle
+cell, it added a leg whenever that cell had stopped being a landing
+cell in the cycle's registry (they are recomputed every cycle, I4 per
+cell): 411 J for one cell, never flown, charged at the commit in 5 of
+the 35 missions of 2026-10-22_campaign_w3 and counted as a violation in
+one (B3a075_r2, -377 J, landed 570 J above the reserve). Decision of
+Dorian, 23 Oct. Kept: the start ramp a plan from a moving aircraft
+charges, which covers in part the braking of a return that changes
+direction, not planned by the model (170 J measured in that mission).
 
 Hover charged by C1 per visit (overhead_s), measured, not assumed. For
 each frontier path flown to arrival the machine measures
@@ -357,6 +367,14 @@ class MissionFSM:
                 zone_id = zid
                 self._event(inp.t, 'escape_margin', margin_j=margin,
                             zone_id=zid, length_m=plan.length_m)
+        if (self.state == RETURNING and b is not None and self._arrived(inp)
+                and any(z.zone_id == self.target_zone
+                        for z in self.registry.confirmed())):
+            # Arrived over the target: this step commits and the aircraft
+            # lands where it is (header), no leg to fly.
+            margin = b - reserve - (self.model.hover_energy(self.overhead_s())
+                                    + self.model.e_land_j)
+            zone_id = self.target_zone
         self.last_margin = margin
         violated = margin is not None and margin < 0
         if violated:
