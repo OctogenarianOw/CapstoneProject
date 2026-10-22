@@ -67,6 +67,7 @@ labelled with N, and completed at N = 10.
     python3 gate_f_tests.py > gate_f_tests.txt
     python3 s95_natural.py > s95_natural.txt
     python3 margin_check.py > margin_check.txt
+    python3 demotions.py > demotions.txt
 
 ## Results, N = 5
 
@@ -116,21 +117,28 @@ left. They differ in what the violations mean in energy
 The 19 violating cycles of the C1 missions: 14 in flight, 2 commit
 cycles, 3 others (the first three of B3a000_r5).
 
-**Why the zone in use leaves: the pass count after a split.** 20
-demotions of a CONFIRMED zone on the pass count in 12 of the 35
+**Why the zone in use leaves: a confirmation resting on a few cells.**
+20 demotions of a CONFIRMED zone on the pass count in 12 of the 35
 missions, 12 of them CONFIRMED again within 10 s; none in the 70
-missions of W2, flown before the passes were counted per cell. At the
-demotion the zone's area fell in 18 of the 20 (268 to 199 m2 for zone
-41 of B3a000_r5, 230 to 25 m2 for zone 9 of B3a075_r2), and in 16 of
-the 20 its landing cells (whole footprint passed twice) covered 1 to
-21 m2. Reading, consistent with every case but not verified by replay
-(the map is saved every 11 s, the registry cannot be replayed cycle by
-cycle): when a zone splits, its identity goes to the larger part
-(`slz_registry._match`), while the few cells passed twice can lie in
-the other part; the zone that keeps the identity then has 1 pass. With
-per-cell passes a zone's confirmation rests on a few cells, so a split
-can take it away. Whether this is I4 per cell or the W3 world is not
-separated: W3 was never flown full length before I4 per cell (its
+missions of W2, flown before the passes were counted per cell. In 17
+of the 20 the zone's landing cells (whole footprint passed twice)
+covered 30 m2 or less before the demotion (1 to 3 m2 in 9), and 17 of
+the 20 came within 10 s of the confirmation. What becomes of those
+cells, from the cycle before and the cycle of the demotion
+(`demotions.py`, `demotions.txt`):
+
+| at the demotion | demotions | return targets lost |
+|---|---|---|
+| shrunk: no new zone, the zone lost the cells its landing cells needed | 10 | 2 (B3a000_r5, B3a075_r1) |
+| split: a new zone with 2 passes took the cells passed twice | 5 | 1 (B3a025_r2) |
+| fragmented: new zones, none with 2 passes | 5 | 1 (B3a075_r2) |
+
+Corrected on 23 Oct: the first version of this README read all 20 as
+splits, the identity going to the larger part; tested demotion by
+demotion, that holds for 5. The common factor is a zone confirmed on
+the strength of a few cells passed twice at its edge, which the next
+map cycles take away. Whether this is I4 per cell or the W3 world is
+not separated: W3 was never flown full length before I4 per cell (its
 missions then ended at the first blocked viewpoint).
 
 **S9.5 met unprovoked** (`s95_natural.txt`). 49 registry shrinks in
@@ -206,14 +214,17 @@ reading, not measured).
 
 ### Candidates, none applied (each a change of its own, to be measured)
 
-1. Registry: when a zone splits, give its identity, and its
-   confirmation, to the part holding its landing cells rather than to
-   the larger part. Target: the pass-count demotions of the zone in use
-   (4 of the 5 return targets lost here).
-2. Return: turn to a confirmed zone whose return costs less than the
-   one flown to, with a hysteresis against flapping. In B3a000_r5, I1
-   against zone 41 read +376 J when it came back, so turning to it
-   would have kept the reserve (counterfactual, not flown).
+1. Return: turn to a confirmed zone whose return costs less than the
+   one flown to. Measured on these logs (23 Oct): it would have fired
+   in 10 returns of 9 missions, saving 0.6 to 5.7 kJ, mostly because
+   the return itself makes the second pass over zones along its way,
+   which get confirmed behind it. In B3a000_r5, I1 against zone 41
+   read +376 J when it came back, so turning to it would have kept the
+   reserve (counterfactual, not flown). First to fly.
+2. Registry: give a split zone's identity and confirmation to the part
+   holding its landing cells. Addresses 5 of the 20 demotions and 1 of
+   the 4 return targets lost; the shrunk zones need another remedy, not
+   yet identified (the maps of those cycles are not saved).
 3. I1 evaluation: a return planned from a moving aircraft without the
    start ramp, and no leg at commit when the aircraft is over the zone.
    It makes the margin less conservative and changes what gate E
