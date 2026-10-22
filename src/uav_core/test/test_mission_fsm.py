@@ -250,7 +250,33 @@ def test_depleted_budget_is_an_emergency_landing():
     m = fsm(policy='nearest')
     airborne(m)
     actions = m.step(inputs(4, w=world(), remaining=-1.0))
-    assert m.state == EMERGENCY and [a.kind for a in actions] == ['land']
+    assert m.state == EMERGENCY and [a.kind for a in actions] == ['hold']
+
+
+def test_emergency_lands_only_at_rest():
+    """
+    Hold in an emergency, land once the executor has held 3 s.
+
+    LAND sent in flight at 5 m/s carried the aircraft 20 m on, into the
+    W3 town; the return was fixed for this on 20 Oct, not the emergency.
+    If the executor never reports holding, land after 10 s anyway.
+    """
+    m = fsm(policy='nearest')
+    airborne(m)
+    first = m.step(inputs(4, ex_state=EX_FOLLOWING, w=world(),
+                          remaining=-1.0))
+    assert [a.kind for a in first] == ['hold']
+    assert m.step(inputs(4.5, ex_state=EX_FOLLOWING)) == []
+    assert m.step(inputs(5.0, ex_state=EX_HOLDING)) == []
+    assert m.step(inputs(7.9, ex_state=EX_HOLDING)) == []
+    land = m.step(inputs(8.0, ex_state=EX_HOLDING))
+    assert [a.kind for a in land] == ['land']
+    stuck = fsm(policy='nearest')
+    airborne(stuck)
+    stuck.step(inputs(4, ex_state=EX_FOLLOWING, w=world(), remaining=-1.0))
+    assert stuck.step(inputs(13.9, ex_state=EX_FOLLOWING)) == []
+    land = stuck.step(inputs(14.0, ex_state=EX_FOLLOWING))
+    assert [a.kind for a in land] == ['land']
 
 
 def test_executor_timeout_blacklists_the_frontier():

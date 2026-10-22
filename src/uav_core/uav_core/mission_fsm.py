@@ -21,8 +21,9 @@ States (S15.1):
                   replan if that zone is retired on the way
   COMMIT_LANDING  descent commanded, no more re-evaluation (S15.2)
   LANDED          done
-  EMERGENCY       no confirmed zone reachable, or budget depleted: land
-                  where the aircraft is, logged (the I5 exception)
+  EMERGENCY       no confirmed zone reachable, or budget depleted: hold
+                  until at rest, then land where the aircraft is, logged
+                  (the I5 exception)
 
 Ends (S15.4), each logged distinctly: 'coverage' (no frontier left),
 'budget' (none admissible under C1, or the B1 threshold), 'commanded'.
@@ -100,6 +101,14 @@ class MissionParams:
     bootstrap_cycles: int = 2
     energy_stale_s: float = 2.0
     command_retry_s: float = 2.0
+    # An emergency holds before it lands, as the return does since
+    # 2026-10-20_landing_drift: LAND sent at 5 m/s carried the aircraft
+    # 20 m on, into the W3 town (2026-10-22_reselect_flights). From
+    # 5 m/s at 3 m/s2 the stop takes 1.7 s; settle_s leaves the position
+    # loop time to come back to the hold point. Chosen. If the executor
+    # never reports holding, it lands after hold_max_s anyway.
+    emergency_settle_s: float = 3.0
+    emergency_hold_max_s: float = 10.0
 
 
 @dataclass
@@ -141,6 +150,9 @@ class MissionFSM:
     log: object = None          # mission_log.MissionLog, optional
     state: str = INIT
     end_reason: str = ''
+    emergency_t: float = None   # when the emergency was declared
+    held_since: float = None    # executor holding since, in an emergency
+    emergency_landing: bool = False
     path_id: int = 0
     target: object = None       # Candidate being flown to
     target_zone: int = None     # zone id of a return
@@ -270,6 +282,20 @@ class MissionFSM:
         if self.state == EMERGENCY:
             if inp.ex_state == EX_LANDED:
                 self._go(inp.t, LANDED, 'emergency landing')
+                return []
+            if self.emergency_landing:
+                return []
+            if inp.ex_state == EX_HOLDING and self.held_since is None:
+                self.held_since = inp.t
+            settled = (self.held_since is not None and inp.t - self.held_since
+                       >= self.params.emergency_settle_s)
+            if settled or (inp.t - self.emergency_t
+                           >= self.params.emergency_hold_max_s):
+                self.emergency_landing = True
+                self._event(inp.t, 'emergency_land',
+                            held_s=(None if self.held_since is None
+                                    else inp.t - self.held_since))
+                return [Action('land')]
             return []
         if inp.world is None:
             return []
@@ -471,4 +497,6 @@ class MissionFSM:
         self._go(inp.t, EMERGENCY, why)
         self._event(inp.t, 'emergency_landing', reason=why,
                     exception='I5, landing outside the registry')
-        return [Action('land')]
+        # Hold first; the EMERGENCY state lands once at rest.
+        self.emergency_t, self.held_since = inp.t, None
+        return [Action('hold')]
