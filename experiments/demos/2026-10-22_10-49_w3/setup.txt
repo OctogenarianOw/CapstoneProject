@@ -1,0 +1,9 @@
+date 2026-10-22T10:49:42+11:00
+duration 900
+px4 parameters reset to the airframe defaults
+world w3
+run display=bash open_display.sh
+run clock=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+run ros=sleep 25; ros2 launch uav_core exploration.launch.py bridge:=false rviz:=false slider:=false capacity_j:=80000.0 alpha:=0.75 grid_size_m:=240.0 area_half_m:=80.0 log_root:=/home/doria/ros2_ws/droneAfter/experiments/demos/2026-10-22_10-49_w3/missions
+git 46bafcaf72df551c801aa2dbb6898a79b0abafb4
+?? experiments/demos/2026-10-22_10-49_w3/
