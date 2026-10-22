@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <world name="w3">
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <scene>
+      <grid>false</grid>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1 1</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>500 500</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+        <pose>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <pose>0 0 0 0 -0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <light name="sunUTC" type="directional">
+      <pose>0 0 500 0 -0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0.001 0.625 -0.78</direction>
+      <diffuse>0.904 0.904 0.904 1</diffuse>
+      <specular>0.271 0.271 0.271 1</specular>
+      <attenuation>
+        <range>2000</range>
+        <linear>0</linear>
+        <constant>1</constant>
+        <quadratic>0</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>47.397971057728974</latitude_deg>
+      <longitude_deg> 8.546163739800146</longitude_deg>
+      <elevation>0</elevation>
+    </spherical_coordinates>
+      <model name="w3_scene">
+      <static>true</static>
+      <link name="scene">
+        <visual name="asphalt_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/asphalt.obj</uri></mesh></geometry>
+          <material><ambient>0.18 0.18 0.19 1</ambient><diffuse>0.18 0.18 0.19 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="asphalt_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/asphalt.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="boulders_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/boulders.obj</uri></mesh></geometry>
+          <material><ambient>0.42 0.41 0.39 1</ambient><diffuse>0.42 0.41 0.39 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="boulders_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/boulders.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="bushes_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/bushes.obj</uri></mesh></geometry>
+          <material><ambient>0.24 0.42 0.18 1</ambient><diffuse>0.24 0.42 0.18 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <visual name="cars_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/cars.obj</uri></mesh></geometry>
+          <material><ambient>0.25 0.35 0.55 1</ambient><diffuse>0.25 0.35 0.55 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="cars_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/cars.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="concrete_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/concrete.obj</uri></mesh></geometry>
+          <material><ambient>0.62 0.61 0.58 1</ambient><diffuse>0.62 0.61 0.58 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="concrete_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/concrete.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="dirt_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/dirt.obj</uri></mesh></geometry>
+          <material><ambient>0.52 0.42 0.30 1</ambient><diffuse>0.52 0.42 0.30 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="dirt_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/dirt.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="flat_roofs_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/flat_roofs.obj</uri></mesh></geometry>
+          <material><ambient>0.50 0.50 0.50 1</ambient><diffuse>0.50 0.50 0.50 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="flat_roofs_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/flat_roofs.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="foliage_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/foliage.obj</uri></mesh></geometry>
+          <material><ambient>0.16 0.38 0.14 1</ambient><diffuse>0.16 0.38 0.14 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <visual name="garden_walls_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/garden_walls.obj</uri></mesh></geometry>
+          <material><ambient>0.66 0.60 0.50 1</ambient><diffuse>0.66 0.60 0.50 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="garden_walls_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/garden_walls.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="grass_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/grass.obj</uri></mesh></geometry>
+          <material><ambient>0.33 0.50 0.24 1</ambient><diffuse>0.33 0.50 0.24 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="grass_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/grass.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="kerb_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/kerb.obj</uri></mesh></geometry>
+          <material><ambient>0.70 0.70 0.68 1</ambient><diffuse>0.70 0.70 0.68 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="kerb_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/kerb.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="rock_ground_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rock_ground.obj</uri></mesh></geometry>
+          <material><ambient>0.47 0.45 0.42 1</ambient><diffuse>0.47 0.45 0.42 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="rock_ground_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rock_ground.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="roofs_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/roofs.obj</uri></mesh></geometry>
+          <material><ambient>0.55 0.30 0.24 1</ambient><diffuse>0.55 0.30 0.24 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="roofs_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/roofs.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="rough_grass_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rough_grass.obj</uri></mesh></geometry>
+          <material><ambient>0.40 0.48 0.26 1</ambient><diffuse>0.40 0.48 0.26 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="rough_grass_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/rough_grass.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="trunks_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/trunks.obj</uri></mesh></geometry>
+          <material><ambient>0.35 0.25 0.16 1</ambient><diffuse>0.35 0.25 0.16 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="trunks_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/trunks.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="units_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/units.obj</uri></mesh></geometry>
+          <material><ambient>0.70 0.72 0.74 1</ambient><diffuse>0.70 0.72 0.74 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="units_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/units.obj</uri></mesh></geometry>
+        </collision>
+        <visual name="walls_visual">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/walls.obj</uri></mesh></geometry>
+          <material><ambient>0.78 0.74 0.66 1</ambient><diffuse>0.78 0.74 0.66 1</diffuse><specular>0.05 0.05 0.05 1</specular></material>
+        </visual>
+        <collision name="walls_collision">
+          <geometry><mesh><uri>file:///home/doria/uav_w3/worlds/w3_meshes/walls.obj</uri></mesh></geometry>
+        </collision>
+      </link>
+    </model>
+</world>
+</sdf>
