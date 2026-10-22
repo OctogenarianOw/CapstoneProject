@@ -36,6 +36,7 @@ def generate_launch_description():
         DeclareLaunchArgument('mode', default_value='explore'),
         DeclareLaunchArgument('policy', default_value='c1_c2'),
         DeclareLaunchArgument('alpha', default_value='0.5'),
+        DeclareLaunchArgument('reserve_fraction', default_value='0.1'),
         DeclareLaunchArgument('rviz', default_value='true'),
         DeclareLaunchArgument('slider', default_value='true'),
         DeclareLaunchArgument('bridge', default_value='true'),
@@ -75,6 +76,9 @@ def generate_launch_description():
                           'policy': LaunchConfiguration('policy'),
                           'alpha': ParameterValue(
                               LaunchConfiguration('alpha'), value_type=float),
+                          'reserve_fraction': ParameterValue(
+                              LaunchConfiguration('reserve_fraction'),
+                              value_type=float),
                           'area_half_m': ParameterValue(
                               LaunchConfiguration('area_half_m'),
                               value_type=float),

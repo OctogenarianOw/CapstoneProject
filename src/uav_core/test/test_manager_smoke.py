@@ -52,6 +52,13 @@ def test_manager_acts_and_runs_a_map_cycle(tmp_path):
         assert (rng.from_value, rng.to_value) == (0.0, 1.0)
         node.set_parameters([Parameter('alpha', value=0.25)])
         assert node.fsm.params.alpha == 0.25
+        # The reserve applies in flight too; any other parameter is
+        # refused, so no change is shown as made and then ignored.
+        node.set_parameters([Parameter('reserve_fraction', value=0.2)])
+        assert node.fsm.params.reserve_fraction == 0.2
+        res = node.set_parameters([Parameter('footprint_m', value=3.0)])
+        assert not res[0].successful and 'launch only' in res[0].reason
+        assert node.get_parameter('footprint_m').value == 1.5
         node.log.close()
         run = Path(node.log.dir)
         events = [json.loads(line) for line in
@@ -59,6 +66,8 @@ def test_manager_acts_and_runs_a_map_cycle(tmp_path):
         kinds = [e['action'] for e in events if e['kind'] == 'action']
         assert kinds == ['takeoff', 'path', 'hold', 'land']
         assert [e['value'] for e in events if e['kind'] == 'alpha'] == [0.25]
+        assert [e['value'] for e in events
+                if e['kind'] == 'reserve_fraction'] == [0.2]
         cycles = (run / 'cycles.jsonl').read_text().splitlines()
         assert len(cycles) == 1
         assert json.loads(cycles[0])['unknown_in_area'] > 0

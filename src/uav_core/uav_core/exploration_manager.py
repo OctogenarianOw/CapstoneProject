@@ -24,9 +24,16 @@ map: take-off, the executor's landing, the vehicle marker.
 Logged per cycle (S17): state, energy left, I1 margin, and every
 candidate with E_go, E_return, E_total, admissibility, G, M and U, not
 only the winner (S14). alpha can be changed in flight (S14), with the
-slider of rqt_reconfigure (declared range 0 to 1, step 0.05) or:
+demonstration panel (experiments/demo_panel.py), the slider of
+rqt_reconfigure (declared range 0 to 1, step 0.05) or:
     ros2 param set /exploration_manager alpha 0.25
-Each change is logged as an event, so a figure can mark it.
+The reserve too (reserve_fraction, 0 to 0.5): C1 reads it every cycle,
+so raising it can send the aircraft home at once, which is the point of
+showing it. Each change is logged as an event, so a figure can mark it.
+Every other parameter is read at launch only, and a change in flight is
+refused with that reason: on 22 Oct rqt_reconfigure showed 22
+parameters of this node as editable, of which alpha alone acted, and a
+change to the others was accepted and did nothing.
 
 Fault injection, for experiments only: inject_delay_s (default 0) holds
 each decision that long after its inputs are read, as a slower computer
@@ -72,6 +79,13 @@ MISSION_PARAMS = ('policy', 'alpha', 'reserve_fraction',
                   'return_threshold_fraction', 'dwell_s', 'latency_window',
                   'bootstrap_cycles', 'energy_stale_s', 'emergency_settle_s',
                   'emergency_hold_max_s')
+# Parameters applied in flight, with the range a slider shows for them.
+LIVE_PARAMS = {
+    'alpha': ('C2 weight: 1 information gain, 0 energy margin',
+              0.0, 1.0, 0.05),
+    'reserve_fraction': ('Reserve R kept by C1, fraction of the capacity',
+                         0.0, 0.5, 0.01),
+}
 
 
 class ExplorationManager(Node):
@@ -84,18 +98,17 @@ class ExplorationManager(Node):
         for name, value in world_defaults.items():
             self.declare_parameter(name, value)
         for name in MISSION_PARAMS:
-            if name == 'alpha':
+            if name in LIVE_PARAMS:
                 # A declared range makes rqt_reconfigure show a slider.
+                text, lo, hi, step = LIVE_PARAMS[name]
                 self.declare_parameter(name, mission_defaults[name],
                                        ParameterDescriptor(
-                                           description='C2 weight: 1 '
-                                           'information gain, 0 energy '
-                                           'margin',
+                                           description=text,
                                            floating_point_range=[
                                                FloatingPointRange(
-                                                   from_value=0.0,
-                                                   to_value=1.0,
-                                                   step=0.05)]))
+                                                   from_value=lo,
+                                                   to_value=hi,
+                                                   step=step)]))
             else:
                 self.declare_parameter(name, mission_defaults[name])
         self.declare_parameter('mode', 'observe')
@@ -212,11 +225,16 @@ class ExplorationManager(Node):
         self.get_logger().info('stop requested')
 
     def on_params(self, params):
-        """Apply alpha changes in flight (S14)."""
+        """Apply alpha and the reserve in flight (S14), refuse the rest."""
+        fixed = [p.name for p in params if p.name not in LIVE_PARAMS]
+        if fixed:
+            return SetParametersResult(
+                successful=False,
+                reason=f'{", ".join(fixed)}: read at launch only, in flight '
+                       f'only {" and ".join(LIVE_PARAMS)} apply')
         for p in params:
-            if p.name == 'alpha':
-                self.fsm.params.alpha = float(p.value)
-                self.log.event(self.now_s(), 'alpha', value=float(p.value))
+            setattr(self.fsm.params, p.name, float(p.value))
+            self.log.event(self.now_s(), p.name, value=float(p.value))
         return SetParametersResult(successful=True)
 
     def inputs(self, world=None, res=1.0, origin=(0.0, 0.0)):
