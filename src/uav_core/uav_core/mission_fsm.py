@@ -36,14 +36,25 @@ lost en route and confirmed again 3 s later was flown past, 30 m on to
 a farther zone, with 1.63 kJ of the reserve used (B3a000_r5). On those
 logs the rule would have fired in 10 returns of 9 missions, saving 0.6
 to 5.7 kJ. The threshold is the switch's own cost, so no switch costs
-more than it saves under the model; the cap bounds flapping between
-zones whose confirmation flickers (17 of the 20 pass-count demotions
-of that campaign came within 10 s of the confirmation). Rejected: a
-minimum age of 10 s for the new zone, which filters that flicker but
-would have turned too late in B3a000_r5 (zone 41 back at 230 s, the
-aircraft over the far zone at 242 s). Both energies are planned the
-same way from the same cell, so the conservative start ramp of a plan
-from a moving aircraft cancels out of the comparison.
+more than it saves under the model; the cap bounds flapping. Both
+energies are planned the same way from the same cell, so the
+conservative start ramp of a plan from a moving aircraft cancels out of
+the comparison.
+
+A switch must keep I1 should the zone switched to be lost on arrival
+(S9.5 applied to the switch itself): the energy to that zone, then from
+there to the current target, the hover and the landing, within the
+budget above the reserve. Otherwise it is refused and logged. The
+take-off point, a provisional zone that cannot be lost, is exempt.
+Measured need (2026-10-23_campaign_w3, stopped after round 2): 4
+switches went to zones confirmed in the very cycle, 3 of them lost
+within 1 to 2 s; C1 returns with a small margin by design, and in
+B3a075_r01 two such switches and their losses turned +640 J into 11
+violating cycles and 0.67 kJ of the reserve used. Rejected: a minimum
+age of the new zone (17 of the 20 pass-count demotions of 22 Oct came
+within 10 s of the confirmation), a parameter fitted to one world that
+says nothing about whether the guarantee survives the loss, where this
+rule tests exactly that.
 
 Ends (S15.4), each logged distinctly: 'coverage' (no frontier left),
 'budget' (none admissible under C1, or the B1 threshold), 'commanded'.
@@ -192,6 +203,7 @@ class MissionFSM:
     cycles_in_state: int = 0
     return_attempts: int = 0
     return_switches: int = 0    # turns to a cheaper zone, this return
+    refused_switch: int = None  # last zone a switch to was refused
     pending: object = None      # (Action, time sent), until confirmed
     violations: int = 0
     last_margin: float = None
@@ -619,21 +631,36 @@ class MissionFSM:
             return None
         current = [z for z in self.registry.confirmed()
                    if z.zone_id == self.target_zone]
-        plan = None
+        plan = field = None
         if current:
-            plan, _ = plan_return(w.traversable,
-                                  return_field(w.traversable, current,
-                                               inp.resolution,
-                                               inp.origin_ne),
-                                  w.vehicle_ij, inp.resolution,
-                                  inp.origin_ne)
+            field = return_field(w.traversable, current, inp.resolution,
+                                 inp.origin_ne)
+            plan, _ = plan_return(w.traversable, field, w.vehicle_ij,
+                                  inp.resolution, inp.origin_ne)
         if plan is None:
             return (f'zone {zone_id}, zone {self.target_zone} no longer '
                     f'reachable')
-        saving = (self.model.path_energy(plan.waypoints_ne)
-                  - self.model.path_energy(best.waypoints_ne))
+        e_best = self.model.path_energy(best.waypoints_ne)
+        saving = self.model.path_energy(plan.waypoints_ne) - e_best
         if saving <= self.switch_cost_j():
             return None
+        new = self.registry.zones.get(zone_id)
+        if not (new is not None and new.provisional):
+            # I1 should the new zone be lost on arrival (header).
+            back, _ = plan_return(w.traversable, field, tuple(best.cells[-1]),
+                                  inp.resolution, inp.origin_ne)
+            if_lost = -math.inf
+            if back is not None and inp.remaining_j is not None:
+                if_lost = inp.remaining_j - self._reserve(inp) - (
+                    e_best + self.model.path_energy(back.waypoints_ne)
+                    + self.model.hover_energy(self.overhead_s())
+                    + self.model.e_land_j)
+            if if_lost < 0:
+                if self.refused_switch != zone_id:
+                    self.refused_switch = zone_id
+                    self._event(inp.t, 'switch_refused', zone_id=zone_id,
+                                saving_j=saving, margin_if_lost_j=if_lost)
+                return None
         return (f'zone {zone_id} cheaper by {saving:.0f} J than zone '
                 f'{self.target_zone}')
 
