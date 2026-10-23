@@ -459,3 +459,35 @@ def test_commit_charges_the_landing_not_a_leg():
     assert m.state == COMMIT_LANDING and [a.kind for a in actions] == ['land']
     need = MODEL.hover_energy(m.overhead_s()) + MODEL.e_land_j
     assert np.isclose(m.last_margin, 50000.0 - 0.1 * CAP - need)
+
+
+def test_switch_refused_if_its_loss_breaks_i1():
+    """
+    No switch whose zone, lost on arrival, would leave I1 broken.
+
+    Home holds I1 with about +240 J; the zone 13 m east is cheaper, but
+    should it be lost on arrival, going home from it would not fit: the
+    switch is refused and logged. In B3a075_r01 two switches to zones
+    confirmed in the same cycle, lost 1 and 2 s later, turned +640 J
+    into 11 violating cycles and 0.67 kJ of the reserve used.
+    """
+    m, w, rfield, events, home = returning_east(13.5)
+    budget = 0.1 * CAP + 5400.0
+    assert m._returning(inputs(10, w=w, vehicle=(0.5, 15.5),
+                               remaining=budget), rfield, []) == []
+    assert m.target_zone == home and m.return_switches == 0
+    (kind, refused), = [e for e in events if e[0] == 'switch_refused']
+    assert refused['zone_id'] == 99 and refused['margin_if_lost_j'] < 0
+
+
+def test_switch_to_the_takeoff_point_is_always_robust():
+    """The provisional take-off zone cannot be lost: no such test."""
+    m, w, rfield, events, home = returning_east(-14.5)
+    m.target_zone = 99
+    vehicle = (0.5, 10.5)
+    w = world(vehicle)
+    rfield = return_field(w.traversable, m.registry.confirmed(), RES, ORIGIN)
+    actions = m._returning(inputs(10, w=w, vehicle=vehicle,
+                                  remaining=0.1 * CAP + 5000.0), rfield, [])
+    assert m.target_zone == home and [a.kind for a in actions] == ['path']
+    assert not [e for e in events if e[0] == 'switch_refused']
