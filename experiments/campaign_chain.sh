@@ -15,7 +15,8 @@ echo "[$(date +%T)] flights: $(tail -1 campaign.log)"
 source /opt/ros/jazzy/setup.bash
 source "$EXP/../install/setup.bash"
 for a in summarise:summary gate_f_tests:gate_f_tests s95_natural:s95_natural \
-         margin_check:margin_check demotions:demotions scan_time:scan_time; do
+         margin_check:margin_check demotions:demotions scan_time:scan_time \
+         switch_check:switch_check; do
   [ -e "${a%%:*}.py" ] && python3 "${a%%:*}.py" > "${a##*:}.txt" 2>&1
 done
 echo "[$(date +%T)] analyses: $(ls *.txt | tr '\n' ' ')"
