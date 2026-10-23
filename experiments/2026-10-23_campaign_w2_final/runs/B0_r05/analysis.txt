@@ -1,0 +1,131 @@
+mission 2026-10-23_19-26-06: mode explore, policy nearest, alpha 0.5, reserve 0.1, git affad8d
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.7 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.8 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.8 s  SELECTING       -> NAVIGATING      frontier at (12.5, 11.5)
+   18.8 s  NAVIGATING      -> SELECTING       arrived
+   18.8 s  SELECTING       -> NAVIGATING      frontier at (14.5, 25.5)
+   23.8 s  NAVIGATING      -> SELECTING       arrived
+   23.8 s  SELECTING       -> NAVIGATING      frontier at (3.5, 36.5)
+   28.9 s  NAVIGATING      -> SELECTING       arrived
+   28.9 s  SELECTING       -> NAVIGATING      frontier at (3.5, 50.5)
+   33.9 s  NAVIGATING      -> SELECTING       arrived
+   33.9 s  SELECTING       -> NAVIGATING      frontier at (18.5, 54.5)
+   38.9 s  NAVIGATING      -> SELECTING       arrived
+   38.9 s  SELECTING       -> NAVIGATING      frontier at (28.5, 44.5)
+   43.9 s  NAVIGATING      -> SELECTING       arrived
+   43.9 s  SELECTING       -> NAVIGATING      frontier at (43.5, 45.5)
+   48.9 s  NAVIGATING      -> SELECTING       arrived
+   48.9 s  SELECTING       -> NAVIGATING      frontier at (54.5, 54.5)
+   53.9 s  NAVIGATING      -> SELECTING       arrived
+   53.9 s  SELECTING       -> NAVIGATING      frontier at (56.5, 35.5)
+   59.9 s  NAVIGATING      -> SELECTING       arrived
+   59.9 s  SELECTING       -> NAVIGATING      frontier at (45.5, 25.5)
+   64.9 s  NAVIGATING      -> SELECTING       arrived
+   64.9 s  SELECTING       -> NAVIGATING      frontier at (46.5, 12.5)
+   69.9 s  NAVIGATING      -> SELECTING       arrived
+   69.9 s  SELECTING       -> NAVIGATING      frontier at (44.5, -2.5)
+   74.9 s  NAVIGATING      -> SELECTING       arrived
+   74.9 s  SELECTING       -> NAVIGATING      frontier at (34.5, -13.5)
+   79.9 s  NAVIGATING      -> SELECTING       arrived
+   79.9 s  SELECTING       -> NAVIGATING      frontier at (34.5, -27.5)
+   84.9 s  NAVIGATING      -> SELECTING       arrived
+   84.9 s  SELECTING       -> NAVIGATING      frontier at (35.5, -41.5)
+   89.9 s  NAVIGATING      -> SELECTING       arrived
+   89.9 s  SELECTING       -> NAVIGATING      frontier at (45.5, -52.5)
+   94.9 s  NAVIGATING      -> SELECTING       arrived
+   94.9 s  SELECTING       -> NAVIGATING      frontier at (53.5, -37.5)
+  100.9 s  NAVIGATING      -> SELECTING       arrived
+  100.9 s  SELECTING       -> NAVIGATING      frontier at (54.5, -15.5)
+  109.9 s  NAVIGATING      -> SELECTING       arrived
+  109.9 s  SELECTING       -> NAVIGATING      frontier at (17.5, -12.5)
+  119.9 s  NAVIGATING      -> SELECTING       arrived
+  119.9 s  SELECTING       -> NAVIGATING      frontier at (12.5, -25.5)
+  124.9 s  NAVIGATING      -> SELECTING       arrived
+  124.9 s  SELECTING       -> NAVIGATING      frontier at (1.5, -35.5)
+  129.9 s  NAVIGATING      -> SELECTING       arrived
+  129.9 s  SELECTING       -> NAVIGATING      frontier at (4.5, -49.5)
+  134.9 s  NAVIGATING      -> SELECTING       arrived
+  134.9 s  SELECTING       -> NAVIGATING      frontier at (-10.5, -54.5)
+  140.9 s  NAVIGATING      -> SELECTING       arrived
+  140.9 s  SELECTING       -> NAVIGATING      frontier at (-26.5, -54.5)
+  146.9 s  NAVIGATING      -> SELECTING       arrived
+  146.9 s  SELECTING       -> NAVIGATING      frontier at (-37.5, -44.5)
+  151.9 s  NAVIGATING      -> SELECTING       arrived
+  151.9 s  SELECTING       -> NAVIGATING      frontier at (-51.5, -45.5)
+  156.9 s  NAVIGATING      -> SELECTING       arrived
+  156.9 s  SELECTING       -> NAVIGATING      frontier at (-55.5, -29.5)
+  162.9 s  NAVIGATING      -> SELECTING       arrived
+  162.9 s  SELECTING       -> NAVIGATING      frontier at (-55.5, -13.5)
+  168.9 s  NAVIGATING      -> EMERGENCY       budget depleted
+  185.3 s  EMERGENCY       -> LANDED          emergency landing
+
+== paths sent
+   12.9 s  path   1: 1 legs,  16.3 m, to N  +12.5 E  +11.5
+   18.9 s  path   2: 1 legs,  14.1 m, to N  +14.5 E  +25.5
+   23.9 s  path   3: 1 legs,  15.6 m, to N   +3.5 E  +36.5
+   29.0 s  path   4: 1 legs,  14.0 m, to N   +3.5 E  +50.5
+   33.9 s  path   5: 1 legs,  15.5 m, to N  +18.5 E  +54.5
+   38.9 s  path   6: 1 legs,  14.1 m, to N  +28.5 E  +44.5
+   43.9 s  path   7: 1 legs,  15.0 m, to N  +43.5 E  +45.5
+   48.9 s  path   8: 1 legs,  14.2 m, to N  +54.5 E  +54.5
+   53.9 s  path   9: 1 legs,  19.1 m, to N  +56.5 E  +35.5
+   59.9 s  path  10: 1 legs,  14.9 m, to N  +45.5 E  +25.5
+   64.9 s  path  11: 1 legs,  13.0 m, to N  +46.5 E  +12.5
+   69.9 s  path  12: 1 legs,  15.1 m, to N  +44.5 E   -2.5
+   74.9 s  path  13: 1 legs,  14.9 m, to N  +34.5 E  -13.5
+   79.9 s  path  14: 1 legs,  14.0 m, to N  +34.5 E  -27.5
+   84.9 s  path  15: 1 legs,  14.0 m, to N  +35.5 E  -41.5
+   89.9 s  path  16: 1 legs,  14.9 m, to N  +45.5 E  -52.5
+   94.9 s  path  17: 1 legs,  17.0 m, to N  +53.5 E  -37.5
+  100.9 s  path  18: 2 legs,  22.4 m, to N  +54.5 E  -15.5
+  109.9 s  path  19: 1 legs,  37.1 m, to N  +17.5 E  -12.5
+  119.9 s  path  20: 1 legs,  13.9 m, to N  +12.5 E  -25.5
+  124.9 s  path  21: 1 legs,  14.9 m, to N   +1.5 E  -35.5
+  129.9 s  path  22: 1 legs,  14.3 m, to N   +4.5 E  -49.5
+  134.9 s  path  23: 1 legs,  15.8 m, to N  -10.5 E  -54.5
+  140.9 s  path  24: 1 legs,  16.0 m, to N  -26.5 E  -54.5
+  146.9 s  path  25: 1 legs,  14.9 m, to N  -37.5 E  -44.5
+  152.0 s  path  26: 1 legs,  14.0 m, to N  -51.5 E  -45.5
+  157.0 s  path  27: 1 legs,  16.5 m, to N  -55.5 E  -29.5
+  163.0 s  path  28: 1 legs,  16.0 m, to N  -55.5 E  -13.5
+
+== emergency_landing: 1
+  168.9 s  {'reason': 'budget depleted', 'exception': 'I5, landing outside the registry'}
+
+== invariant: 40
+  129.9 s  {'margin_j': -273.27879558921086, 'zone_id': 1, 'remaining_j': 11245.484378486646, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+  130.9 s  {'margin_j': -630.2136962671666, 'zone_id': 1, 'remaining_j': 10945.255395800057, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+  131.9 s  {'margin_j': -1157.6280822596582, 'zone_id': 1, 'remaining_j': 10646.748902254454, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+  132.9 s  {'margin_j': -1730.319371772136, 'zone_id': 1, 'remaining_j': 10360.471588138658, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+  133.9 s  {'margin_j': -2202.2667977625497, 'zone_id': 1, 'remaining_j': 10062.40845578644, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+  134.9 s  {'margin_j': -2557.599358223076, 'zone_id': 1, 'remaining_j': 9763.61876612166, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+  135.9 s  {'margin_j': -2691.2949965426433, 'zone_id': 1, 'remaining_j': 9466.28775280642, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+  136.9 s  {'margin_j': -3098.2845998679213, 'zone_id': 1, 'remaining_j': 9167.651688132079, 'reserve_j': 4800.0, 'violated': True, 'retired': []}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF           14400      0         0     48.0     nan         0
+   16.8 NAVIGATING        12695   1705        16     44.6    34.5         1
+   32.8 NAVIGATING        11158   3242        24     39.9    27.8         1
+   47.8 NAVIGATING        10100   4300        25     35.4    22.6         1
+   63.8 NAVIGATING         9570   4830        21     30.7    18.4         1
+   79.8 NAVIGATING         8163   6237        20     26.0    14.6         1
+   94.8 NAVIGATING         6863   7537        20     21.5     7.1         1
+  110.8 NAVIGATING         6737   7663        17     16.8     4.2         1
+  126.8 NAVIGATING         6137   8263        17     12.1     0.9         1
+  141.8 NAVIGATING         5117   9283        17      7.7    -4.8         1
+  157.8 NAVIGATING         3982  10418        19      3.0   -12.0         1
+  172.8 EMERGENCY          3299  11101        22     -1.3   -16.4         1
+  188.8 LANDED             3270  11130        22     -4.0   -16.4         1
+
+== result
+duration 188 s, coverage 77.3 % of the area, unknown left 3270 cells
+energy consumed 52.0 kJ, left -4.0 kJ
+I1 margin min -16.43 kJ, violations 40
+end: EMERGENCY, budget depleted
+final position N -55.5 E -13.6 D -0.8
+  confirmed zone 1: touchdown (0.0, 0.0), home, 57.2 m from the final position
+cycle time median 107 ms, max 286 ms over 189 cycles

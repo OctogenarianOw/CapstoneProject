@@ -1,0 +1,71 @@
+mission 2026-10-23_20-13-07: mode explore, policy gain, alpha 0.5, reserve 0.1, git affad8d
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.8 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   12.9 s  BOOTSTRAP       -> SELECTING       first maps in
+   12.9 s  SELECTING       -> NAVIGATING      frontier at (3.5, -17.5)
+   18.9 s  NAVIGATING      -> SELECTING       arrived
+   18.9 s  SELECTING       -> NAVIGATING      frontier at (4.5, -34.5)
+   24.9 s  NAVIGATING      -> SELECTING       arrived
+   24.9 s  SELECTING       -> NAVIGATING      frontier at (13.5, 11.5)
+   36.9 s  NAVIGATING      -> SELECTING       arrived
+   36.9 s  SELECTING       -> NAVIGATING      frontier at (-16.5, 5.5)
+   44.9 s  NAVIGATING      -> SELECTING       arrived
+   44.9 s  SELECTING       -> NAVIGATING      frontier at (-31.5, -1.5)
+   50.9 s  NAVIGATING      -> SELECTING       arrived
+   50.9 s  SELECTING       -> NAVIGATING      frontier at (-35.5, -17.5)
+   56.9 s  NAVIGATING      -> SELECTING       arrived
+   56.9 s  SELECTING       -> NAVIGATING      frontier at (24.5, 23.5)
+   73.9 s  NAVIGATING      -> SELECTING       arrived
+   73.9 s  SELECTING       -> NAVIGATING      frontier at (41.5, 25.5)
+   79.9 s  NAVIGATING      -> SELECTING       arrived
+   79.9 s  SELECTING       -> NAVIGATING      frontier at (19.5, -41.5)
+  100.9 s  NAVIGATING      -> SELECTING       arrived
+  100.9 s  SELECTING       -> NAVIGATING      frontier at (-35.5, -33.5)
+  118.9 s  NAVIGATING      -> SELECTING       arrived
+  118.9 s  SELECTING       -> NAVIGATING      frontier at (-42.5, 10.5)
+  120.9 s  NAVIGATING      -> RETURNING       B1 battery threshold
+  130.9 s  RETURNING       -> COMMIT_LANDING  over zone 2, budget
+  145.4 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   12.9 s  path   1: 1 legs,  17.3 m, to N   +3.5 E  -17.5
+   18.9 s  path   2: 1 legs,  17.0 m, to N   +4.5 E  -34.5
+   24.9 s  path   3: 1 legs,  46.9 m, to N  +13.5 E  +11.5
+   37.0 s  path   4: 1 legs,  30.6 m, to N  -16.5 E   +5.5
+   45.0 s  path   5: 1 legs,  16.6 m, to N  -31.5 E   -1.5
+   51.0 s  path   6: 1 legs,  16.5 m, to N  -35.5 E  -17.5
+   57.0 s  path   7: 1 legs,  72.7 m, to N  +24.5 E  +23.5
+   74.0 s  path   8: 1 legs,  17.1 m, to N  +41.5 E  +25.5
+   80.0 s  path   9: 3 legs,  71.7 m, to N  +19.5 E  -41.5
+  101.0 s  path  10: 3 legs,  62.5 m, to N  -35.5 E  -33.5
+  119.0 s  path  11: 1 legs,  44.6 m, to N  -42.5 E  +10.5
+  120.9 s  path  12: 1 legs,  40.6 m, to N   -4.5 E   -4.5
+
+== return: 1
+  120.9 s  {'zone_id': 2, 'reason': 'B1 battery threshold', 'length_m': 40.607881008493905, 'energy_j': 2861.4212755450353}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF           14400      0         0     48.0     nan         0
+   15.8 NAVIGATING        12907   1493        14     44.9    35.1         1
+   30.8 NAVIGATING        11712   2688        22     40.5    30.8         2
+   45.8 NAVIGATING        10439   3961        28     36.1    26.0         2
+   61.8 NAVIGATING         9179   5221        30     31.5    21.2         2
+   77.8 NAVIGATING         8081   6319        39     26.9    15.3         2
+   92.8 NAVIGATING         7217   7183        39     22.5    11.7         2
+  108.8 NAVIGATING         6574   7826        37     17.8     6.9         2
+  124.8 RETURNING          6058   8342        40     13.0     1.9         2
+  140.8 COMMIT_LANDING     6058   8342        40      8.4     2.2         2
+  150.8 LANDED             6058   8342        40      8.0     2.2         2
+
+== result
+duration 150 s, coverage 57.9 % of the area, unknown left 6058 cells
+energy consumed 40.0 kJ, left 8.0 kJ
+I1 margin min 1.88 kJ, violations 0
+end: COMMIT_LANDING, over zone 2, budget
+final position N -4.5 E -4.6 D -0.0
+  confirmed zone 1: touchdown (-0.0, -0.0), home, 6.4 m from the final position
+  confirmed zone 2: touchdown (-0.5, 0.5), 138 m2, 6.5 m from the final position
+cycle time median 94 ms, max 329 ms over 151 cycles

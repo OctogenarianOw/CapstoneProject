@@ -1,0 +1,41 @@
+date 2026-10-23T21:21:01+11:00
+duration 900
+px4 parameters reset to the airframe defaults
+world w2
+run map=ros2 run uav_core cloud_world --ros-args -p grid_size:=200.0
+run mon=ros2 run uav_core energy_monitor --ros-args -p capacity_j:=48000.0
+run exe=ros2 run uav_core trajectory_executor
+run mgr=ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=0.0 -p area_half_m:=60.0 -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-23_campaign_w2_final/runs/.B3a000_r10.tmp/missions
+run clock=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+run watch=sleep 20; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 4; touch stop
+git affad8dd4540c3f729407ac694940b4e215c86f6
+ M docs/prompt-maitre-projet-uav.md
+ M experiments/2026-10-23_campaign_w3_final/README.md
+?? experiments/2026-10-22_campaign_w3/figures/
+?? experiments/2026-10-23_campaign_w1_final/
+?? experiments/2026-10-23_campaign_w2_final/campaign.log
+?? experiments/2026-10-23_campaign_w2_final/chain.log
+?? experiments/2026-10-23_campaign_w2_final/figures.py
+?? experiments/2026-10-23_campaign_w2_final/runs/
+?? experiments/2026-10-23_campaign_w3_final/campaign.done
+?? experiments/2026-10-23_campaign_w3_final/campaign.log
+?? experiments/2026-10-23_campaign_w3_final/chain.log
+?? experiments/2026-10-23_campaign_w3_final/demotions.txt
+?? experiments/2026-10-23_campaign_w3_final/figures.py
+?? experiments/2026-10-23_campaign_w3_final/figures/
+?? experiments/2026-10-23_campaign_w3_final/gate_f_tests.txt
+?? experiments/2026-10-23_campaign_w3_final/margin_check.txt
+?? experiments/2026-10-23_campaign_w3_final/missions.csv
+?? experiments/2026-10-23_campaign_w3_final/runs/
+?? experiments/2026-10-23_campaign_w3_final/s95_natural.txt
+?? experiments/2026-10-23_campaign_w3_final/scan_time.txt
+?? experiments/2026-10-23_campaign_w3_final/summary.txt
+?? experiments/2026-10-23_campaign_w3_final/switch_check.txt
+?? experiments/2026-10-23_s95_depot/
+?? experiments/campaign_w3.done
+?? experiments/evening2.done
+?? experiments/evening3.done
+?? experiments/evening4.done
+?? experiments/final_chain_2026-10-23.log
+?? experiments/night.done
+?? experiments/night_chain_2026-10-23.sh
