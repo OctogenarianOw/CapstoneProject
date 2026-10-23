@@ -64,6 +64,30 @@ over 95 % of its scans at the scan time (`scan_time.py`), or is flagged.
     python3 demotions.py > demotions.txt
     python3 scan_time.py > scan_time.txt
 
-## Results
+## Results: stopped after round 2, a defect of the return switch
 
-To be filled after the flights.
+14 missions (rounds 1 and 2, every configuration), 10:35 to 11:40, all
+at the first attempt, 0 clock steps; the 15th (B0_r03) was stopped in
+flight (`failed/B0_r03_stopped`). Stopped with Dorian's agreement once
+the defect below was measured: flying 5 more hours on code known to be
+wrong would measure nothing worth keeping. Not a gate E or F result;
+the campaign is flown again, in full, on the corrected code.
+
+**The defect** (`switch_check.py`, `switch_check.txt`). 3 of the 10 C1
+missions switched their return to a cheaper zone, and in all 3 the zone
+switched to was lost within 1 to 2 s; it had been confirmed in the very
+cycle of the switch (age 0 s, 4 switches of the campaign). B3a075_r01:
+return to zone 3 with +640 J at 224 s; switch to zone 31, confirmed at
+228 s and 1656 J cheaper; zone 31 lost at 230 s (`1 pass, 2 needed`),
+back to zone 3 with -53 J; zone 31 confirmed again at 233 s, switch
+again; lost at 234 s; 11 violating cycles, landed 0.67 kJ into the
+reserve. B3a100_r02: one violating cycle after a switch. The 10 flights
+of `2026-10-23_return_switch_flights` switched to zones confirmed 191 s
+and 3 s before, which held. A switch costs a stop and a restart when
+its zone is lost, and C1 returns with a small margin by design: the
+switch rule must not take a switch whose loss would break I1.
+
+**The other changes, checked on these 14 missions:** 100 % of the scans
+at the scan time in every mission (`scan_time.txt`, P5 fix active
+through /clock); the leg charged at the commit is 0 J in every mission
+(`margin_check.txt`, I1 commit fix).
