@@ -1,0 +1,42 @@
+mission 2026-10-24_10-08-21: mode explore, policy c1_c2, alpha 0.0, reserve 0.1, git 5be8801
+
+== states
+    0.1 s  INIT            -> TAKEOFF         pose, energy and executor ready
+   11.8 s  TAKEOFF         -> BOOTSTRAP       at altitude
+   13.8 s  BOOTSTRAP       -> SELECTING       first maps in
+   13.8 s  SELECTING       -> NAVIGATING      frontier at (-3.5, -16.5)
+   19.8 s  NAVIGATING      -> SELECTING       arrived
+   19.8 s  SELECTING       -> NAVIGATING      frontier at (12.5, -15.5)
+   25.8 s  NAVIGATING      -> SELECTING       arrived
+   25.8 s  SELECTING       -> NAVIGATING      frontier at (20.5, -1.5)
+   31.8 s  NAVIGATING      -> SELECTING       arrived
+   31.8 s  SELECTING       -> RETURNING       none_admissible
+   35.8 s  RETURNING       -> COMMIT_LANDING  over zone 2, budget
+   50.3 s  COMMIT_LANDING  -> LANDED          budget
+
+== paths sent
+   13.8 s  path   1: 1 legs,  16.3 m, to N   -3.5 E  -16.5
+   19.8 s  path   2: 1 legs,  16.0 m, to N  +12.5 E  -15.5
+   25.9 s  path   3: 1 legs,  16.1 m, to N  +20.5 E   -1.5
+   31.9 s  path   4: 1 legs,  10.0 m, to N  +10.5 E   -1.5
+
+== return: 1
+   31.8 s  {'zone_id': 2, 'reason': 'none_admissible', 'length_m': 10.0, 'energy_j': 1125.121888}
+
+== coverage and energy over time
+    t s state           unknown   seen frontiers  left kJ   I1 kJ confirmed
+    0.8 TAKEOFF            3600      0         0     16.0     nan         0
+   16.8 NAVIGATING         2118   1482        14     12.6     5.9         1
+   32.8 RETURNING          1249   2351        12      7.9     1.3         2
+   48.8 COMMIT_LANDING     1231   2369        12      3.8     1.4         2
+   54.8 LANDED             1231   2369        12      3.8     1.4         2
+
+== result
+duration 54 s, coverage 65.8 % of the area, unknown left 1231 cells
+energy consumed 12.2 kJ, left 3.8 kJ
+I1 margin min 1.15 kJ, violations 0
+end: COMMIT_LANDING, over zone 2, budget
+final position N +10.9 E -1.4 D +0.0
+  confirmed zone 1: touchdown (0.0, 0.0), home, 11.0 m from the final position
+  confirmed zone 2: touchdown (-3.5, 0.5), 1677 m2, 14.5 m from the final position
+cycle time median 21 ms, max 38 ms over 55 cycles

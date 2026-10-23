@@ -57,6 +57,56 @@ time; commit leg 0 J; no I1 violation within 15 s after a switch.
     python3 scan_time.py > scan_time.txt
     python3 switch_check.py > switch_check.txt
 
-## Results
+## Results, N = 10
 
-To be filled after the flights.
+70 missions, git 5be8801, 24 Oct 08:41 to 10:25, 70 of 70 at the first
+attempt, 0 technical failures, 0 PX4 failsafes, 0 clock steps.
+`summary.txt`, `gate_f_tests.txt`, `missions.csv`, the check files,
+figures in `figures/` (`figures.py`).
+
+### Safety (gate E on W1)
+
+| config | missions with an I1 violation | reserve used, median | emergency landings | landed on ground landable by design |
+|---|---|---|---|---|
+| B0 | 10/10 (median 24 cycles) | 5.77 kJ | 10 | 5 |
+| B1 | 10/10 (median 6 cycles) | 1.08 kJ | 0 | 10 |
+| B3, every alpha | **0/50** | 0 | 0 | 50 |
+
+**Gate E holds on W1 on the final code**: 0 of 50 C1 missions violate
+I1, none uses its reserve, every one lands on flat or gently sloped
+ground with 3.1 to 3.9 kJ left (medians). Against both baselines,
+violations p = 0.0001 or less, r -1.00. B1 fails in every mission at
+16 kJ (6 of 10 on 20 Oct): its 30 % threshold leaves less than the
+return, the landing and the reserve, and it lands 1.08 kJ into its
+reserve each time. It also covers more (0.89 against 0.69 at alpha
+0.5): the coverage B1 gains is the energy it takes from its reserve.
+
+### Coverage and alpha (gate F on W1)
+
+| config | coverage OBSERVED | cells per kJ | minimum I1 margin |
+|---|---|---|---|
+| B0 | 0.87 [0.86, 0.88] | 157 | -7.25 kJ |
+| B1 | 0.89 [0.89, 0.90] | 216 | -1.86 kJ |
+| B3 alpha 0 | 0.65 [0.64, 0.66] | 204 | 1.48 kJ |
+| B3 alpha 0.25 | 0.67 [0.66, 0.67] | 203 | 1.31 kJ |
+| B3 alpha 0.5 | 0.69 [0.67, 0.71] | 207 | 1.25 kJ |
+| B3 alpha 0.75 | 0.77 [0.77, 0.78] | 233 | 1.18 kJ |
+| B3 alpha 1 | 0.76 [0.67, 0.77] | 221 | 0.67 kJ |
+
+**The W1 optimum holds on the final code.** Alpha 0.75 against the
+ends: coverage OBSERVED 0.77 against 0.65 at alpha 0 (p 0.0002, r
++1.00) and 0.76 at alpha 1 (p 0.0091, r +0.70); cells per kJ 233
+against 204 and 221 (p 0.0002, r +1.00 both). Monotone and
+interpretable: coverage seen rises with alpha (Spearman +0.62,
+p < 0.0001) and the minimum I1 margin falls with it (-0.36, p 0.01),
+the trade C2 is built to expose. On 20 Oct (`2026-10-20_gate_f_16kJ`)
+alpha 0.75 covered 81 % against 67 % at alpha 1; on the final code the
+pure-gain end comes much closer (0.76), with a wider spread.
+
+### The changes, checked on the 70 missions
+
+- P5: 100 % of the scans at the scan time in every mission.
+- I1 at the commit: 0 J of leg; 0 violating cycles in the C1 missions.
+- Return switch: no switch (W1 is small, its zones few).
+- S9.5 unprovoked: 0 registry shrinks in the C1 missions; 15 of the 54
+  targets had a guarantee resting on one zone.

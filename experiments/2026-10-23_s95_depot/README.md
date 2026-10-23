@@ -64,6 +64,26 @@ is the result.
     bash run.sh 30 4
     python3 analyse.py > results.txt     # ROS and the workspace sourced
 
-## Results
+## Results: no placement in 26 missions
 
-To be filled after the flights.
+26 missions at the first attempt, 21:38 to 23:38 on 23 Oct, 0 clock
+steps, git 5be8801 (`flights.log`, `results.txt`); the 27th was
+stopped in flight that night at Dorian's request, the fan disturbing
+him (`failed/B3a050_r14_stopped`), so the run ended at 26 of its 30.
+
+**The depot was never placed.** Over the 26 missions the trigger
+evaluated 696 frontier decisions; 12 relied on Z, none with Z in view
+(the planned path never came within 9 m of Z's centre). The decisions
+relying on Z were taken 18 to 104 m from it, and the transits that
+followed went away from it (`approach_measure.py`,
+`approach_measure.txt`, on these runs and the final W3 campaign: 67
+decisions relying on Z in 76 missions; a transit relying on Z came
+within 12 m of it in 5 of the 76, mostly in the return to Z itself).
+
+What it shows: on W3 a frontier transit relies on pad Z rarely and
+flies away from it when it does, so the critical case of S9.5 at a
+frontier transit is rare by geometry, as the energy band of
+`2026-10-22_w3_design` predicted, not something a trigger can wait
+for in a session. The deliberate test moves to the transit that always
+relies on its zone and flies to it, the return
+(`2026-10-24_s95_return`).
