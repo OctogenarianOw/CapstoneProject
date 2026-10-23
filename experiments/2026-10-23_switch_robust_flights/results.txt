@@ -1,0 +1,32 @@
+
+== before, 2026-10-23_campaign_w3 rounds 1 and 2: 10 missions
+mission     returns switches  ratio above R kJ viol after sw end             severe  savings J
+B3a000_r01        1        0   1.14      10.87    0        0 COMMIT_LANDING   False  []
+B3a000_r02        1        0   1.14       8.39    0        0 COMMIT_LANDING   False  []
+B3a025_r01        1        0   1.08       2.13    0        0 COMMIT_LANDING   False  []
+B3a025_r02        1        0   1.14       1.75    0        0 COMMIT_LANDING   False  []
+B3a050_r01        1        0   1.50       2.21    0        0 COMMIT_LANDING   False  []
+B3a050_r02        1        0   1.30       1.70    0        0 COMMIT_LANDING   False  []
+B3a075_r01        5        2   1.56      -0.67   11       11 COMMIT_LANDING   False  [1656, 641]
+B3a075_r02        3        1   1.24       1.37    0        0 COMMIT_LANDING   False  [1999]
+B3a100_r01        1        0   1.17      30.49    0        0 COMMIT_LANDING   False  []
+B3a100_r02        3        1   1.36       0.41    1        1 COMMIT_LANDING   False  [750]
+
+== after, robust return switch: 10 missions
+mission     returns switches  ratio above R kJ viol after sw end             severe  savings J
+B3a000_r1         1        0   1.07       3.16    0        0 COMMIT_LANDING   False  []
+B3a000_r2         1        0   1.06       2.28    0        0 COMMIT_LANDING   False  []
+B3a025_r1         1        0   1.07       1.82    0        0 COMMIT_LANDING   False  []
+B3a025_r2         2        1   0.46      11.52    0        0 COMMIT_LANDING   False  [2814]
+B3a050_r1         1        0   1.06       2.30    0        0 COMMIT_LANDING   False  []
+B3a050_r2         2        0   1.39       1.73    0        0 COMMIT_LANDING   False  []
+B3a075_r1         1        0   1.09       2.61    0        0 COMMIT_LANDING   False  []
+B3a075_r2         1        0   1.07       3.22    0        0 COMMIT_LANDING   False  []
+B3a100_r1         1        0   1.01      24.84    0        0 COMMIT_LANDING   False  []
+B3a100_r2         1        0   1.05       2.12    0        0 COMMIT_LANDING   False  []
+
+before: switches 4 in 3 missions, refused 0; return ratio median 1.21 (min 1.08, max 1.56); in the missions with a switch [1.56, 1.24, 1.36]
+before: above the reserve median 1.94 kJ, reserve used in 1; missions with an I1 violation 2, violations within 15 s after a switch 12; emergencies 0, severe landings 0
+
+after: switches 1 in 1 missions, refused 0; return ratio median 1.06 (min 0.46, max 1.39); in the missions with a switch [0.46]
+after: above the reserve median 2.46 kJ, reserve used in 0; missions with an I1 violation 0, violations within 15 s after a switch 0; emergencies 0, severe landings 0

@@ -59,4 +59,33 @@ same criterion.
 
 ## Results
 
-To be filled after the flights.
+10 missions at the first attempt, 11:45 to 12:31, 0 PX4 failsafes,
+0 clock steps (`flights.log`, `results.txt`).
+
+| | before (stopped campaign, 10) | after (10) | criterion |
+|---|---|---|---|
+| landings on a severe cell | 0 | 0 | 0: met |
+| emergencies | 0 | 0 | 0: met |
+| landings as a commit over a registry zone | 10/10 | 10/10 | all: met |
+| I1 violations within 15 s after a switch | 12 (2 missions) | 0 | 0: met |
+| missions using the reserve | 1 | 0 | 0: met |
+| switches, refused | 4 in 3 missions, 0 refused | 1, 0 refused | at least one: met |
+| missions with an I1 violation | 2 | 0 | reported |
+| energy above the reserve once landed, median | 1.94 kJ | 2.46 kJ | reported |
+
+**Every item holds: merged** (rule above).
+
+The one switch, B3a025_r2: the return left at 193 s for zone 29, 70 m
+away (coverage complete, 4.5 kJ planned); at 196 s zone 41, 11 m away,
+was confirmed and 2814 J cheaper. It had been confirmed in that very
+cycle, as the zones lost in the stopped campaign were, but the budget
+above the reserve covered going to it and, should it be lost, on to
+zone 29: the switch kept I1 whatever happened, and was taken. Zone 41
+held; the return used 0.46 of the energy planned for the first one,
+and the aircraft landed 11.5 kJ above the reserve.
+
+What this does not show: no switch was refused in these 10 missions.
+The case the condition exists for, a fresh zone and a small margin, is
+covered by its unit test (`test_switch_refused_if_its_loss_breaks_i1`)
+and will be counted in the campaigns (`switch_refused` events,
+`switch_check.py`), not demonstrated here.
