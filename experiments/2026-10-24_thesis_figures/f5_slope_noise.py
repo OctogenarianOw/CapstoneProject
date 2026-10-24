@@ -122,8 +122,7 @@ def main():
     ax.text(p01 + 0.15, top * 0.70, f'10 deg ramp p01 {p01:.2f} deg',
             color=INK2, fontsize=7, va='top')
     ax.text(CLIP - 0.2, top * 0.30, f'over {CLIP:.0f} deg, drawn at '
-            f'{CLIP:.0f}: flat {tail:.1f} %, 10 deg ramp {tail10:.1f} %
-'
+            f'{CLIP:.0f}: flat {tail:.1f} %, 10 deg ramp {tail10:.1f} %\n'
             f'(cells at zone edges and next to the cube)', color=MUTED,
             fontsize=7, ha='right')
     ax.set_xlim(0, CLIP)
