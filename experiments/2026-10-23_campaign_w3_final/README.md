@@ -121,6 +121,65 @@ missions with an I1 violation 2/25 to 0/50, reserve used once to never.
   on 22 Oct), 43 of them within 10 s of the confirmation; 26 shrunk,
   14 fragmented, 9 split. Still there; now absorbed by the robust
   switch and the S9.5 reaction, still a cost (returns sent back).
+  Cause reconstructed below.
+
+### Why confirmed zones are demoted (`demotion_cause.py`, 24 Oct)
+
+The registry cannot be replayed cycle by cycle (the map is saved every
+10 s), but what a landing cell depends on can be rebuilt: the passes
+per cell exactly (the PassGrid fed every logged vehicle position), and
+the landable cells on the two map snapshots around each demotion, run
+through the perception code that flew. Passes per cell only grow, so a
+landing cell can only be lost to a split or because a cell within two
+footprints of it went from accepted to refused.
+
+Of the 49 demotions, 24 cannot be examined (the snapshot before
+predates the confirmation, which came and went between two snapshots);
+of the 25 that can, 21 show newly refused cells and 4 no loss (the
+zone was back by the snapshot after). The 637 newly refused cells:
+
+| | measured |
+|---|---|
+| test they fail | roughness in 609 (alone in 421), step in 188, slope in 82 |
+| their map roughness, before -> after | 0.013 -> 0.066 m (threshold 0.05 m), medians |
+| their map step, before -> after | 0.046 -> 0.201 m |
+| their own variance | unchanged (x 1.00) |
+| new observations in their 3 x 3 window | x 1.24; largest height change of a neighbour 0.19 m |
+| truth roughness under them | 0.000 m; over 0.05 m in 4 of 637 |
+| distance to the nearest truth obstacle | 3.0 m median; within 3 m for 319 |
+| on the zone's border / inside | 310 / 327 |
+| aircraft at the snapshot after | 26 m away, median |
+
+**Most probable cause: a perception artefact next to obstacles, P2 seen
+from an oblique angle.** The refused cells are flat in the truth (4 of
+637 are really rough): the refusals are false, not a change of the
+terrain. They sit about 3 m from a building, a tree, a car or a rock.
+Between the two snapshots their 3 x 3 window received new points and a
+neighbouring cell moved by about 0.2 m, while the cell itself did not
+change. A cell keeps one height (one Gaussian, P2): points from the
+side or the top of the nearby obstacle, seen obliquely as the aircraft
+flies past or away, fall into the cells at its foot and lift them. The
+roughness of the cells next to them, computed over 3 x 3 windows,
+jumps over 0.05 m, they are refused, the footprint test breaks around
+them, and the few cells of the zone passed twice (1 to 30 m2 in 17 of
+20 on 22 Oct) lose their footprint. Later views from above pull the
+heights back, which is why the zone often comes back within seconds
+(12 of 20 on 22 Oct within 10 s), and why the demotions cluster in the
+10 s after the confirmation, when the aircraft that made the second
+pass flies on and sees the zone's edges at an angle.
+
+It also explains the worlds: 49 demotions in 70 missions on W3, whose
+zones lie between buildings, trees and cars; 2 in 70 on W2, whose pads
+lie in an open slope field; 1 in 70 on W1, whose only raised
+objects are a cube and two ramps. Measured: the failed tests, the
+truth under the cells, their distance to obstacles, the new
+observations around them. Inferred, not observed: the oblique points
+from the obstacle as the source of the height change, since the point
+cloud is not logged. The effect on safety is conservative (good ground
+refused, never bad ground accepted); its cost is the demotions and the
+returns they send back. Candidate remedies, none applied: weighting or
+gating returns by incidence angle near steps, or a robust roughness
+(median of absolute residuals) less sensitive to one lifted neighbour.
 
 ### Coverage and alpha (gate F on W3)
 
