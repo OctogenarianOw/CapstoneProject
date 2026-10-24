@@ -3,12 +3,12 @@
 # fixed before the flights). The protocol of 2026-10-23_s95_depot/run.sh
 # (W3, 80 kJ, reserve 10 %, fresh PX4 world and reset parameters for
 # every mission, the WSL clock checked and watched), C1 + C2 at alpha
-# 0.5 and 0.75 in turn, with one process more: the return trigger
-# (return_depot.py), which follows the mission log and, at the start of
-# the return, places a field of crates over its target zone if that
-# zone is small enough to be covered whole and the return long enough
-# for the crates to be seen before the arrival. It acts on the Gazebo
-# world only and sends nothing to the aircraft or the manager.
+# 1 (v2; 0.5 and 0.75 in v1), with one process more: the return trigger
+# (return_depot.py, version 2), which follows the mission log and,
+# 35 to 20 m before the current target of a return, places a field of
+# crates over it if that zone is small enough to be covered whole and
+# clear of the take-off point. It acts on the Gazebo world only and
+# sends nothing to the aircraft or the manager.
 # Missions are flown until WANT of them have had the field placed, or
 # MAX missions in all. A placement that Gazebo refuses stops the run:
 # flying on would measure nothing.
@@ -19,7 +19,7 @@ MAX=${1:-30}
 WANT=${2:-4}
 CAP=80000.0
 WATCH="python3 $EXP/2026-10-22_p5_stable_clock/clock_watch.py"
-CONFIGS=("B3a050 c1_c2 0.5" "B3a075 c1_c2 0.75")
+CONFIGS=("B3a100 c1_c2 1.0")
 mkdir -p "$HERE/runs" "$HERE/failed"
 
 placed() {  # number of missions where the depot was placed

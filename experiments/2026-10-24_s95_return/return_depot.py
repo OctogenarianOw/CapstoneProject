@@ -20,15 +20,25 @@ every C1 mission has one, the target is never the take-off point on W3
 (0 of 50), and it is the transit where the energy is lowest, the
 hardest case for the guarantee.
 
-Conditions, at the first 'return' event of the mission:
+Conditions (v2, 24 Oct 10:55), checked every cycle of a return, on its
+current target (the last 'return' event, so a switch to a cheaper zone
+moves the target):
   zone    the target is a confirmed, non-provisional zone of at most
-          MAX_AREA_M2, so that the field covers it whole
-  length  the planned return is at least MIN_LENGTH_M long, so that the
-          crates are seen before the arrival: once the landing is
-          committed the machine re-evaluates nothing (S15.2), and a
-          field placed under a committed landing would test that rule,
-          not S9.5. Assumed detection delay 2.5 s (22 Oct design); 20 m
-          leave about 4 s of flight
+          MAX_AREA_M2, so that the field covers it whole, and the field
+          would not cover the take-off point (TAKEOFF_CLEAR_M)
+  arm     the aircraft is within ARM_M of the target's touchdown point
+          and at least MIN_LENGTH_M from it, so that the crates are
+          placed on the zone it is about to reach and seen before the
+          arrival: once the landing is committed the machine
+          re-evaluates nothing (S15.2), and a field placed under a
+          committed landing would test that rule, not S9.5. Assumed
+          detection delay 2.5 s (22 Oct design); 20 m leave about 4 s
+Why v2 (runs_v1/, README.md): v1 fired once, at the start of the
+return, on the take-off yard; 3 s later the return switched to a
+cheaper zone and never saw the crates. And a field over the take-off
+point covers the provisional zone, which the system assumes free for
+the whole mission (S15.3) and no observation can retire: that is an
+assumption to declare, not what S9.5 tests.
 The field: crates of 2 x 2 x 2 m on a 3.5 m pitch over a 20 m square
 centred on the zone's touchdown point, at the height of the truth
 surface there (a zone may be a roof). The 1.5 m gaps hold no 1.5 m
@@ -40,6 +50,7 @@ footprint of 3 x 3 cells, so no landing cell survives under it.
 import argparse
 import glob
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -49,8 +60,9 @@ import numpy as np
 
 TRUTH = Path.home() / 'ros2_ws/droneAfter/worlds/w3_truth.npz'
 WORLD = 'w3'
-MAX_AREA_M2 = 200.0
+MAX_AREA_M2 = 250.0
 MIN_LENGTH_M = 20.0
+ARM_M = 35.0
 SIDE_M = 20.0
 CRATE_M = 2.0
 PITCH_M = 3.5
@@ -126,8 +138,9 @@ def main():
         log.write(json.dumps(rec) + '\n')
         log.flush()
 
-    write({'wall': time.time(), 'kind': 'start', 'max_area_m2': MAX_AREA_M2,
-           'min_length_m': MIN_LENGTH_M, 'side_m': SIDE_M})
+    write({'wall': time.time(), 'kind': 'start', 'version': 2,
+           'max_area_m2': MAX_AREA_M2, 'min_length_m': MIN_LENGTH_M,
+           'arm_m': ARM_M, 'side_m': SIDE_M})
     mdir = None
     while mdir is None:
         found = sorted(glob.glob(os.path.join(args.log_root, '*',
@@ -137,47 +150,66 @@ def main():
         else:
             time.sleep(0.5)
     cycles, oc, oe = [], 0, 0
-    decided = False
+    target = None          # the last 'return' event: the current target
+    fired = False
+    skipped = set()
     while True:
         new_c, oc = read_lines(os.path.join(mdir, 'cycles.jsonl'), oc)
         new_e, oe = read_lines(os.path.join(mdir, 'events.jsonl'), oe)
         cycles += new_c
         for e in new_e:
             if e.get('kind') == 'state' and e.get('new') == 'LANDED':
-                write({'wall': time.time(), 'kind': 'end'})
+                write({'wall': time.time(), 'kind': 'end', 'fired': fired})
                 return
-            if decided or e.get('kind') != 'return' or not cycles:
-                continue
-            decided = True
-            zone = next((z for z in cycles[-1]['zones']
-                         if z['id'] == e['zone_id']), None)
-            rec = {'wall': time.time(), 't': e['t'], 'zone_id': e['zone_id'],
-                   'reason': e['reason'], 'length_m': e['length_m'],
-                   'kind': 'decision'}
-            if zone is not None:
-                rec.update(touchdown_ne=zone['touchdown_ne'],
-                           area_m2=zone['area_m2'],
-                           landing_m2=zone['landing_m2'],
-                           provisional=zone['provisional'],
-                           state=zone['state'])
-            ok = (zone is not None and not zone['provisional']
-                  and zone['state'] == 'CONFIRMED'
-                  and zone['area_m2'] <= MAX_AREA_M2
-                  and e['length_m'] >= MIN_LENGTH_M)
-            if ok:
-                n, east = zone['touchdown_ne']
-                h = surface_height(n, east)
-                poses = crates(n, east, h)
-                path = os.path.join(os.path.dirname(os.path.abspath(
-                    args.out)), 'return_depot.sdf')
-                with open(path, 'w') as fh:
-                    fh.write(field_sdf(poses))
-                rec.update(kind='fire', height_m=h, crates=len(poses),
-                           side_m=SIDE_M, spawned=spawn(path),
-                           spawn_wall=time.time())
-            write(rec)
-        time.sleep(0.1)
-
+            if e.get('kind') == 'return':
+                target = e
+                write({'wall': time.time(), 't': e['t'], 'kind': 'target',
+                       'zone_id': e['zone_id'], 'reason': e['reason'],
+                       'length_m': e['length_m']})
+            if e.get('kind') == 'state' and e.get('new') in (
+                    'COMMIT_LANDING', 'EMERGENCY'):
+                target = None      # nothing is re-evaluated after it
+        if fired or target is None or not new_c:
+            time.sleep(0.1)
+            continue
+        c = cycles[-1]
+        zone = next((z for z in c['zones']
+                     if z['id'] == target['zone_id']), None)
+        if c['state'] != 'RETURNING' or zone is None:
+            time.sleep(0.1)
+            continue
+        n, east = zone['touchdown_ne']
+        d = math.dist(c['vehicle_ned'][:2], (n, east))
+        half = SIDE_M / 2.0 + 1.0
+        covers_takeoff = abs(n) <= half and abs(east) <= half
+        eligible = (not zone['provisional'] and zone['state'] == 'CONFIRMED'
+                    and zone['area_m2'] <= MAX_AREA_M2 and not covers_takeoff)
+        if not eligible:
+            if target['zone_id'] not in skipped:
+                skipped.add(target['zone_id'])
+                write({'wall': time.time(), 't': c['t'], 'kind': 'skip',
+                       'zone_id': target['zone_id'],
+                       'area_m2': zone['area_m2'],
+                       'provisional': zone['provisional'],
+                       'covers_takeoff': covers_takeoff})
+            time.sleep(0.1)
+            continue
+        if not MIN_LENGTH_M <= d <= ARM_M:
+            time.sleep(0.1)
+            continue
+        h = surface_height(n, east)
+        poses = crates(n, east, h)
+        path = os.path.join(os.path.dirname(os.path.abspath(args.out)),
+                            'return_depot.sdf')
+        with open(path, 'w') as fh:
+            fh.write(field_sdf(poses))
+        fired = True
+        write({'wall': time.time(), 't': c['t'], 'kind': 'fire',
+               'zone_id': target['zone_id'], 'reason': target['reason'],
+               'length_m': d, 'touchdown_ne': [n, east],
+               'area_m2': zone['area_m2'], 'landing_m2': zone['landing_m2'],
+               'height_m': h, 'crates': len(poses), 'side_m': SIDE_M,
+               'spawned': spawn(path), 'spawn_wall': time.time()})
 
 if __name__ == '__main__':
     main()

@@ -85,8 +85,8 @@ def main():
         events = load(m / 'events.jsonl')
         cycles = load(m / 'cycles.jsonl')
         z, t0 = fire['zone_id'], fire['t']
-        print(f'\n== {run.name}: return at {t0:.1f} s to zone {z}, '
-              f'{fire["length_m"]:.0f} m, zone {fire["area_m2"]:.0f} m2, '
+        print(f'\n== {run.name}: field placed at {t0:.1f} s on zone {z}, '
+              f'{fire["length_m"]:.0f} m ahead, zone {fire["area_m2"]:.0f} m2, '
               f'field at {fire["height_m"]:.1f} m ({fire["reason"]})')
         lost = next((e for e in events if e['kind'] == 'zone'
                      and e['zone_id'] == z and e['old'] == 'CONFIRMED'
@@ -112,7 +112,7 @@ def main():
         half = fire['side_m'] / 2.0
         in_field = abs(v[0] - cn) <= half and abs(v[1] - ce) <= half
         print(f'   Z left CONFIRMED at {lost["t"]:.1f} s '
-              f'({lost["t"] - t0:.1f} s after the return began): '
+              f'({lost["t"] - t0:.1f} s after the placement): '
               f'{lost["new"]}, {lost["reason"]}')
         branch_ok = False
         if inv is not None:

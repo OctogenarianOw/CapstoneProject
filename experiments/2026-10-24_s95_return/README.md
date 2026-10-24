@@ -25,29 +25,49 @@ guarantee, and the one where the campaigns met S9.5 unprovoked (8
 returns lost their target on W3, 0 violations). Decided on 24 Oct,
 within the go Dorian gave that morning to carry on.
 
-## The trigger (`return_depot.py`)
+## The trigger (`return_depot.py`, version 2)
 
-At the first return of the mission, if its target is a confirmed,
-non-provisional zone of at most 200 m2 and the planned return is at
-least 20 m long, a field of 36 crates (2 x 2 x 2 m, 3.5 m pitch, a
-20 m square) is placed over the zone's touchdown point, at the height
-of the truth surface there (a zone may be a roof). The 1.5 m gaps hold
-no 1.5 m footprint. Why 20 m: once the landing is committed nothing is
+During a return, on its current target (a switch to a cheaper zone
+moves it), once the aircraft is within 35 m of the target's touchdown
+point and still at least 20 m from it: if the target is a confirmed,
+non-provisional zone of at most 250 m2 whose field would not cover the
+take-off point, a field of 36 crates (2 x 2 x 2 m, 3.5 m pitch, a 20 m
+square) is placed over the touchdown point, at the height of the truth
+surface there (a zone may be a roof). The 1.5 m gaps hold no 1.5 m
+footprint. Why at least 20 m: once the landing is committed nothing is
 re-evaluated (S15.2); a field placed under a committed landing would
 test that rule, not S9.5, and 20 m leave about 4 s of flight against
-the 2.5 s of detection assumed in the design. Like the depot trigger
-it reads the mission log and acts on the Gazebo world only.
+the 2.5 s of detection assumed in the design. Like the depot trigger it
+reads the mission log and acts on the Gazebo world only.
+
+**Version 1, flown first** (`runs_v1/`, `flights_v1.log`, 5 missions,
+10:27 to 10:51): it placed the field at the start of the return, on the
+target of that moment, with zones of at most 200 m2. It fired once,
+B3a050_r03, on the take-off yard (zone 3); 3 s later the return switched
+to a zone 1446 J cheaper and never saw the crates, so Z was never lost.
+Two defects of the trigger, not of the system: it ignored the switch,
+and a field over the take-off yard covers the provisional take-off
+zone, which the system assumes free for the whole mission (S15.3) and
+no observation can retire; testing that assumption is not S9.5, and it
+is declared as a limitation instead. Stopped there, the sixth mission
+in flight (`failed/`).
+
+**Version 2 and the configuration, chosen on the logs before flying**:
+replaying the v2 trigger over the 50 C1 missions of the final W3
+campaign (the live code fed the logged lines), it fires in 3 missions
+at 200 m2 (6 %), and at 250 m2 in 2 of the 10 at alpha 1, 1 of 10 at
+0.5, 0 of 10 at 0.75. Alpha 1 explores farthest and returns to small
+far zones; flown alone. 250 m2 admits the flat roof (244 m2), which
+the field covers whole.
 
 ## Set-up
 
-`run.sh 16 5`: the protocol of `2026-10-23_s95_depot` (W3, 80 kJ,
+`run.sh 16 4`: the protocol of `2026-10-23_s95_depot` (W3, 80 kJ,
 reserve 10 %, fresh PX4 world and reset parameters per mission, clock
-checked and watched, C1 + C2 at alpha 0.5 and 0.75 in turn), the
-return trigger in place of the depot trigger; missions flown until the
-field has been placed in 5, or 16 missions (about 75 min, the time left
-on 24 Oct). On the final W3 logs about one return in three meets the
-two conditions. The code is dronePropre, its commit in each mission's
-config.json.
+checked and watched), C1 + C2 at alpha 1, the return trigger version 2;
+missions flown until the field has been placed in 4, or 16 missions
+(about 75 min, the time left on 24 Oct), about 3 placements expected.
+The code is dronePropre, its commit in each mission's config.json.
 
 ## Criterion, fixed before the flights
 
@@ -74,7 +94,7 @@ detection delay assumed at 2.5 s.
 ## Commands
 
     cd ~/ros2_ws/droneAfter/experiments/2026-10-24_s95_return
-    bash run.sh 16 5
+    bash run.sh 16 4
     python3 analyse.py > results.txt     # ROS and the workspace sourced
     python3 s95_figure.py runs/<run>     # F13, figures/
 
