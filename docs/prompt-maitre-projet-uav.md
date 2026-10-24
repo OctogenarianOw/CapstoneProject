@@ -401,7 +401,7 @@ rugosite  <= 0.05 m
 marche    <= 0.24 m
 ```
 
-Le seuil de pente de 6° vient d'une mesure, pas d'une convention : le plat atteint p95 à 5.41° et la pente de 10° commence à p01 à 6.96°. Il existe donc un seuil qui sépare le plat de la pente de 10° pour 95 % des cellules. Le monde de validation contient ensuite une pente de 3° précisément pour vérifier que ce seuil n'est pas trop strict dans l'autre sens : elle est acceptée entre 84 % et 98 % des cellules selon les versions de carte, ce qui valide le seuil des deux côtés.
+Le seuil de pente de 6° vient d'une mesure, pas d'une convention : le plat atteint p95 à 5.41° et la pente de 10° commence à p01 à 6.96°. **Remesuré sur la carte de référence v6 le 24 octobre** (figure F5, `experiments/2026-10-24_thesis_figures/f5_slope_noise.py`) : plat p95 4.34°, pente de 10° p01 8.25°, pente de 3° p99 6.17° ; le seuil de 6° sépare toujours le plat de la pente de 10°. Les valeurs 5.41° et 6.96° avaient été lues par `tools/validate_terrain.py`, qui lit par défaut la carte du dernier vol (/tmp) et nomme « ramp_10 » la zone de code 1, la pente de 3° dans la vérité actuelle. Il existe donc un seuil qui sépare le plat de la pente de 10° pour 95 % des cellules. Le monde de validation contient ensuite une pente de 3° précisément pour vérifier que ce seuil n'est pas trop strict dans l'autre sens : elle est acceptée entre 84 % et 98 % des cellules selon les versions de carte, ce qui valide le seuil des deux côtés.
 
 **Calcul du rayon d'empreinte.**
 
