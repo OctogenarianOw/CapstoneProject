@@ -263,7 +263,7 @@ def main():
         Line2D([], [], color=BLUE, lw=1.6, label='flight before the loss'),
         Line2D([], [], color=BLUE_DARK, lw=2.2, label='reaction'),
         Line2D([], [], ls='', marker='o', color=INK, markersize=6,
-               label='decision'),
+               label='crates placed' if depot else 'decision'),
         Line2D([], [], ls='', marker='D', color=INK, markersize=6,
                label=f'zone {zone} lost'),
         Line2D([], [], ls='', marker='v', color=BLUE_DARK, markersize=6,

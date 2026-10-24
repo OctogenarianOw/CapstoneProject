@@ -1,0 +1,23 @@
+date 2026-10-24T11:21:56+11:00
+duration 900
+px4 parameters reset to the airframe defaults
+world w3
+run map=ros2 run uav_core cloud_world --ros-args -p grid_size:=240.0
+run mon=ros2 run uav_core energy_monitor --ros-args -p capacity_j:=80000.0
+run exe=ros2 run uav_core trajectory_executor
+run mgr=ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=1.0 -p area_half_m:=80.0 -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-24_s95_return/runs/.B3a100_r05.tmp/missions
+run depot=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-24_s95_return/return_depot.py /home/doria/ros2_ws/droneAfter/experiments/2026-10-24_s95_return/runs/.B3a100_r05.tmp/missions --out /home/doria/ros2_ws/droneAfter/experiments/2026-10-24_s95_return/runs/.B3a100_r05.tmp/depot.jsonl
+run clock=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+run watch=sleep 20; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 4; touch stop
+git 24140b41cd9fc406ce6fb368effc46516fba66a2
+?? experiments/2026-10-24_s95_return/flights.log
+?? experiments/2026-10-24_s95_return/runs/
+?? experiments/autonomy_23oct.done
+?? experiments/campaign_w3.done
+?? experiments/day_chain_2026-10-24.log
+?? experiments/day_go
+?? experiments/evening2.done
+?? experiments/evening3.done
+?? experiments/evening4.done
+?? experiments/night.done
+?? experiments/night_go

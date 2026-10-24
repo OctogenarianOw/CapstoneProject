@@ -100,4 +100,39 @@ detection delay assumed at 2.5 s.
 
 ## Results
 
-To be filled after the flights.
+Version 2: 13 missions at the first attempt, 11:03 to 12:03, 0 clock
+steps; the field was placed in 4, the run stopping there as set
+(`flights.log`, `results.txt`, `figures/`).
+
+| mission | zone lost (area) | lost after the placement | margin at the re-evaluation | branch | violating cycles | landing | above the reserve |
+|---|---|---|---|---|---|---|---|
+| B3a100_r05 | 16 (190 m2) | 3.1 s | -278 J (zone 4) | none within the guarantee, return 24 m | 9 | zone 4 | +0.11 kJ |
+| B3a100_r08 | 26 (174 m2) | 3.1 s | +11837 J (zone 25) | I1 holds, return 30 m | 0 | zone 4 | +12.21 kJ |
+| B3a100_r10 | 21 (209 m2) | 4.1 s | -461 J (zone 9) | none within the guarantee, return 33 m | 6 | zone 9 | 0.00 kJ |
+| B3a100_r13 | 20, pad Z (49 m2) | 3.2 s | -914 J (zone 3) | none within the guarantee, return 45 m | 12 | zone 3 | -0.30 kJ |
+
+**The criterion is met in all 4 missions.** Each time the crates were
+seen and the zone left CONFIRMED 3.1 to 4.1 s after the placement (`no
+whole footprint of landable cells` 3 times, the pass count once), the
+assumed 2.5 s plus at most one map cycle; I1 was re-evaluated at that
+very cycle against the shrunk registry; the machine turned the return
+to the nearest reachable zone within 0.5 s; every landing was a commit
+over another registry zone, outside the field, on a cell not severe in
+the truth.
+
+**What it shows about the guarantee.** In 3 of the 4, losing the
+target at the start of the return left no zone within the guarantee:
+the margin C1 keeps at the end of a mission (by design it returns when
+no frontier is admissible any more) is smaller than the extra distance
+to the next zone. S9.5 step 5 then applies, the violation is logged,
+and the aircraft still lands on the nearest zone, using up to 0.30 kJ
+of its 8 kJ reserve (B3a100_r13); the reserve covers what the shrunk
+registry no longer does. The acceptance of S9.5, a scripted
+invalidation without an I1 violation, holds only in the branch where
+another zone stays within the margin (B3a100_r08). Keeping I1 through
+the loss of the zone in use would need the guarantee to hold without
+that zone (the `rests_on_zone` quantity logged since 22 Oct), a choice
+of margin to make with Dorian, not taken here.
+
+F13: `figures/f13_B3a100_r13.png` (pad Z itself, the hardest branch)
+and `figures/f13_B3a100_r08.png` (I1 holds), the two others alongside.
