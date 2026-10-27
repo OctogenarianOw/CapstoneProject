@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """
-Spec F3: the validation world W1, its geometry in 3D next to its truth
+Spec F3: the validation world W1, the Gazebo render next to its truth
 map, the zones named.
 
-The spec asks for a Gazebo render next to the truth map. Drawn here
-instead: a 3D view of the truth surface itself (worlds/
-validation_truth.npz, rasterised from the world's own geometry, S2),
-which shows the same scene without starting a simulation, and is
-exactly what every measure of the thesis is compared against. A
-Gazebo screenshot can replace the left panel later if wanted.
+Left: W1 rendered by Gazebo Harmonic itself (f3_gazebo_w1.png, saved
+by f3_capture/capture.sh through the GUI's Screenshot service, camera
+fixed in f3_capture/gui.config: from the south-south-west, 32 deg
+above the horizon). The zone names on it are placed at pixel positions
+read on that render; they hold for that camera pose only, so a new
+pose means new positions. Right: the truth zones seen from above
+(worlds/validation_truth.npz, rasterised from the world's own
+geometry, S2), with the geometry each one tests: flat ground, a ramp
+under the 6 deg threshold, one over it, a rough patch, a cube.
 
-Left: the truth surface in 3D, heights exaggerated by 2 so the 3 deg
-ramp shows. Right: the truth zones seen from above, with their names
-and the geometry each one tests (flat ground, a ramp under the 6 deg
-threshold, one over it, a rough patch, a cube).
+Choice: a real render rather than the 3D plot of the truth drawn here
+until 27 Oct, as the spec asks for one; the truth map stays on the
+right because it is what every measure is compared against.
 
+    bash f3_capture/capture.sh      # once, Gazebo, nothing else running
     python3 f3_validation_world.py
 """
 
@@ -22,14 +25,16 @@ from pathlib import Path
 
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.image as mpimg  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
-from matplotlib.colors import LightSource, ListedColormap  # noqa: E402
+from matplotlib.colors import ListedColormap  # noqa: E402
 import numpy as np  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
 TRUTH = ROOT / 'worlds' / 'validation_truth.npz'
-OUT = Path(__file__).resolve().parent / 'f3_validation_world.png'
-EXAGGERATION = 2.0
+RENDER = HERE / 'f3_gazebo_w1.png'
+OUT = HERE / 'f3_validation_world.png'
 
 SURFACE, INK, INK2, MUTED, GRID = ('#fcfcfb', '#0b0b0b', '#52514e',
                                    '#898781', '#e1e0d9')
@@ -41,15 +46,21 @@ LABEL = {'flat': 'flat: true slope 0',
          'ramp_bad': 'ramp 10 deg: refused, over 6 deg',
          'rough': 'rough patch: refused on roughness',
          'obstacle': 'cube: refused on step'}
+# Pixel positions of each zone on the render of gui.config's camera
+# (image 1799 x 1052, y down), and the short name written there.
+ON_RENDER = {'ramp_ok': ((480, 700), 'ramp 3 deg'),
+             'ramp_bad': ((1205, 435), 'ramp 10 deg'),
+             'rough': ((750, 300), 'rough patch'),
+             'obstacle': ((1210, 930), 'cube, 4 m')}
 
 
 def main():
+    if not RENDER.exists():
+        raise SystemExit(f'{RENDER.name} missing: run f3_capture/capture.sh')
     t = np.load(TRUTH)
     names = [str(n) for n in t['zone_names']]
-    up = t['truth'].T                     # heights up, rows north
-    zone = t['zone'].T
+    zone = t['zone'].T                    # rows north, columns east
     c = t['centres']
-    east, north = np.meshgrid(c, c)
 
     plt.rcParams.update({'font.family': 'sans-serif', 'font.size': 8,
                          'axes.edgecolor': GRID, 'axes.labelcolor': INK2,
@@ -59,30 +70,23 @@ def main():
                          'axes.facecolor': SURFACE,
                          'savefig.facecolor': SURFACE,
                          'legend.frameon': False})
-    fig = plt.figure(figsize=(10.0, 4.6))
-    ax3 = fig.add_subplot(1, 2, 1, projection='3d')
-    rgb = np.array([[int(ZONE_COLOURS[names[z]][k:k + 2], 16) / 255.0
-                     for k in (1, 3, 5)] for z in zone.ravel()])
-    rgb = rgb.reshape(zone.shape + (3,))
-    shade = LightSource(azdeg=315, altdeg=40).shade_rgb(
-        rgb, up * EXAGGERATION, blend_mode='soft', fraction=0.6)
-    ax3.plot_surface(east, north, up * EXAGGERATION, facecolors=shade,
-                     rstride=1, cstride=1, linewidth=0, antialiased=False,
-                     shade=False)
-    ax3.view_init(elev=32, azim=-120)
-    ax3.set_box_aspect((1, 1, 0.25))
-    ax3.set_xlabel('east (m)')
-    ax3.set_ylabel('north (m)')
-    ax3.set_zlabel(f'height x {EXAGGERATION:.0f} (m)')
-    ax3.tick_params(labelsize=6.5)
-    ax3.set_zticks([0, 4, 8])
-    ax3.set_title('the truth surface in 3D (S2)', loc='left', color=INK)
+    fig, (ax3, ax) = plt.subplots(1, 2, figsize=(12.0, 4.7),
+                                  gridspec_kw={'width_ratios': [1.71, 1.0]})
+    img = mpimg.imread(RENDER)
+    ax3.imshow(img)
+    for key, ((x, y), text) in ON_RENDER.items():
+        ax3.text(x, y, text, ha='center', va='center', fontsize=8,
+                 color=INK, bbox={'facecolor': SURFACE, 'alpha': 0.85,
+                                  'edgecolor': ZONE_COLOURS[key],
+                                  'boxstyle': 'round,pad=0.3'})
+    ax3.set_axis_off()
+    ax3.set_title('rendered by Gazebo Harmonic, seen from the '
+                  'south-south-west', loc='left', color=INK)
 
-    ax = fig.add_subplot(1, 2, 2)
-    cmap = ListedColormap([ZONE_COLOURS[n] for n in names])
     res = float(t['resolution'])
     extent = (c[0] - res / 2, c[-1] + res / 2, c[0] - res / 2,
               c[-1] + res / 2)
+    cmap = ListedColormap([ZONE_COLOURS[n] for n in names])
     ax.imshow(zone, origin='lower', extent=extent, cmap=cmap, vmin=-0.5,
               vmax=len(names) - 0.5, interpolation='nearest')
     ax.scatter([0], [0], marker='x', s=40, color=INK, zorder=3)

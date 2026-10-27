@@ -14,7 +14,7 @@ Run from this directory, ROS and the workspace sourced (F4 to F7 import
 |---|---|---|---|
 | F1 | architecture, nodes and flows, contributions dashed | `f1_architecture.png` | 4 uav_core nodes, 2 bridges, real topic names; dashed: registry, C1, C2 |
 | F2 | the four frames and the conversions | `f2_frames.png` | FLU to FRD (+0.15 m down), R(q) and position at the scan stamp minus 0.060 s, ENU to NED |
-| F3 | validation world W1, geometry and truth zones | `f3_validation_world.png` | truth surface in 3D in place of a Gazebo render (choice in the header) |
+| F3 | validation world W1, Gazebo render and truth zones | `f3_validation_world.png` | render by Gazebo itself (`f3_capture/capture.sh`, camera fixed in `f3_capture/gui.config`), saved as `f3_gazebo_w1.png` |
 | F4 | elevation map v6 against the truth, per-zone error | `f4_map_vs_truth.png` | flat RMS 0.240 m, ramp 3 deg 0.128 m, cube bias -1.667 m (P2) |
 | F5 | slope distribution per zone, the 6 deg threshold | `f5_slope_noise.png` | flat p95 4.34 deg, 10 deg ramp p01 8.25 deg, 3 deg ramp p99 6.17 deg |
 | F6 | slope and roughness kept apart | `f6_slope_roughness.png` | zone medians, map against truth |
