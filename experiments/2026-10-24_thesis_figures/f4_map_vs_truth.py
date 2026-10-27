@@ -7,8 +7,8 @@ Data: data_survey_v6.npz (never regenerated) and the W1 truth, aligned
 as tools/validate_map.py does: the truth grid cropped out of the map,
 ENU turned to NED, and the constant offset of the EKF origin removed
 with the median over the flat zone, so every residual left is error.
-Zone names come from the truth file itself (validate_map.py still
-carries the labels of an older truth, ramp_10 and ramp_25).
+Zone names come from the truth file itself (validate_map.py carried
+the labels of an older truth, ramp_10 and ramp_25, until 27 Oct).
 
 Panels: the map height, the truth height, both on one sequential
 scale, and the difference map on a diverging scale with a neutral

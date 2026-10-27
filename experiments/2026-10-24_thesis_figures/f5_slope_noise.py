@@ -21,9 +21,11 @@ the threshold.
 
 Measured on v6 (24 Oct): flat p95 4.34 deg, 10 deg ramp p01 8.25 deg,
 3 deg ramp p99 6.17 deg. The spec's earlier 5.41 and 6.96 deg were
-read with tools/validate_terrain.py, which defaults to the last
-flight's map in /tmp, not v6, and labels the zone of code 1 'ramp_10'
-although the current truth codes the 3 deg ramp there.
+read with tools/validate_terrain.py on a /tmp map not kept; not v6
+values (on v6 that tool read 0.91 deg for its 'ramp_10', there the
+3 deg ramp), most likely those of the older world whose code 1 was a
+10 deg ramp. The tool is fixed since 27 Oct and now prints the values
+above.
 
     python3 f5_slope_noise.py        # ROS and the workspace sourced
 """
