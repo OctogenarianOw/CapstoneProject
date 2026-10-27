@@ -851,6 +851,8 @@ Le projet réussit si, à la fin, on peut écrire ces phrases en les ayant mesur
 | F12 | trajectoires superposées, B1 contre B3, sur W2 |
 | F13 | le cas du rétrécissement du registre sur W3, carte avant et après invalidation, avec la trajectoire de réaction |
 | F14 | histogramme de précision d'atterrissage, avec le rayon d'empreinte retenu |
+
+**Toutes produites au 27 octobre**, chacune regénérée par un script du dépôt ; index, fichiers et chiffres montrés : `experiments/2026-10-24_thesis_figures/README.md`. F9 à F12 existent pour les trois mondes (campagnes finales), F12 donc aussi hors W2.
 | T1 | tableau de tous les paramètres du système avec leur valeur, leur origine (mesuré, choisi, hérité) et la section qui les justifie |
 | T2 | tableau des résultats principaux, toutes configurations, toutes métriques, médiane et IQR |
 
