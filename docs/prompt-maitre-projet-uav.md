@@ -980,7 +980,7 @@ Tous silencieux, aucun ne produit de message d'erreur. Cette liste évite de les
 
 ---
 
-## 10. État au 17 octobre 2026
+## 10. État du projet, du 17 au 27 octobre 2026
 
 **Fait et mesuré.** Chaîne de contrôle offboard stable, modèle de drone et LiDAR, monde de validation avec vérité terrain analytique, cartographie 2.5D avec fusion de Kalman par cellule et plancher de variance, analyse de terrain validée contre vérité, détection SLZ avec seuils justifiés par la mesure, élément d'empreinte couvrant, instrument de mesure d'énergie validé sur le stationnaire, outillage de validation hors ligne complet. Référence courante : carte v6, erreur RMS 0.240 m sur plat, recall 94.2 %, zéro faux acceptable dangereux sur ce seul vol.
 
@@ -1038,7 +1038,14 @@ Ouvert, mesuré, non corrigé :
 - **Rétrogradations de zones, cause reconstruite le 24 octobre** (`experiments/2026-10-23_campaign_w3_final/demotion_cause.py`) : passages par cellule recalculés exactement depuis les positions journalisées, perception rejouée sur les cartes encadrant chaque rétrogradation. Sur les 25 cas examinables (49 au total), 637 cellules nouvellement refusées, presque toutes par la rugosité (609 ; 0.013 -> 0.066 m pour un seuil de 0.05), plates dans la vérité (4 seulement réellement rugueuses), à 3 m d'un obstacle en médiane, leur voisinage ayant reçu de nouveaux points (une hauteur voisine déplacée de 0.19 m) sans que leur propre variance change. Cause la plus probable : P2 vu en oblique, des points du flanc ou du sommet d'un obstacle voisin soulèvent les cellules à son pied, la rugosité des cellules adjacentes dépasse le seuil, l'empreinte casse. Faux refus, donc effet conservateur pour la sûreté ; d'où 49 rétrogradations sur W3 (zones entre bâtiments, arbres, voitures), 2 sur W2, 1 sur W1. La source oblique des points est déduite, non observée (nuage non journalisé).
 - **Lecture de la réserve, décision de Dorian le 24 octobre** : la réserve de 10 % absorbe les variations de batterie en vol réel ; ce n'est pas une énergie que le drone doit encore détenir après un rétrécissement du registre. C1 reste tel quel, sans garantie « sans la zone en usage ». I1 tient tant que le registre ne rétrécit pas sous la zone utilisée ; quand il rétrécit, la réserve couvre le manque. Mesuré sur 188 missions C1 : énergie minimale au poser 2.8 kJ, réserve entamée 2 fois (1.63 kJ le 22 octobre avant les correctifs, 0.30 kJ dans le S9.5 provoqué), jamais près de 0.
 
-**À construire.** Registre SLZ dynamique (B), frontières sur la carte (D), C1 (E), C2 (F), exploration autonome (G), campagne d'évaluation (H).
+**Ajouts du 27 octobre 2026**, hors ligne, sans vol :
+
+- **Figures F1 à F14 toutes produites**, chacune par un script du dépôt ; index : `experiments/2026-10-24_thesis_figures/README.md`. Nouvelles aujourd'hui : F1 (architecture telle qu'elle tourne, topics réels), F2 (repères, formules lues dans `cloud_world.py`), F3 à F8, F14 (précision d'atterrissage : p95 0.180 m, marge 0.364 m à l'empreinte de 1.5 m).
+- **Sections 6.3 et 6.4 consolidées** : huit résultats négatifs mesurés, vingt limites avec leur borne mesurée et leur source.
+- **Outils de validation corrigés** (5af17ea) : `validate_terrain.py` et `validate_map.py` portaient les noms de zones d'une ancienne vérité et lisaient /tmp par défaut. Sur v6, la « séparation plat contre ramp_10 » valait 0.91°, mesurée sur la pente de 3° ; corrigée, 8.25° sur la pente de 10°, la valeur de F5. Les anciens 5.41° et 6.96° ne sont pas des valeurs de v6, très probablement celles de l'ancien monde.
+- **Queue du plat de F5 expliquée** (`f5_flat_tail.py`) : 88 cellules de plat sur 2484 lisent plus de 6°, 81 à moins de 3 m d'un bord de zone où la vérité porte une marche ; vérité plate sous toutes. Étalement P2, refus à tort, côté prudent.
+
+**Reste à faire, au 27 octobre.** Toutes les portes A à H sont passées et toutes les figures existent : reste la rédaction du mémoire. Facultatif, sur décision de Dorian parce qu'il faut revoler : reprendre l'exploration après une échappée au lieu de rentrer (2 missions sur 70 sur W3, 21 et 48 kJ inutilisés) ; ce changement ferait sortir le code des campagnes finales, qui devraient alors être refaites pour rester sur un code unique.
 
 ---
 
