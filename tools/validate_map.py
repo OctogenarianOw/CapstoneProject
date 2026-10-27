@@ -13,17 +13,34 @@ has to be transposed and negated to be comparable.
 """
 
 import sys
+from pathlib import Path
+
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-MAP_PATH = sys.argv[1] if len(sys.argv) > 1 else '/tmp/elevation_map.npz'
+# Defaults: the reference map and the W1 truth of this repository. The
+# default used to be /tmp/elevation_map.npz, which any cloud_world run
+# overwrites, so a figure could silently be measured on the last flight.
+ROOT = Path(__file__).resolve().parents[1]
+MAP_PATH = (sys.argv[1] if len(sys.argv) > 1
+            else str(ROOT / 'data_survey_v6.npz'))
 TRUTH_PATH = (sys.argv[2] if len(sys.argv) > 2
-              else '/home/doria/ros2_ws/droneAfter/worlds/validation_truth.npz')
+              else str(ROOT / 'worlds' / 'validation_truth.npz'))
 
-ZONE_NAMES = ['flat', 'ramp_10', 'ramp_25', 'rough', 'obstacle']
-TRUE_SLOPE = {1: 10.0, 2: 25.0, 0: 0.0}
+def zone_names(truth):
+    """Zone names as the truth file stores them, code = index.
+
+    Hard-coded names used to label code 1 'ramp_10' and code 2
+    'ramp_25' after the truth was redrawn with a 3 deg and a 10 deg
+    ramp, so every row of the table was mislabelled.
+    """
+    if 'zone_names' in truth.files:
+        return [str(n) for n in truth['zone_names']]
+    print('warning: truth without zone_names, legacy labels used')
+    return ['flat', 'ramp_10', 'ramp_25', 'rough', 'obstacle']
+
 
 # ------------------------------------------------------------------ load
 
@@ -38,6 +55,7 @@ truth_gz = t['truth']          # indexed [x_east, y_north], z up
 zone_gz = t['zone']
 centres = t['centres']
 t_res = float(t['resolution'])
+ZONE_NAMES = zone_names(t)
 
 if abs(t_res - res) > 1e-6:
     raise SystemExit(f'resolution mismatch: map {res}, truth {t_res}')
@@ -67,7 +85,7 @@ known = sub_count > 0
 # The EKF origin sits on base_link at spawn, so the whole map carries a
 # constant offset against the world ground plane. Remove it using the
 # flat reference zone, then every residual is real error.
-ref = known & (zone_ned == 0)
+ref = known & (zone_ned == ZONE_NAMES.index('flat'))
 if ref.sum() < 50:
     raise SystemExit('not enough flat cells observed to calibrate the offset')
 offset = np.median(sub_elev[ref] - truth_ned[ref])
@@ -105,8 +123,9 @@ for code, name in enumerate(ZONE_NAMES):
     e = err[seen]
     cover = 100.0 * seen.sum() / in_zone.sum()
     s_map = mean_slope(filled, seen)
-    s_true = TRUE_SLOPE.get(code)
-    s_true_txt = f'{s_true:>10.1f}°' if s_true is not None else f'{"-":>11}'
+    # The true slope by the same estimator on the truth, not a number
+    # typed in (they were those of an older truth, 10 and 25 deg).
+    s_true_txt = f'{mean_slope(truth_ned, seen):>10.1f}°'
 
     print(f'{name:<10} {seen.sum():>6} {cover:>6.0f}% '
           f'{np.nanmean(e):>+8.3f} {np.sqrt(np.nanmean(e ** 2)):>8.3f} '

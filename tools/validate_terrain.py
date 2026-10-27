@@ -18,19 +18,37 @@ measurement noise.
 """
 
 import sys
+from pathlib import Path
+
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, '/home/doria/ros2_ws/droneAfter/src/uav_core')
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src' / 'uav_core'))
 from uav_core.terrain_analysis import analyse
 
-MAP_PATH = sys.argv[1] if len(sys.argv) > 1 else '/tmp/elevation_map.npz'
+# Defaults: the reference map and the W1 truth of this repository. The
+# default used to be /tmp/elevation_map.npz, which any cloud_world run
+# overwrites, so a figure could silently be measured on the last flight.
+ROOT = Path(__file__).resolve().parents[1]
+MAP_PATH = (sys.argv[1] if len(sys.argv) > 1
+            else str(ROOT / 'data_survey_v6.npz'))
 TRUTH_PATH = (sys.argv[2] if len(sys.argv) > 2
-              else '/home/doria/ros2_ws/droneAfter/worlds/validation_truth.npz')
+              else str(ROOT / 'worlds' / 'validation_truth.npz'))
 
-ZONE_NAMES = ['flat', 'ramp_10', 'ramp_25', 'rough', 'obstacle']
+def zone_names(truth):
+    """Zone names as the truth file stores them, code = index.
+
+    Hard-coded names used to label code 1 'ramp_10' and code 2
+    'ramp_25' after the truth was redrawn with a 3 deg and a 10 deg
+    ramp, so every row of the table was mislabelled.
+    """
+    if 'zone_names' in truth.files:
+        return [str(n) for n in truth['zone_names']]
+    print('warning: truth without zone_names, legacy labels used')
+    return ['flat', 'ramp_10', 'ramp_25', 'rough', 'obstacle']
+
 RADIUS = 1
 
 # ------------------------------------------------------------------ load
@@ -42,6 +60,7 @@ res = float(m['resolution'])
 ox, oy = float(m['origin_x']), float(m['origin_y'])
 
 t = np.load(TRUTH_PATH)
+ZONE_NAMES = zone_names(t)
 truth_ned = -t['truth'].T          # ENU up to NED down, axes swapped
 zone_ned = t['zone'].T
 
@@ -109,7 +128,8 @@ for code, name in enumerate(ZONE_NAMES):
 # The noise floor sets every threshold downstream: a slope limit below
 # what flat ground already reads cannot discriminate anything. Measured
 # on interior flat cells only, where the true slope is exactly zero.
-flat = interior(zone_ned == 0, RADIUS) & map_layers['valid']
+flat = (interior(zone_ned == ZONE_NAMES.index('flat'), RADIUS)
+        & map_layers['valid'])
 print()
 print(f'noise floor on flat interior ({flat.sum()} cells):')
 for q in (50, 90, 95, 99):
@@ -119,12 +139,18 @@ for q in (50, 90, 95, 99):
 
 # Separation is what a classifier actually needs: how far apart the
 # flat distribution and the 10 deg ramp distribution are.
-ramp = interior(zone_ned == 1, RADIUS) & map_layers['valid']
+# The ramp over the 6 deg threshold, found by name: by code it was
+# the 3 deg ramp of the current truth, which reported a separation
+# that does not exist.
+STEEP = next((n for n in ('ramp_bad', 'ramp_10') if n in ZONE_NAMES), None)
+ramp = (interior(zone_ned == ZONE_NAMES.index(STEEP), RADIUS)
+        & map_layers['valid']) if STEEP else np.zeros_like(flat)
 if ramp.sum():
     print()
-    print('separation flat vs ramp_10:')
-    print(f'  flat    p99 {np.percentile(map_layers["slope"][flat], 99):.2f}°')
-    print(f'  ramp_10 p01 {np.percentile(map_layers["slope"][ramp], 1):.2f}°')
+    print(f'separation flat vs {STEEP} (the ramp over the threshold):')
+    for q in (95, 99):
+        print(f'  flat     p{q} {np.percentile(map_layers["slope"][flat], q):.2f}°')
+    print(f'  {STEEP:<8} p01 {np.percentile(map_layers["slope"][ramp], 1):.2f}°')
 
 # ------------------------------------------------------------------ plot
 
