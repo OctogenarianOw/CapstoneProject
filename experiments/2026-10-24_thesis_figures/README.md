@@ -26,6 +26,13 @@ Run from this directory, ROS and the workspace sourced (F4 to F7 import
 | F13 | registry shrink at the return (S9.5) | `../2026-10-24_s95_return/figures/f13_B3a100_r{05,08,10,13}.png` | map before and after, reaction trajectory; margins -278, +11837, -461, -914 J |
 | F14 | landing precision, footprint retained | `f14_landing_precision.png` | 15 landings, p95 0.180 m; room 0.364 m at 1.5 m |
 
+Figures of the final report outside the spec list, all from
+`r_report_figures.py`: `r1_method_overview.png` (the method as
+concepts, contributions dashed; F1 keeps the implementation),
+`r2_c1_geometry.png` (the C1 rule on one decision, illustrative
+energies), `r3_worlds.png` (the three worlds from their truth). The
+report itself is built by `docs/report/build_report.py`.
+
 `f5_flat_tail.py` (no figure) explains the tail of F5's flat ground,
 p99 21.66 deg: 88 of 2484 flat cells read over 6 deg, 81 of them
 within 3 m of another zone's edge, where the truth has a step and the
