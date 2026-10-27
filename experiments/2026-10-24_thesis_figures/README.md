@@ -26,6 +26,11 @@ Run from this directory, ROS and the workspace sourced (F4 to F7 import
 | F13 | registry shrink at the return (S9.5) | `../2026-10-24_s95_return/figures/f13_B3a100_r{05,08,10,13}.png` | map before and after, reaction trajectory; margins -278, +11837, -461, -914 J |
 | F14 | landing precision, footprint retained | `f14_landing_precision.png` | 15 landings, p95 0.180 m; room 0.364 m at 1.5 m |
 
+`f5_flat_tail.py` (no figure) explains the tail of F5's flat ground,
+p99 21.66 deg: 88 of 2484 flat cells read over 6 deg, 81 of them
+within 3 m of another zone's edge, where the truth has a step and the
+map smears it (P2); the truth is flat under all of them.
+
 Worlds and budgets of F9 to F12: W1 at 16 kJ (the budget where alpha
 acts on W1), W2 at 48 kJ, W3 at 80 kJ, reserve 10 %, seven
 configurations, 210 missions.
