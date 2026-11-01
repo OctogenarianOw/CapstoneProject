@@ -1,0 +1,35 @@
+
+== W1
+  E_ret path only      : n 60; measured - predicted: median +164 J [+137, +207], min +19, max +494; relative median +18.7 % [+17.6, +25.7], p95 +30.1 %; under-predicted (meas > pred) 100 %
+  E_ret + tau (as C1)  : n 60; measured - predicted: median -407 J [-434, -364], min -552, max -77; relative median -28.7 % [-32.4, -23.8], p95 -18.3 %; under-predicted (meas > pred) 0 %
+  E_land (3387 J plan) : n 60; measured - predicted: median -93 J [-112, -76], min -166, max -31; relative median -2.7 % [-3.3, -2.2], p95 -1.6 %; under-predicted (meas > pred) 0 %
+  E_go (as C1, w/ tau) : n 181; measured - predicted: median -373 J [-432, -326], min -548, max -247; relative median -15.8 % [-17.6, -14.1], p95 -13.8 %; under-predicted (meas > pred) 0 %
+
+== W2
+  E_ret path only      : n 60; measured - predicted: median +175 J [+103, +281], min +13, max +1232; relative median +6.6 % [+3.5, +13.5], p95 +inf %; under-predicted (meas > pred) 100 %
+  E_ret + tau (as C1)  : n 60; measured - predicted: median -396 J [-469, -290], min -850, max +661; relative median -11.9 % [-15.2, -8.6], p95 +25.6 %; under-predicted (meas > pred) 7 %
+  E_land (3387 J plan) : n 60; measured - predicted: median -76 J [-125, -43], min -197, max +4; relative median -2.2 % [-3.7, -1.3], p95 -0.4 %; under-predicted (meas > pred) 2 %
+  E_go (as C1, w/ tau) : n 890; measured - predicted: median -302 J [-372, -280], min -585, max -16; relative median -14.0 % [-15.8, -13.1], p95 -6.9 %; under-predicted (meas > pred) 0 %
+
+== W3
+  E_ret path only      : n 60; measured - predicted: median +251 J [+161, +332], min -105, max +836; relative median +12.5 % [+6.2, +22.4], p95 +112.3 %; under-predicted (meas > pred) 97 %
+  E_ret + tau (as C1)  : n 60; measured - predicted: median -342 J [-458, -277], min -839, max +230; relative median -14.4 % [-21.4, -9.4], p95 -4.1 %; under-predicted (meas > pred) 3 %
+  E_land (3387 J plan) : n 60; measured - predicted: median -76 J [-119, -36], min -1978, max +10; relative median -2.2 % [-3.5, -1.1], p95 -0.2 %; under-predicted (meas > pred) 5 %
+  E_go (as C1, w/ tau) : n 1464; measured - predicted: median -312 J [-398, -273], min -1157, max +137; relative median -14.1 % [-17.5, -12.4], p95 -4.7 %; under-predicted (meas > pred) 0 %
+
+== all worlds
+  E_ret path only      : n 180; measured - predicted: median +188 J [+133, +272], min -105, max +1232; relative median +13.8 % [+5.8, +20.7], p95 +61.2 %; under-predicted (meas > pred) 99 %
+  E_ret + tau (as C1)  : n 180; measured - predicted: median -386 J [-445, -320], min -850, max +661; relative median -17.1 % [-26.3, -11.0], p95 -4.3 %; under-predicted (meas > pred) 3 %
+  E_ret+tau+E_land     : n 180; measured - predicted: median -462 J [-544, -385], min -2621, max +488; relative median -8.5 % [-10.5, -6.1], p95 -3.1 %; under-predicted (meas > pred) 3 %
+  E_land (3387 J plan) : n 180; measured - predicted: median -87 J [-119, -52], min -1978, max +10; relative median -2.6 % [-3.5, -1.5], p95 -0.4 %; under-predicted (meas > pred) 2 %
+  E_go (as C1, w/ tau) : n 2535; measured - predicted: median -309 J [-397, -278], min -1157, max +137; relative median -14.1 % [-17.0, -12.9], p95 -6.0 %; under-predicted (meas > pred) 0 %
+  E_go path only       : n 2535; measured - predicted: median +273 J [+194, +298], min -345, max +1021; relative median +17.6 % [+9.1, +20.0], p95 +25.2 %; under-predicted (meas > pred) 100 %
+  E_go under-predicted by C1: 5 of 2535, by [49, 80, 137, 11, 9] J
+  E_land measured: 3300 [3268, 3335] J, max 3397
+  transits excluded (timeout, blacklist, abort, return): 211
+  worst E_ret+tau under-predictions:
+    W3 B1_r05: pred 411 + tau 605, meas 1247, length 1 m, legs 3
+    W2 B1_r06: pred 740 + tau 571, meas 1588, length 4 m, legs 1
+    W2 B3a025_r09: pred 0 + tau 571, meas 1200, length 0 m, legs 2
+    W2 B3a025_r06: pred 0 + tau 571, meas 1213, length 0 m, legs 2
+    W2 B3a025_r10: pred 0 + tau 571, meas 1232, length 0 m, legs 2
