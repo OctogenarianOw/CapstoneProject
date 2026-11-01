@@ -982,7 +982,7 @@ Tous silencieux, aucun ne produit de message d'erreur. Cette liste évite de les
 
 ---
 
-## 10. État du projet, du 17 au 27 octobre 2026
+## 10. État du projet, du 17 octobre au 1er novembre 2026
 
 **Fait et mesuré.** Chaîne de contrôle offboard stable, modèle de drone et LiDAR, monde de validation avec vérité terrain analytique, cartographie 2.5D avec fusion de Kalman par cellule et plancher de variance, analyse de terrain validée contre vérité, détection SLZ avec seuils justifiés par la mesure, élément d'empreinte couvrant, instrument de mesure d'énergie validé sur le stationnaire, outillage de validation hors ligne complet. Référence courante : carte v6, erreur RMS 0.240 m sur plat, recall 94.2 %, zéro faux acceptable dangereux sur ce seul vol.
 
@@ -1047,7 +1047,14 @@ Ouvert, mesuré, non corrigé :
 - **Outils de validation corrigés** (5af17ea) : `validate_terrain.py` et `validate_map.py` portaient les noms de zones d'une ancienne vérité et lisaient /tmp par défaut. Sur v6, la « séparation plat contre ramp_10 » valait 0.91°, mesurée sur la pente de 3° ; corrigée, 8.25° sur la pente de 10°, la valeur de F5. Les anciens 5.41° et 6.96° ne sont pas des valeurs de v6, très probablement celles de l'ancien monde.
 - **Queue du plat de F5 expliquée** (`f5_flat_tail.py`) : 88 cellules de plat sur 2484 lisent plus de 6°, 81 à moins de 3 m d'un bord de zone où la vérité porte une marche ; vérité plate sous toutes. Étalement P2, refus à tort, côté prudent.
 
-**Reste à faire, au 27 octobre.** Toutes les portes A à H sont passées et toutes les figures existent : reste la rédaction du mémoire. Facultatif, sur décision de Dorian parce qu'il faut revoler : reprendre l'exploration après une échappée au lieu de rentrer (2 missions sur 70 sur W3, 21 et 48 kJ inutilisés) ; ce changement ferait sortir le code des campagnes finales, qui devraient alors être refaites pour rester sur un code unique.
+**Additions of 31 October to 1 November 2026**, flight code unchanged (tag `thesis-2026-10-27` untouched):
+
+- **Report, drafts v2 and v3** (`docs/report/`, built by `build_report.py`): v3 has 9981 body words, 19 figures, 11 tables; links to the two videos and Appendix B, an `alpha` 0.1 against 0.9 figure on W2, Appendix C (ROS 2 vocabulary and the live graph), the generative AI declaration. B0 is described as a crash: all 30 B0 missions emptied their budget in flight, then flew on for 12.4 to 17.8 s.
+- **Report analyses** (`experiments/2026-10-31_report_analyses`, index in its README): the coverage optimum is a plateau of `alpha` 0.5 to 0.75 after Holm correction, not 0.75 on every world; the energy C1 charges exceeds the measurement in 2530 of 2535 transits; the confirmation guard does not hold on the final W1 maps (10 of 70 keep a dangerous cell, at the north corner of the 3° ramp, no landing on it).
+- **Demonstration videos** (`experiments/2026-10-31_video`, README): filming W3 with RViz starved the simulation (25 to 60 % stale-pose scans, against 25 of 287,600 in the campaigns); RViz at low priority and 5 Hz brings the RViz takes to 0.1 % at most. The W3 Gazebo film stays at 18 %, demonstration only. Filming exposed a gap: a return whose target zone partly survives commits the landing on its end cell without re-checking that it is landable (`w3_depot_4`, landing among the crates). A correction exists on branch `return-end-check`, not merged (I1 broken in 2 of 5 filmed flights). In the campaigns, 149 of 150 commits were over a cell still landable.
+- **Live ROS graph against F1** (`experiments/2026-11-01_rqt_graph`): one W1 flight, every topic of F1 found on its node; `trajectory_executor` also reads `vehicle_local_position`, added to F1. Internal references (S9.5, spec 2, F2, F8, S10) removed from the text of five figures, plotted data unchanged.
+
+**Remaining, as of 1 November.** All gates A to H are passed, every figure exists, report draft v3 is written: what remains is Dorian's review (PDF rendering not checked, the Word export hung that day), the communication log (Appendix A) and the generative AI reflection with screenshots. Optional, Dorian's decision because it needs new flights: resume exploration after an escape instead of returning (2 of 70 W3 missions, 21 and 48 kJ unused); this change would take the code off the final campaigns, which would then have to be flown again to keep a single code.
 
 ---
 
