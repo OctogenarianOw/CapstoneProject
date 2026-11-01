@@ -8,11 +8,19 @@ figures, tables, an algorithm, references) into a .docx with numbered
 captions and resolved cross-references, so the text can be revised in
 Python and rebuilt, or edited directly in Word once frozen.
 Choice: python-docx and a small inline markup (**bold**, *italic*,
-_{sub}, ^{sup}, `mono`, \\* for a literal asterisk) rather than writing
-in Word by hand, so figure and table numbers follow their order and a
-reference to {fig:key}, {tab:key}, {eq:key} or {alg:key} can never point
-at the wrong number. Rejected: pandoc from Markdown, not installed here
-and weaker on table borders and equation numbering.
+_{sub}, ^{sup}, `mono`, [text](url) for a hyperlink, \\* for a literal
+asterisk) rather than writing in Word by hand, so figure and table
+numbers follow their order and a reference to {fig:key}, {tab:key},
+{eq:key} or {alg:key} can never point at the wrong number. Rejected:
+pandoc from Markdown, not installed here and weaker on table borders and
+equation numbering.
+
+Algorithms are typeset like LaTeX's algorithmicx rather than as a
+monospace listing (draft v2): caption between two rules, proportional
+type, keywords in bold and variables in italic, small line numbers,
+real indentation per level, comments flush right after a triangle.
+The supervisor's reader is used to that layout, and the monospace
+version was hard to read (review of 1 Nov).
 
     PYTHONPATH=<dir with python-docx> python3 build_report.py
 """
@@ -26,6 +34,7 @@ from docx import Document
 from docx.enum.section import WD_SECTION
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_TAB_ALIGNMENT
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
@@ -36,11 +45,17 @@ sys.path.insert(0, str(HERE))
 from content_a import BLOCKS as BLOCKS_A  # noqa: E402
 from content_b import BLOCKS as BLOCKS_B  # noqa: E402
 
-OUT = HERE / 'report_draft_v1.docx'
+OUT = HERE / 'report_draft_v3.docx'
 FONT = 'Times New Roman'
 MONO = 'Consolas'
 TEXT_WIDTH_CM = 16.0
 STAR = '\x00'
+LINK_COLOUR = RGBColor(0x1F, 0x4E, 0x9A)
+GREY = RGBColor(0x59, 0x59, 0x59)
+ALG_PT = 10                 # algorithm type size
+ALG_NUM_CM = 0.75           # where the code starts, after the line number
+ALG_INDENT_CM = 0.6         # per nesting level
+ALG_RIGHT_CM = 15.5         # right edge of the comments
 
 
 # ------------------------------------------------------------ numbering
@@ -70,14 +85,55 @@ def resolve(text, labels):
 
 # --------------------------------------------------------- inline markup
 
-TOKEN = re.compile(r'(\*\*.+?\*\*|\*.+?\*|_\{.+?\}|\^\{.+?\}|`.+?`)')
+LINK = re.compile(r'\[([^\]]+)\]\(([^)\s]+)\)')
+TOKEN = re.compile(r'(\[[^\]]+\]\([^)\s]+\)|\*\*.+?\*\*|\*.+?\*|_\{.+?\}'
+                   r'|\^\{.+?\}|`.+?`)')
+
+
+def visible(text, labels):
+    """The text as the reader sees it: references resolved, links as text."""
+    return LINK.sub(r'\1', resolve(text, labels))
+
+
+def add_hyperlink(par, text, url, size=None):
+    """A clickable external link, blue and underlined."""
+    r_id = par.part.relate_to(url, RT.HYPERLINK, is_external=True)
+    link = OxmlElement('w:hyperlink')
+    link.set(qn('r:id'), r_id)
+    run = OxmlElement('w:r')
+    # Children of w:rPr in the order the schema requires (color, sz, szCs,
+    # u): Word refuses a file whose run properties are out of order.
+    rpr = OxmlElement('w:rPr')
+    colour = OxmlElement('w:color')
+    colour.set(qn('w:val'), str(LINK_COLOUR))
+    rpr.append(colour)
+    if size:
+        for tag in ('w:sz', 'w:szCs'):
+            sz = OxmlElement(tag)
+            sz.set(qn('w:val'), str(int(round(size * 2))))
+            rpr.append(sz)
+    under = OxmlElement('w:u')
+    under.set(qn('w:val'), 'single')
+    rpr.append(under)
+    run.append(rpr)
+    t = OxmlElement('w:t')
+    t.set(qn('xml:space'), 'preserve')
+    t.text = text
+    run.append(t)
+    link.append(run)
+    par._p.append(link)
 
 
 def add_runs(par, text, labels, size=None, italic=False, bold=False,
-             font=None):
+             font=None, colour=None):
     text = resolve(text, labels).replace('\\*', STAR)
     for piece in TOKEN.split(text):
         if not piece:
+            continue
+        m = LINK.fullmatch(piece)
+        if m:
+            add_hyperlink(par, m.group(1).replace(STAR, '*'), m.group(2),
+                          size)
             continue
         kw = {'bold': bold, 'italic': italic, 'sub': False, 'sup': False,
               'mono': False}
@@ -109,6 +165,8 @@ def add_runs(par, text, labels, size=None, italic=False, bold=False,
             set_font(run, font)
         if size and not kw['mono']:
             run.font.size = Pt(size)
+        if colour is not None:
+            run.font.color.rgb = colour
     return par
 
 
@@ -218,6 +276,73 @@ def png_size(path):
     return struct.unpack('>II', head[16:24])
 
 
+def keep_row_together(row):
+    trpr = row._tr.get_or_add_trPr()
+    el = OxmlElement('w:cantSplit')
+    trpr.append(el)
+
+
+def render_algorithm(doc, block, labels):
+    """('alg', key, title, header lines, numbered lines, footer lines).
+
+    A numbered line is (level, code, comment): code indented by level,
+    comment flush right after a triangle, both with the inline markup.
+    """
+    _, key, title, head, lines, foot = block
+    table = doc.add_table(rows=2, cols=1)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table.autofit = False
+    for row in table.rows:
+        keep_row_together(row)
+        row.cells[0].width = Cm(TEXT_WIDTH_CM)
+    cap = table.cell(0, 0).paragraphs[0]
+    cap.paragraph_format.space_before = Pt(2)
+    cap.paragraph_format.space_after = Pt(2)
+    cap.paragraph_format.keep_with_next = True
+    add_runs(cap, f'**Algorithm {labels["alg:" + key]}.** ' + title, labels,
+             size=9.5)
+    body = table.cell(1, 0)
+    pars = iter([body.paragraphs[0]])
+
+    def new_par(space_after=0.5):
+        par = next(pars, None) or body.add_paragraph()
+        pf = par.paragraph_format
+        pf.space_before = Pt(0)
+        pf.space_after = Pt(space_after)
+        pf.line_spacing = 1.08
+        return par
+
+    for k, text in enumerate(head):
+        par = new_par(3 if k == len(head) - 1 else 0.5)
+        par.paragraph_format.left_indent = Cm(ALG_NUM_CM)
+        par.paragraph_format.first_line_indent = Cm(-ALG_NUM_CM)
+        add_runs(par, text, labels, size=ALG_PT)
+    for n, (level, code, comment) in enumerate(lines, 1):
+        par = new_par()
+        x = ALG_NUM_CM + level * ALG_INDENT_CM
+        pf = par.paragraph_format
+        pf.left_indent = Cm(x)
+        pf.first_line_indent = Cm(-x)
+        stops = pf.tab_stops
+        stops.add_tab_stop(Cm(ALG_NUM_CM - 0.3), WD_TAB_ALIGNMENT.RIGHT)
+        stops.add_tab_stop(Cm(x), WD_TAB_ALIGNMENT.LEFT)
+        stops.add_tab_stop(Cm(ALG_RIGHT_CM), WD_TAB_ALIGNMENT.RIGHT)
+        run = par.add_run(f'\t{n}:\t')
+        run.font.size = Pt(ALG_PT - 2)
+        run.font.color.rgb = GREY
+        add_runs(par, code, labels, size=ALG_PT)
+        if comment:
+            par.add_run('\t')
+            add_runs(par, '▷ ' + comment, labels, size=ALG_PT - 0.5,
+                     italic=True, colour=GREY)
+    for text in foot:
+        par = new_par()
+        par.paragraph_format.space_before = Pt(3)
+        add_runs(par, text, labels, size=ALG_PT - 0.5, colour=GREY)
+    table_borders(table)
+    doc.add_paragraph().paragraph_format.space_after = Pt(2)
+
+
 # --------------------------------------------------------------- blocks
 
 def render(doc, blocks, labels):
@@ -268,7 +393,7 @@ def render(doc, blocks, labels):
             par.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             add_runs(par, b[1], labels)
             if counting:
-                words['body'] += len(resolve(b[1], labels).split())
+                words['body'] += len(visible(b[1], labels).split())
         elif kind == 'quote':
             par = doc.add_paragraph()
             par.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
@@ -283,7 +408,7 @@ def render(doc, blocks, labels):
                 par.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
                 add_runs(par, item, labels)
                 if counting:
-                    words['body'] += len(resolve(item, labels).split())
+                    words['body'] += len(visible(item, labels).split())
         elif kind == 'eq':
             par = doc.add_paragraph()
             stops = par.paragraph_format.tab_stops
@@ -329,28 +454,7 @@ def render(doc, blocks, labels):
             table_borders(table)
             doc.add_paragraph().paragraph_format.space_after = Pt(2)
         elif kind == 'alg':
-            _, key, title, lines = b
-            cap = doc.add_paragraph()
-            cap.paragraph_format.keep_with_next = True
-            add_runs(cap, f'**Algorithm {labels["alg:" + key]}.** ' + title,
-                     labels, size=9.5)
-            table = doc.add_table(rows=1, cols=1)
-            cell = table.cell(0, 0)
-            cell.width = Cm(TEXT_WIDTH_CM)
-            first = True
-            for n, line in enumerate(lines, 1):
-                par = cell.paragraphs[0] if first else cell.add_paragraph()
-                first = False
-                par.paragraph_format.space_after = Pt(0)
-                par.paragraph_format.line_spacing = 1.0
-                lead = f'{n:>2}  ' if line.strip() else ''
-                run = par.add_run(lead)
-                set_font(run, MONO)
-                run.font.size = Pt(8.5)
-                add_runs(par, line.replace(' ', ' '), labels, size=8.5,
-                         font=MONO)
-            table_borders(table)
-            doc.add_paragraph().paragraph_format.space_after = Pt(2)
+            render_algorithm(doc, b, labels)
         elif kind == 'ref':
             par = doc.add_paragraph()
             par.alignment = WD_ALIGN_PARAGRAPH.LEFT
