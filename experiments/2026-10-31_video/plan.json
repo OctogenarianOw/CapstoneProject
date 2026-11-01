@@ -1,0 +1,47 @@
+{
+  "output": "uav_safe_landing_demo.mp4",
+  "parts": [
+    {"kind": "card", "seconds": 6, "lines": [
+      "Energy-feasible UAV exploration over an online registry of safe landing zones",
+      "Demonstration missions: PX4 SITL, Gazebo Harmonic, ROS 2, shown in RViz",
+      "Each flight is shown next to its own energy margin, drawn from the mission log",
+      "Dorian Veloso, Capstone B, University of Technology Sydney, 2026"]},
+    {"kind": "card", "seconds": 10, "lines": [
+      "Reading the picture",
+      "Cells: green landable, light green too close to a refused cell, red refused (slope, roughness, step), grey not yet judged",
+      "Zones of the registry: yellow candidate, green confirmed, blue the take-off point",
+      "Frontiers: cyan admissible, red rejected by C1, blue the target chosen by C2; blue line: the path",
+      "Right: energy left (blue) against what the return and landing need plus the reserve (black); the gap is the margin",
+      "Filmed missions are demonstrations: rendering slows the simulation, so they are charged more energy than the measured ones"]},
+    {"kind": "card", "lines": [
+      "1. A full mission on W3 with C1 and C2",
+      "Town, forest, scrub, rocks; 80 kJ budget, 10 % reserve, α = 0.75; shown four times faster"]},
+    {"kind": "segment", "run": "w3_b3a075", "speed": 4,
+     "title": "W3, C1 + C2, α = 0.75\n80 kJ, reserve 8 kJ, shown ×4"},
+    {"kind": "card", "lines": [
+      "2. The same world without energy reasoning (B0)",
+      "Nearest frontier first: it crosses the invariant, spends its reserve and lands where its energy ends"]},
+    {"kind": "segment", "run": "w3_b0", "speed": 5,
+     "title": "W3, B0: nearest frontier, no energy reasoning\n80 kJ, reserve 8 kJ, shown ×5"},
+    {"kind": "card", "lines": [
+      "3. A fixed return threshold (B1) on W1",
+      "Returns when 30 % of the 16 kJ budget is left: less than the return, the landing and the reserve need"]},
+    {"kind": "segment", "run": "w1_b1", "speed": 1.5,
+     "title": "W1, B1: largest gain, return at 30 %\n16 kJ, reserve 1.6 kJ, shown ×1.5"},
+    {"kind": "card", "lines": [
+      "4. The same world and budget with C1 and C2",
+      "C1 returns when no frontier is admissible any longer: the margin stays positive"]},
+    {"kind": "segment", "run": "w1_b3a075", "speed": 1.5,
+     "title": "W1, C1 + C2, α = 0.75\n16 kJ, reserve 1.6 kJ, shown ×1.5"},
+    {"kind": "card", "lines": [
+      "5. W2: three flat pads 62.5 m apart in a 20° field",
+      "Nearest-frontier exploration without energy reasoning (B0) lands wherever its energy ends"]},
+    {"kind": "segment", "run": "w2_b0", "speed": 3,
+     "title": "W2, B0: nearest frontier, no energy reasoning\n48 kJ, shown ×3"},
+    {"kind": "card", "lines": [
+      "6. W2 with C1 and C2",
+      "It explores around the pad it can reach and comes back to land on it"]},
+    {"kind": "segment", "run": "w2_b3a075", "speed": 3,
+     "title": "W2, C1 + C2, α = 0.75\n48 kJ, reserve 4.8 kJ, shown ×3"}
+  ]
+}

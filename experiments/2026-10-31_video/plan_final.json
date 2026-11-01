@@ -1,0 +1,37 @@
+{
+  "output": "uav_safe_landing_demo_full.mp4",
+  "prefix": "final",
+  "parts": [
+    {"kind": "file", "path": "part_00.mp4"},
+    {"kind": "file", "path": "part_01.mp4"},
+    {"kind": "file", "path": "part_02.mp4"},
+    {"kind": "file", "path": "part_03.mp4"},
+    {"kind": "file", "path": "part_04.mp4"},
+    {"kind": "file", "path": "part_05.mp4"},
+    {"kind": "file", "path": "part_06.mp4"},
+    {"kind": "file", "path": "part_07.mp4"},
+    {"kind": "file", "path": "part_08.mp4"},
+    {"kind": "file", "path": "part_09.mp4"},
+    {"kind": "file", "path": "part_10.mp4"},
+    {"kind": "segment", "run": "w2_b0", "speed": 3, "tag": "v2",
+     "crop": [668, 107, 1000, 878],
+     "title": "W2, B0: nearest frontier, no energy reasoning\n48 kJ, shown ×3"},
+    {"kind": "file", "path": "part_12.mp4"},
+    {"kind": "file", "path": "part_13.mp4"},
+    {"kind": "card", "seconds": 7, "lines": [
+      "7. Losing part of the zone in use (evaluated code)",
+      "A field of crates is dropped on the zone the return flies to, 31 m before it arrives",
+      "The zone survives through its other cells, so no loss is detected:",
+      "the return flies on to its original end and commits the landing among the crates",
+      "A gap found while filming, reported in Section 6.6; shown in real time"]},
+    {"kind": "segment", "run": "w3_depot_4", "speed": 1, "full_axis": true,
+     "from_abs": 196.0, "to_abs": 243.0,
+     "title": "W3, provoked loss, evaluated code\ncrates dropped at t = 209 s, real time"},
+    {"kind": "card", "seconds": 8, "lines": [
+      "What the report measures (210 headless missions, three worlds)",
+      "No mission with C1 violated the invariant: 0 of 150, against 30 of 30 for B0 and 11 of 30 for B1",
+      "The energy C1 charged exceeded the energy measured in 2530 of 2535 transits",
+      "Coverage peaks for α between 0.5 and 0.75; the landing area found grows with α",
+      "D. Veloso, Energy-Feasible UAV Exploration over an Online Registry of Safe Landing Zones, UTS, 2026"]}
+  ]
+}

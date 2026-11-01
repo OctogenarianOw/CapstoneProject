@@ -1,0 +1,426 @@
+{
+ "output": "uav_safe_landing_demo_v2.mp4",
+ "parts": [
+  {
+   "kind": "card",
+   "seconds": 8,
+   "title": "Energy-feasible UAV exploration over an online registry of safe landing zones",
+   "lead": "Demonstration missions: PX4 SITL, Gazebo Harmonic and ROS 2, shown in RViz",
+   "blocks": [
+    {
+     "ul": [
+      "Each flight is shown next to {b|its own energy chart}, drawn from the mission log",
+      "These are {b|demonstrations}, not measurements: the display slows the simulation, so a filmed mission is charged more energy than a measured one"
+     ]
+    },
+    {
+     "p": "Dorian Veloso  ·  Capstone B  ·  University of Technology Sydney  ·  2026",
+     "color": "#a3a19a",
+     "size": 18
+    }
+   ]
+  },
+  {
+   "kind": "card",
+   "seconds": 16,
+   "width": 1560,
+   "title": "Reading the picture",
+   "blocks": [
+    {
+     "cols": [
+      [
+       {
+        "h": "Map cells, left"
+       },
+       {
+        "legend": [
+         [
+          "square:cell",
+          "{cell|Green}: landable"
+         ],
+         [
+          "square:margin",
+          "{margin|Light green}: sound, but too close to a refused cell for the 1.5 m footprint"
+         ],
+         [
+          "square:refused",
+          "{refused|Red}: refused, slope, roughness or step over its threshold"
+         ],
+         [
+          "square:unseen",
+          "{unseen|Grey}: not yet seen well enough to judge"
+         ]
+        ]
+       },
+       {
+        "h": "Landing zones of the registry"
+       },
+       {
+        "legend": [
+         [
+          "disc:cand",
+          "{cand|Yellow}: candidate, seen from one pass"
+         ],
+         [
+          "disc:conf",
+          "{conf|Green}: confirmed, seen from two passes; C1 may rely on it"
+         ],
+         [
+          "disc:takeoff",
+          "{takeoff|Blue}: the take-off point, a provisional zone"
+         ]
+        ]
+       }
+      ],
+      [
+       {
+        "h": "Frontiers and path"
+       },
+       {
+        "legend": [
+         [
+          "square:adm",
+          "{adm|Cyan}: frontier admissible under C1"
+         ],
+         [
+          "square:c1red",
+          "{c1red|Red}: frontier refused by C1, its return would not be affordable"
+         ],
+         [
+          "disc:chosen",
+          "{chosen|Blue}: the target chosen by C2"
+         ],
+         [
+          "line:path",
+          "{path|Blue line}: the planned path"
+         ]
+        ]
+       },
+       {
+        "h": "Energy chart, right"
+       },
+       {
+        "legend": [
+         [
+          "line:left",
+          "{left|Blue}: energy left"
+         ],
+         [
+          "line:need",
+          "{need|Black}: what the return, the landing and the reserve need (I1)"
+         ],
+         [
+          "band:left",
+          "{left|Blue band}: the margin"
+         ],
+         [
+          "band:refused",
+          "{refused|Red band}: margin below zero, the invariant is violated"
+         ]
+        ],
+        "panel": true
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "card",
+   "title": "1.  A full mission on W3 with C1 and C2",
+   "lead": "Town, forest, scrub and rocks over 240 m",
+   "blocks": [
+    {
+     "ul": [
+      "Budget {b|80 kJ}, reserve {b|10 %}, α = 0.75",
+      "{b|C1} keeps a {conf|confirmed} zone within reach at every cycle",
+      "{b|C2} ranks the frontiers C1 admits",
+      "Shown four times faster"
+     ]
+    }
+   ],
+   "orbit": {
+    "world": "w3",
+    "start": 0,
+    "label": "W3 in Gazebo: 240 m of town, road, forest, scrub, rocks and hills"
+   }
+  },
+  {
+   "kind": "segment",
+   "run": "w3_b3a075_v3",
+   "speed": 4,
+   "title": "W3, C1 + C2, α = 0.75\n80 kJ, reserve 8 kJ, shown ×4",
+   "crop": [
+    650,
+    118,
+    1170,
+    898
+   ]
+  },
+  {
+   "kind": "card",
+   "title": "2.  The same world without energy reasoning (B0)",
+   "blocks": [
+    {
+     "ul": [
+      "Nearest frontier first, no energy check",
+      "It crosses the invariant: the {refused|red band} on the chart",
+      "When its energy reaches zero the video stops: {crash|a real battery is empty and the aircraft falls}"
+     ]
+    }
+   ],
+   "orbit": {
+    "world": "w3",
+    "start": 8,
+    "label": "W3 in Gazebo: 240 m of town, road, forest, scrub, rocks and hills"
+   }
+  },
+  {
+   "kind": "segment",
+   "run": "w3_b0_v3",
+   "speed": 5,
+   "crash": true,
+   "title": "W3, B0: nearest frontier, no energy reasoning\n80 kJ, reserve 8 kJ, shown ×5",
+   "crop": [
+    500,
+    87,
+    1060,
+    898
+   ]
+  },
+  {
+   "kind": "card",
+   "title": "3.  A fixed return threshold (B1) on W1",
+   "blocks": [
+    {
+     "ul": [
+      "Largest information gain first",
+      "Returns when {b|30 %} of the 16 kJ budget is left",
+      "Here 30 % is less than the return, the landing and the reserve need: it lands {refused|into its reserve}"
+     ]
+    }
+   ],
+   "orbit": {
+    "world": "w1",
+    "start": 0,
+    "label": "W1 in Gazebo: the 60 m validation world"
+   },
+   "lead": "W1, the 60 m validation world: flat ground, a 3° ramp (landable), a 10° ramp, a rough patch and a 4 m cube"
+  },
+  {
+   "kind": "segment",
+   "run": "w1_b1",
+   "speed": 1.5,
+   "title": "W1, B1: largest gain, return at 30 %\n16 kJ, reserve 1.6 kJ, shown ×1.5"
+  },
+  {
+   "kind": "card",
+   "title": "4.  The same world and budget with C1 and C2",
+   "blocks": [
+    {
+     "ul": [
+      "C1 returns when no frontier is admissible any longer",
+      "The margin stays {left|positive} all the way down"
+     ]
+    }
+   ],
+   "orbit": {
+    "world": "w1",
+    "start": 12,
+    "label": "W1 in Gazebo: the 60 m validation world"
+   }
+  },
+  {
+   "kind": "segment",
+   "run": "w1_b3a075",
+   "speed": 1.5,
+   "title": "W1, C1 + C2, α = 0.75\n16 kJ, reserve 1.6 kJ, shown ×1.5"
+  },
+  {
+   "kind": "card",
+   "title": "5.  W2: three flat pads 62.5 m apart in a 20° field",
+   "blocks": [
+    {
+     "ul": [
+      "B0 again: nearest frontier, no energy reasoning",
+      "It explores far from every pad and {crash|runs out of energy in flight}"
+     ]
+    }
+   ],
+   "orbit": {
+    "world": "w2",
+    "start": 0,
+    "label": "W2 in Gazebo: a 176 m field at 20°, three flat pads"
+   }
+  },
+  {
+   "kind": "segment",
+   "run": "w2_b0",
+   "speed": 3,
+   "tag": "v2",
+   "crash": true,
+   "crop": [
+    668,
+    107,
+    1000,
+    878
+   ],
+   "title": "W2, B0: nearest frontier, no energy reasoning\n48 kJ, shown ×3"
+  },
+  {
+   "kind": "card",
+   "title": "6.  W2 with C1 and C2",
+   "blocks": [
+    {
+     "ul": [
+      "It explores around the pad it can reach",
+      "Then comes back to land on it, with its margin {left|positive}"
+     ]
+    }
+   ],
+   "orbit": {
+    "world": "w2",
+    "start": 8,
+    "label": "W2 in Gazebo: a 176 m field at 20°, three flat pads"
+   }
+  },
+  {
+   "kind": "segment",
+   "run": "w2_b3a075",
+   "speed": 3,
+   "title": "W2, C1 + C2, α = 0.75\n48 kJ, reserve 4.8 kJ, shown ×3"
+  },
+  {
+   "kind": "card",
+   "width": 1440,
+   "title": "7.  The effect of α",
+   "lead": "Same world (W2), same 48 kJ budget, same take-off point: only α changes",
+   "blocks": [
+    {
+     "p": "C2 ranks the frontiers C1 admits by   U = α · {gain|G} + (1 − α) · {marg|M}"
+    },
+    {
+     "ul": [
+      "{gain|G}, information gain: the unknown cells a frontier would reveal",
+      "{marg|M}, energy margin: what would be left after going there and coming back",
+      "α = 0.1 leans on the {marg|margin}, α = 0.9 on the {gain|gain}",
+      "One flight per value: a SITL mission never repeats exactly, so the measured campaign follows the maps"
+     ]
+    }
+   ],
+   "orbit": {
+    "world": "w2",
+    "start": 16,
+    "label": "W2 in Gazebo: a 176 m field at 20°, three flat pads"
+   }
+  },
+  {
+   "kind": "segment",
+   "run": "w2_a010",
+   "speed": 3,
+   "title": "W2, C1 + C2, α = 0.1\n48 kJ, reserve 4.8 kJ, shown ×3",
+   "crop": [
+    610,
+    87,
+    1080,
+    898
+   ]
+  },
+  {
+   "kind": "segment",
+   "run": "w2_a090",
+   "speed": 3,
+   "title": "W2, C1 + C2, α = 0.9\n48 kJ, reserve 4.8 kJ, shown ×3",
+   "crop": [
+    610,
+    87,
+    1080,
+    898
+   ]
+  },
+  {
+   "kind": "compare",
+   "seconds": 16,
+   "runs": [
+    "w2_a010",
+    "w2_a090"
+   ],
+   "title": "Final maps on W2, drawn from the two mission logs at the same scale",
+   "labels": [
+    "α = 0.1, leaning on the {marg|energy margin}",
+    "α = 0.9, leaning on the {gain|information gain}"
+   ],
+   "half_m": 60.0,
+   "png": "alpha_compare_w2.png",
+   "campaign": "experiments/2026-10-23_campaign_w2_final/missions.csv",
+   "campaign_alphas": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+   ],
+   "flown_alphas": [
+    0.1,
+    0.9
+   ],
+   "caption": "About the same area seen, reached in two ways: {marg|α = 0.1} circles its take-off pad in widening loops, {gain|α = 0.9} strikes out on long legs to the far side"
+  },
+  {
+   "kind": "card",
+   "width": 1440,
+   "title": "8.  Losing part of the zone in use (evaluated code)",
+   "blocks": [
+    {
+     "ul": [
+      "A field of crates is dropped on the zone the return flies to, 31 m before it arrives",
+      "The zone survives through its other cells, so {b|no loss is detected}",
+      "The return flies on to its original end and commits the landing {refused|among the crates}",
+      "A gap found while filming, reported in Section 6.6; shown in real time"
+     ]
+    },
+    {
+     "p": "Filmed on 31 October with the heavier display: its map is noisier than in the measured missions",
+     "color": "#a3a19a",
+     "size": 17
+    }
+   ],
+   "orbit": {
+    "world": "w3",
+    "start": 16,
+    "label": "W3 in Gazebo: 240 m of town, road, forest, scrub, rocks and hills"
+   }
+  },
+  {
+   "kind": "segment",
+   "run": "w3_depot_4",
+   "speed": 1,
+   "full_axis": true,
+   "from_abs": 196.0,
+   "to_abs": 243.0,
+   "title": "W3, provoked loss, evaluated code\ncrates dropped at t = 209 s, real time"
+  },
+  {
+   "kind": "card",
+   "seconds": 14,
+   "width": 1480,
+   "title": "What the report measures",
+   "lead": "210 headless missions on three worlds",
+   "blocks": [
+    {
+     "ul": [
+      "No mission with C1 violated the invariant: {conf|0 of 150}, against {refused|30 of 30} for B0 and {refused|11 of 30} for B1",
+      "Every B0 mission ran out of energy in flight: {crash|30 crashes} on a real battery",
+      "The energy C1 charged exceeded the energy measured in {b|2530 of 2535} transits",
+      "Coverage peaks for α between {b|0.5 and 0.75}; the landing area found grows with α"
+     ]
+    },
+    {
+     "p": "D. Veloso, Energy-Feasible UAV Exploration over an Online Registry of Safe Landing Zones, UTS, 2026",
+     "color": "#a3a19a",
+     "size": 17
+    }
+   ]
+  }
+ ]
+}

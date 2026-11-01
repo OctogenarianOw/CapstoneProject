@@ -1,0 +1,21 @@
+{
+ "output": "uav_gazebo_flight_w1.mp4",
+ "prefix": "gzw1",
+ "parts": [
+  {"kind": "card", "seconds": 22,
+   "title": "The simulation itself, seen in Gazebo",
+   "lead": "One W1 mission with C1 and C2, the camera following the aircraft",
+   "orbit": {"world": "w1", "start": 4, "label": "W1 in Gazebo: the 60 m validation world"},
+   "blocks": [
+    {"ul": [
+     "PX4 SITL flies an x500 quadrotor; its downward LiDAR scans the ground ten times a second",
+     "W1: flat ground, a 3° ramp (landable), a 10° ramp, a rough patch and a 4 m cube",
+     "Same mission software as in the main video: α = 0.75, 16 kJ budget, 10 % reserve",
+     "Bottom left, from the mission log: time, state, and the {left|energy left} against what C1 needs (white mark)",
+     "Shown in real time"]},
+    {"p": "A demonstration, not a measurement: the display slows the simulation", "color": "#a3a19a", "size": 17}]},
+  {"kind": "gz_segment", "run": "w1_gazebo", "speed": 1,
+   "hud_title": "W1, C1 + C2, α = 0.75   ·   real time",
+   "crop": [4, 78, 1912, 936]}
+ ]
+}

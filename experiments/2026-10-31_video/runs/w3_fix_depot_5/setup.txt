@@ -1,0 +1,22 @@
+date 2026-10-31T19:09:06+11:00
+duration 900
+px4 parameters reset to the airframe defaults
+world w3
+run map=ros2 run uav_core cloud_world --ros-args -p grid_size:=240.0
+run mon=ros2 run uav_core energy_monitor --ros-args -p capacity_j:=80000.0
+run exe=ros2 run uav_core trajectory_executor
+run mgr=PYTHONPATH=/home/doria/uav_commit/src/uav_core:$PYTHONPATH ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=1.0 -p area_half_m:=80.0 -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-10-31_video/runs/w3_fix_depot_5/missions
+run display=bash open_display_video.sh display.rviz
+run depot=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-24_s95_return/return_depot.py /home/doria/ros2_ws/droneAfter/experiments/2026-10-31_video/runs/w3_fix_depot_5/missions --out /home/doria/ros2_ws/droneAfter/experiments/2026-10-31_video/runs/w3_fix_depot_5/depot.jsonl
+run clock=python3 /home/doria/ros2_ws/droneAfter/experiments/2026-10-22_p5_stable_clock/clock_watch.py
+run watch=sleep 20; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 8; touch stop
+git 3242f0545125bd1b13a14e7f8bd1e9f1b6cbfd26
+ M docs/report/build_report.py
+ M docs/report/content_a.py
+ M docs/report/content_b.py
+ M docs/report/report_draft_v1.docx
+?? docs/report/report_draft_v2.docx
+?? docs/report/~$port_draft_v2.docx
+?? experiments/2026-10-31_report_analyses/
+?? experiments/2026-10-31_video/
+?? nul

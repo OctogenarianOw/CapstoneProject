@@ -1,0 +1,19 @@
+{
+ "output": "uav_gazebo_flight.mp4",
+ "parts": [
+  {"kind": "card",
+   "title": "The simulation itself, seen in Gazebo",
+   "lead": "One W3 mission with C1 and C2, the camera following the aircraft",
+   "orbit": {"world": "w3", "start": 4, "label": "W3 in Gazebo: 240 m of town, road, forest, scrub, rocks and hills"},
+   "blocks": [
+    {"ul": [
+     "PX4 SITL flies an x500 quadrotor; its downward LiDAR scans the ground ten times a second",
+     "Same mission software as in the main video: α = 0.75, 80 kJ budget, 10 % reserve",
+     "Bottom left, from the mission log: time, state, and the {left|energy left} against what C1 needs (white mark)",
+     "Shown twice as fast"]},
+    {"p": "A demonstration, not a measurement: the display slows the simulation", "color": "#a3a19a", "size": 17}]},
+  {"kind": "gz_segment", "run": "w3_gazebo_3", "speed": 2,
+   "hud_title": "W3, C1 + C2, α = 0.75   ·   shown ×2",
+   "crop": [4, 78, 1912, 936]}
+ ]
+}
