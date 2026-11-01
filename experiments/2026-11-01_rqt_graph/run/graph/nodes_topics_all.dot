@@ -1,0 +1,255 @@
+digraph graphname {
+	graph [bb="0,0,1422,335",
+		compound=True,
+		rank=same,
+		rankdir=LR,
+		ranksep=0.2
+	];
+	node [label="\N"];
+	subgraph cluster___fmu {
+		graph [bb="168.49,213,459.49,327",
+			compound=True,
+			label="/fmu",
+			lheight=0.21,
+			lp="313.99,315.5",
+			lwidth=0.46,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		subgraph cluster___fmu__out {
+			graph [bb="176.49,221,451.49,296",
+				compound=True,
+				label="/fmu/out",
+				lheight=0.21,
+				lp="313.99,284.5",
+				lwidth=0.85,
+				rank=same,
+				rankdir=LR,
+				ranksep=0.2,
+				style=bold
+			];
+			t___fmu__out__vehicle_local_position_v1	[URL=topic_3A__fmu__out__vehicle_local_position_v1,
+				height=0.5,
+				label="/fmu/out/vehicle_local_position_v1",
+				pos="313.99,247",
+				shape=box,
+				tooltip="topic:/fmu/out/vehicle_local_position_v1",
+				width=3.5972];
+		}
+	}
+	subgraph cluster___map {
+		graph [bb="654.17,118,792.17,193",
+			compound=True,
+			label="/map",
+			lheight=0.21,
+			lp="723.17,181.5",
+			lwidth=0.50,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		t___map__elevation	[URL=topic_3A__map__elevation,
+			height=0.5,
+			label="/map/elevation",
+			pos="723.17,144",
+			shape=box,
+			tooltip="topic:/map/elevation",
+			width=1.6944];
+	}
+	subgraph cluster___executor {
+		graph [bb="1031.8,58,1204.8,241",
+			compound=True,
+			label="/executor",
+			lheight=0.21,
+			lp="1118.3,229.5",
+			lwidth=0.93,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		t___executor__command	[URL=topic_3A__executor__command,
+			height=0.5,
+			label="/executor/command",
+			pos="1118.3,192",
+			shape=box,
+			tooltip="topic:/executor/command",
+			width=2.1806];
+		t___executor__status	[URL=topic_3A__executor__status,
+			height=0.5,
+			label="/executor/status",
+			pos="1118.3,138",
+			shape=box,
+			tooltip="topic:/executor/status",
+			width=1.8333];
+		t___executor__path	[URL=topic_3A__executor__path,
+			height=0.5,
+			label="/executor/path",
+			pos="1118.3,84",
+			shape=box,
+			tooltip="topic:/executor/path",
+			width=1.6667];
+	}
+	subgraph cluster___x500_slz_0 {
+		graph [bb="163.99,8,463.99,122",
+			compound=True,
+			label="/x500_slz_0",
+			lheight=0.21,
+			lp="313.99,110.5",
+			lwidth=1.14,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		subgraph cluster___x500_slz_0__command {
+			graph [bb="171.99,16,455.99,91",
+				compound=True,
+				label="/x500_slz_0/command",
+				lheight=0.21,
+				lp="313.99,79.5",
+				lwidth=2.17,
+				rank=same,
+				rankdir=LR,
+				ranksep=0.2,
+				style=bold
+			];
+			t___x500_slz_0__command__motor_speed	[URL=topic_3A__x500_slz_0__command__motor_speed,
+				height=0.5,
+				label="/x500_slz_0/command/motor_speed",
+				pos="313.99,42",
+				shape=box,
+				tooltip="topic:/x500_slz_0/command/motor_speed",
+				width=3.7222];
+		}
+	}
+	subgraph cluster___energy {
+		graph [bb="659.67,27,786.67,102",
+			compound=True,
+			label="/energy",
+			lheight=0.21,
+			lp="723.17,90.5",
+			lwidth=0.76,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		t___energy__state	[URL=topic_3A__energy__state,
+			height=0.5,
+			label="/energy/state",
+			pos="723.17,53",
+			shape=box,
+			tooltip="topic:/energy/state",
+			width=1.5417];
+	}
+	subgraph cluster___lidar {
+		graph [bb="254.49,130,373.49,205",
+			compound=True,
+			label="/lidar",
+			lheight=0.21,
+			lp="313.99,193.5",
+			lwidth=0.53,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		t___lidar__points	[URL=topic_3A__lidar__points,
+			height=0.5,
+			label="/lidar/points",
+			pos="313.99,156",
+			shape=box,
+			tooltip="topic:/lidar/points",
+			width=1.4306];
+	}
+	n___exploration_manager	[URL=__exploration_manager,
+		height=0.5,
+		label="/exploration_manager",
+		pos="911.96,141",
+		shape=ellipse,
+		tooltip="/exploration_manager",
+		width=3.1053];
+	t___fmu__out__vehicle_local_position_v1 -> n___exploration_manager	[edgetooltip="Subscription\nnode_name: /exploration_manager\ntopic_name: /fmu/out/vehicle_local_position_v1\nQoS settings\n- reliability: best_effort\n- durability: transient_local\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,881.29,158.44 443.5,245.17 540.81,241 676.95,229.19 792.17,197 820.16,189.18 849.72,175.27 872.35,163.27"];
+	n___cloud_world	[URL=__cloud_world,
+		height=0.5,
+		label="/cloud_world",
+		pos="559.08,156",
+		shape=ellipse,
+		tooltip="/cloud_world",
+		width=1.9318];
+	t___fmu__out__vehicle_local_position_v1 -> n___cloud_world	[edgetooltip="Subscription\nnode_name: /cloud_world\ntopic_name: /fmu/out/vehicle_local_position_v1\nQoS settings\n- reliability: best_effort\n- durability: transient_local\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,529.28,172.46 401.71,228.98 422.45,223.56 444.29,216.9 463.99,209 467.07,207.76 495.53,191.68 520.35,177.55"];
+	n___trajectory_executor	[URL=__trajectory_executor,
+		height=0.5,
+		label="/trajectory_executor",
+		pos="1317.4,165",
+		shape=ellipse,
+		tooltip="/trajectory_executor",
+		width=2.9067];
+	t___fmu__out__vehicle_local_position_v1 -> n___trajectory_executor	[edgetooltip="Subscription\nnode_name: /trajectory_executor\ntopic_name: /fmu/out/vehicle_local_position_v1\nQoS settings\n- reliability: best_effort\n- durability: transient_local\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,1298.6,182.89 443.79,252.74 523.88,255.82 628.99,259 722.17,259 722.17,259 722.17,259 912.96,259 1042.8,259 1082.1,287.67 1204.8,245 1237.9,233.47 1269.8,208.75 1291,189.82"];
+	t___map__elevation -> n___exploration_manager	[edgetooltip="Subscription\nnode_name: /exploration_manager\ntopic_name: /map/elevation\nQoS settings\n- reliability: reliable\n- durability: transient_local\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,800.38,142.78 784.3,143.03 786.26,143 788.24,142.97 790.24,142.94"];
+	t___executor__command -> n___trajectory_executor	[edgetooltip="Subscription\nnode_name: /trajectory_executor\ntopic_name: /executor/command\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,1234.9,176.16 1196.9,181.37 1206.1,180.11 1215.5,178.82 1224.8,177.54"];
+	t___executor__status -> n___exploration_manager	[edgetooltip="Subscription\nnode_name: /exploration_manager\ntopic_name: /executor/status\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,1023.5,139.38 1052.1,138.96 1046.1,139.04 1039.9,139.14 1033.5,139.23"];
+	t___executor__path -> n___trajectory_executor	[edgetooltip="Subscription\nnode_name: /trajectory_executor\ntopic_name: /executor/path\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,1284.2,147.9 1178.5,101.49 1187.4,104.46 1196.4,107.67 1204.8,111 1228.5,120.44 1254.3,132.75 1275,143.23"];
+	n___energy_monitor	[URL=__energy_monitor,
+		height=0.5,
+		label="/energy_monitor",
+		pos="559.08,46",
+		shape=ellipse,
+		tooltip="/energy_monitor",
+		width=2.4192];
+	t___x500_slz_0__command__motor_speed -> n___energy_monitor	[edgetooltip="Subscription\nnode_name: /energy_monitor\ntopic_name: /x500_slz_0/command/motor_speed\nQoS settings\n- reliability: best_effort\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,472.13,44.586 448.27,44.193 452.81,44.268 457.33,44.342 461.8,44.416"];
+	t___energy__state -> n___exploration_manager	[edgetooltip="Subscription\nnode_name: /exploration_manager\ntopic_name: /energy/state\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,874.67,123.9 762.42,71.02 792.21,85.056 833.67,104.59 865.22,119.45"];
+	t___lidar__points -> n___cloud_world	[edgetooltip="Subscription\nnode_name: /cloud_world\ntopic_name: /lidar/points\nQoS settings\n- reliability: best_effort\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,489.5,156 365.65,156 398.47,156 441.88,156 479.16,156"];
+	n___ros_gz_bridge	[URL=__ros_gz_bridge,
+		height=0.5,
+		label="/ros_gz_bridge",
+		pos="77.993,99",
+		shape=ellipse,
+		tooltip="/ros_gz_bridge",
+		width=2.1665];
+	n___ros_gz_bridge -> t___x500_slz_0__command__motor_speed	[edgetooltip="Publisher\nnode_name: /ros_gz_bridge\ntopic_name: /x500_slz_0/command/motor_speed\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,238.99,60.026 132.38,85.994 160.99,79.027 196.88,70.284 229.11,62.431"];
+	n___ros_gz_bridge -> t___lidar__points	[edgetooltip="Publisher\nnode_name: /ros_gz_bridge\ntopic_name: /lidar/points\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,262.23,143.64 132.38,112.01 168.01,120.69 214.95,132.12 252.05,141.16"];
+	n___exploration_manager -> t___executor__command	[edgetooltip="Publisher\nnode_name: /exploration_manager\ntopic_name: /executor/command\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,1045,173.97 973.43,156.09 992.83,160.94 1014.6,166.39 1035.3,171.55"];
+	n___exploration_manager -> t___executor__path	[edgetooltip="Publisher\nnode_name: /exploration_manager\ntopic_name: /executor/path\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,1057.9,100.55 968.78,125.42 993.3,118.59 1022.3,110.49 1048.2,103.27"];
+	n___energy_monitor -> t___energy__state	[edgetooltip="Publisher\nnode_name: /energy_monitor\ntopic_name: /energy/state\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,667.57,50.642 644.45,49.644 648.74,49.829 653.02,50.014 657.24,50.196"];
+	n___cloud_world -> t___map__elevation	[edgetooltip="Publisher\nnode_name: /cloud_world\ntopic_name: /map/elevation\nQoS settings\n- reliability: reliable\n- durability: transient_local\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,662.12,148.45 626.48,151.08 634.87,150.46 643.47,149.83 651.92,149.2"];
+	n___trajectory_executor -> t___executor__status	[edgetooltip="Publisher\nnode_name: /trajectory_executor\ntopic_name: /executor/status\nQoS settings\n- reliability: reliable\n- durability: volatile\n- lifespan: 9223372036854775807 ns\n- deadline: 9223372036854775807 ns\n- liveliness: automatic\n- liveliness_lease_duration: 9223372036854775807 ns\n- avoid_ros_namespace_conventions: False",
+		penwidth=1,
+		pos="e,1184.3,146.92 1234.8,153.83 1221.4,151.99 1207.6,150.1 1194.3,148.28"];
+}

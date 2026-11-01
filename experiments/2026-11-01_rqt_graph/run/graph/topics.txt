@@ -1,0 +1,267 @@
+/clock  [rosgraph_msgs/msg/Clock]
+  publishers  ros_gz_bridge
+  subscribers cloud_world
+/cloud_world  [sensor_msgs/msg/PointCloud2]
+  publishers  cloud_world
+  subscribers none
+/energy/state  [uav_interfaces/msg/EnergyState]
+  publishers  energy_monitor
+  subscribers exploration_manager
+/executor/command  [uav_interfaces/msg/ExecutorCommand]
+  publishers  exploration_manager
+  subscribers trajectory_executor
+/executor/path  [uav_interfaces/msg/PathCommand]
+  publishers  exploration_manager
+  subscribers trajectory_executor
+/executor/status  [uav_interfaces/msg/ExecutorStatus]
+  publishers  trajectory_executor
+  subscribers exploration_manager
+/fmu/in/actuator_motors  [px4_msgs/msg/ActuatorMotors]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/actuator_servos  [px4_msgs/msg/ActuatorServos]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/arming_check_reply_v1  [px4_msgs/msg/ArmingCheckReply]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/aux_global_position_v1  [px4_msgs/msg/AuxGlobalPosition]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/config_control_setpoints  [px4_msgs/msg/VehicleControlMode]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/config_overrides_request_v1  [px4_msgs/msg/ConfigOverrides]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/distance_sensor  [px4_msgs/msg/DistanceSensor]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/fixed_wing_lateral_setpoint  [px4_msgs/msg/FixedWingLateralSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/fixed_wing_longitudinal_setpoint  [px4_msgs/msg/FixedWingLongitudinalSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/goto_setpoint  [px4_msgs/msg/GotoSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/landing_gear  [px4_msgs/msg/LandingGear]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/lateral_control_configuration  [px4_msgs/msg/LateralControlConfiguration]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/longitudinal_control_configuration  [px4_msgs/msg/LongitudinalControlConfiguration]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/manual_control_input  [px4_msgs/msg/ManualControlSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/message_format_request  [px4_msgs/msg/MessageFormatRequest]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/mode_completed  [px4_msgs/msg/ModeCompleted]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/obstacle_distance  [px4_msgs/msg/ObstacleDistance]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/offboard_control_mode  [px4_msgs/msg/OffboardControlMode]
+  publishers  trajectory_executor
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/onboard_computer_status  [px4_msgs/msg/OnboardComputerStatus]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/register_ext_component_request_v2  [px4_msgs/msg/RegisterExtComponentRequest]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/rover_attitude_setpoint  [px4_msgs/msg/RoverAttitudeSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/rover_position_setpoint  [px4_msgs/msg/RoverPositionSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/rover_rate_setpoint  [px4_msgs/msg/RoverRateSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/rover_speed_setpoint  [px4_msgs/msg/RoverSpeedSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/rover_steering_setpoint  [px4_msgs/msg/RoverSteeringSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/rover_throttle_setpoint  [px4_msgs/msg/RoverThrottleSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/sensor_optical_flow  [px4_msgs/msg/SensorOpticalFlow]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/telemetry_status  [px4_msgs/msg/TelemetryStatus]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/trajectory_setpoint  [px4_msgs/msg/TrajectorySetpoint]
+  publishers  trajectory_executor
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/unregister_ext_component  [px4_msgs/msg/UnregisterExtComponent]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_attitude_setpoint_v1  [px4_msgs/msg/VehicleAttitudeSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_command  [px4_msgs/msg/VehicleCommand]
+  publishers  trajectory_executor
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_command_mode_executor  [px4_msgs/msg/VehicleCommand]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_mocap_odometry  [px4_msgs/msg/VehicleOdometry]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_rates_setpoint  [px4_msgs/msg/VehicleRatesSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_thrust_setpoint  [px4_msgs/msg/VehicleThrustSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_torque_setpoint  [px4_msgs/msg/VehicleTorqueSetpoint]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/in/vehicle_visual_odometry  [px4_msgs/msg/VehicleOdometry]
+  publishers  none
+  subscribers _CREATED_BY_BARE_DDS_APP_
+/fmu/out/airspeed_validated_v1  [px4_msgs/msg/AirspeedValidated]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/arming_check_request_v1  [px4_msgs/msg/ArmingCheckRequest]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/battery_status_v1  [px4_msgs/msg/BatteryStatus]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/collision_constraints  [px4_msgs/msg/CollisionConstraints]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/estimator_status_flags  [px4_msgs/msg/EstimatorStatusFlags]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/failsafe_flags  [px4_msgs/msg/FailsafeFlags]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/gimbal_device_attitude_status  [px4_msgs/msg/GimbalDeviceAttitudeStatus]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/home_position_v1  [px4_msgs/msg/HomePosition]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/manual_control_setpoint  [px4_msgs/msg/ManualControlSetpoint]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/message_format_response  [px4_msgs/msg/MessageFormatResponse]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/mode_completed  [px4_msgs/msg/ModeCompleted]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/position_setpoint_triplet  [px4_msgs/msg/PositionSetpointTriplet]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/register_ext_component_reply_v1  [px4_msgs/msg/RegisterExtComponentReply]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/sensor_combined  [px4_msgs/msg/SensorCombined]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/timesync_status  [px4_msgs/msg/TimesyncStatus]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers trajectory_executor
+/fmu/out/transponder_report  [px4_msgs/msg/TransponderReport]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/vehicle_attitude  [px4_msgs/msg/VehicleAttitude]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers cloud_world
+/fmu/out/vehicle_command_ack_v1  [px4_msgs/msg/VehicleCommandAck]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/vehicle_control_mode  [px4_msgs/msg/VehicleControlMode]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/vehicle_global_position  [px4_msgs/msg/VehicleGlobalPosition]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/vehicle_gps_position  [px4_msgs/msg/SensorGps]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/vehicle_land_detected  [px4_msgs/msg/VehicleLandDetected]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/vehicle_local_position_v1  [px4_msgs/msg/VehicleLocalPosition]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers cloud_world, exploration_manager, trajectory_executor
+/fmu/out/vehicle_odometry  [px4_msgs/msg/VehicleOdometry]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/vehicle_status_v4  [px4_msgs/msg/VehicleStatus]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers trajectory_executor
+/fmu/out/vtol_vehicle_status  [px4_msgs/msg/VtolVehicleStatus]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/fmu/out/wind  [px4_msgs/msg/Wind]
+  publishers  _CREATED_BY_BARE_DDS_APP_
+  subscribers none
+/lidar/points  [sensor_msgs/msg/PointCloud2]
+  publishers  ros_gz_bridge
+  subscribers cloud_world
+/map/elevation  [uav_interfaces/msg/ElevationMap]
+  publishers  cloud_world
+  subscribers exploration_manager
+/mission/stop  [std_msgs/msg/Empty]
+  publishers  none
+  subscribers exploration_manager
+/parameter_events  [rcl_interfaces/msg/ParameterEvent]
+  publishers  cloud_world, energy_monitor, exploration_manager, ros_gz_bridge, rqt_graph_capture, trajectory_executor
+  subscribers ros_gz_bridge
+/rosout  [rcl_interfaces/msg/Log]
+  publishers  cloud_world, energy_monitor, exploration_manager, ros_gz_bridge, rqt_graph_capture, trajectory_executor
+  subscribers none
+/viz/classification  [sensor_msgs/msg/PointCloud2]
+  publishers  exploration_manager
+  subscribers none
+/viz/elevation  [sensor_msgs/msg/PointCloud2]
+  publishers  exploration_manager
+  subscribers none
+/viz/frontiers  [visualization_msgs/msg/MarkerArray]
+  publishers  exploration_manager
+  subscribers none
+/viz/landing  [visualization_msgs/msg/MarkerArray]
+  publishers  exploration_manager
+  subscribers none
+/viz/observation  [nav_msgs/msg/OccupancyGrid]
+  publishers  exploration_manager
+  subscribers none
+/viz/path  [nav_msgs/msg/Path]
+  publishers  exploration_manager
+  subscribers none
+/viz/score/roughness  [sensor_msgs/msg/PointCloud2]
+  publishers  exploration_manager
+  subscribers none
+/viz/score/slope  [sensor_msgs/msg/PointCloud2]
+  publishers  exploration_manager
+  subscribers none
+/viz/score/step  [sensor_msgs/msg/PointCloud2]
+  publishers  exploration_manager
+  subscribers none
+/viz/status  [visualization_msgs/msg/Marker]
+  publishers  exploration_manager
+  subscribers none
+/viz/vehicle  [visualization_msgs/msg/Marker]
+  publishers  exploration_manager
+  subscribers none
+/viz/zones  [visualization_msgs/msg/MarkerArray]
+  publishers  exploration_manager
+  subscribers none
+/x500_slz_0/command/motor_speed  [actuator_msgs/msg/Actuators]
+  publishers  ros_gz_bridge
+  subscribers energy_monitor

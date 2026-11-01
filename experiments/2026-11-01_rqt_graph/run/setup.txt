@@ -1,0 +1,33 @@
+date 2026-11-01T19:00:59+11:00
+duration 300
+px4 parameters reset to the airframe defaults
+world validation
+run map=ros2 run uav_core cloud_world --ros-args -p grid_size:=100.0
+run mon=ros2 run uav_core energy_monitor --ros-args -p capacity_j:=16000.0
+run exe=ros2 run uav_core trajectory_executor
+run mgr=ros2 run uav_core exploration_manager --ros-args -p mode:=explore -p policy:=c1_c2 -p alpha:=0.75 -p area_half_m:=30.0 -p log_root:=/home/doria/ros2_ws/droneAfter/experiments/2026-11-01_rqt_graph/run/missions
+run graph=until grep -qs NAVIGATING missions/*/events.jsonl; do sleep 1; done; sleep 5; python3 /home/doria/ros2_ws/droneAfter/experiments/2026-11-01_rqt_graph/capture_graph.py /home/doria/ros2_ws/droneAfter/experiments/2026-11-01_rqt_graph/run/graph
+run watch=sleep 20; until grep -qs LANDED missions/*/events.jsonl; do sleep 2; done; sleep 3; touch stop
+git 3242f0545125bd1b13a14e7f8bd1e9f1b6cbfd26
+ M docs/report/build_report.py
+ M docs/report/content_a.py
+ M docs/report/content_b.py
+ M docs/report/report_draft_v1.docx
+ M experiments/2026-10-24_s95_return/figures/f13_B3a100_r13.png
+ M experiments/2026-10-24_s95_return/s95_figure.py
+ M experiments/2026-10-24_thesis_figures/f14_landing_precision.png
+ M experiments/2026-10-24_thesis_figures/f14_landing_precision.py
+ M experiments/2026-10-24_thesis_figures/f1_architecture.png
+ M experiments/2026-10-24_thesis_figures/f1_architecture.py
+ M experiments/2026-10-24_thesis_figures/f8_energy_calibration.png
+ M experiments/2026-10-24_thesis_figures/f8_energy_calibration.py
+ M experiments/2026-10-24_thesis_figures/r1_method_overview.png
+ M experiments/2026-10-24_thesis_figures/r_report_figures.py
+?? docs/report/report_draft_v2.docx
+?? docs/report/report_draft_v3.docx
+?? docs/report/~$port_draft_v2.docx
+?? docs/report/~$port_draft_v3.docx
+?? experiments/2026-10-31_report_analyses/
+?? experiments/2026-10-31_video/
+?? experiments/2026-11-01_rqt_graph/
+?? nul
