@@ -147,7 +147,7 @@ def main():
     bx.set_axis_off()
     bx.set_title('seen from above: the setpoint +, the p95 circle',
                  loc='left', color=INK, fontsize=8.5)
-    fig.suptitle('Landing precision against the footprint (spec P4, S8)',
+    fig.suptitle('Landing precision against the footprint',
                  x=0.01, ha='left', color=INK, fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(OUT, dpi=200)

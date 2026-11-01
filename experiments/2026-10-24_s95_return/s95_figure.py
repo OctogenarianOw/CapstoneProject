@@ -279,7 +279,7 @@ def main():
     fig.legend(handles=handles, loc='lower center', ncol=4, fontsize=7,
                labelcolor=INK2, bbox_to_anchor=(0.5, 0.0))
     name = run.name
-    fig.suptitle(f'W3, S9.5: zone {zone} invalidated during the return, '
+    fig.suptitle(f'W3: zone {zone} invalidated during the return, '
                  f'{name}', x=0.01, ha='left', color=INK, fontsize=10)
     fig.subplots_adjust(left=0.07, right=0.98, top=0.91, bottom=0.2,
                         hspace=0.38, wspace=0.12)

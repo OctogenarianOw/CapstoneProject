@@ -162,7 +162,7 @@ def main():
     for side in ('top', 'right'):
         bx.spines[side].set_visible(False)
     bx.legend(loc='upper right', fontsize=7, labelcolor=INK2)
-    bx.set_title('residuals: why a cost per leg (S10 accepts 10 %)',
+    bx.set_title('residuals: why a cost per leg',
                  loc='left', color=INK)
     fig.suptitle('Energy model, calibration of 19 Oct 2026', x=0.01,
                  ha='left', color=INK, fontsize=10)

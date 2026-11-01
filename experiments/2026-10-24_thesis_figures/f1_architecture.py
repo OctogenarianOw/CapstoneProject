@@ -119,24 +119,24 @@ def main():
     box(ax, 31.5, 47, 18, 10, 'energy_monitor',
         'rotor shaft power from\nthe motor speeds, integrated')
     box(ax, 31.5, 29, 18, 13, 'cloud_world',
-        'lidar to NED (F2), Kalman\nfusion per cell, elevation\n'
-        'grid 100 x 100 m, 1 m')
+        'lidar to NED, Kalman\nfusion per cell, elevation\n'
+        'grid with 1 m cells')
     box(ax, 31.5, 5, 18, 13, 'trajectory_executor',
         'follows the path: 5 m/s,\n3 m/s² ramps, stop at each\n'
         'vertex; take-off, landing')
 
     # Exploration manager, right.
     box(ax, 59, 3, 39, 54, 'exploration_manager, sole decision '
-        'authority (S15)', face=SURFACE, top=True, title_size=8.5, lw=1.3)
+        'authority', face=SURFACE, top=True, title_size=8.5, lw=1.3)
     box(ax, 61, 39, 35, 13, 'world_model',
-        'terrain analysis: slope, roughness, step (Beycimen 2025);\n'
+        'terrain analysis: slope, roughness, step (Beycimen 2026);\n'
         'landing cells and footprint; frontiers (Yamauchi 1997);\n'
         'obstacle map and A* planner', face=NODE_FACE)
     box(ax, 61, 25, 17, 11.5, 'slz_registry',
-        'zones confirmed after\ntwo passes (I4);\nloss detected (S9.5)',
+        'zones confirmed after\ntwo passes (I4);\nloss detected at once',
         contribution=True)
     box(ax, 79.5, 25, 16.5, 11.5, 'energy_model',
-        'E = P t + k d + c n,\ncalibrated (F8)')
+        'E = P t + k d + c n,\ncalibrated on\nrotor shaft power')
     box(ax, 61, 5, 35, 17.5, 'mission_fsm, mission_policy', face=NODE_FACE,
         top=True, title_size=8)
     box(ax, 62.5, 6.5, 15.5, 11.5, 'C1',
@@ -158,8 +158,10 @@ def main():
           dy=0.4)
     arrow(ax, (31.5, 12.5), (20.0, 12.5), 'trajectory_setpoint\n'
           'offboard_control_mode\nvehicle_command', dy=0.8)
-    arrow(ax, (20.0, 8.5), (31.5, 8.5), 'vehicle_status\ntimesync_status',
-          dy=-4.4)
+    # local_position too: the executor tests arrival on it (checked
+    # against the live graph, experiments/2026-11-01_rqt_graph).
+    arrow(ax, (20.0, 8.5), (31.5, 8.5),
+          'vehicle_status\ntimesync_status\nlocal_position', dy=-5.7)
     arrow(ax, (49.5, 52), (59, 52), '/energy/state\n10 Hz')
     arrow(ax, (49.5, 35.5), (59, 35.5), '/map/elevation\n1 Hz')
     arrow(ax, (59, 13.5), (49.5, 13.5), '/executor/path\n/executor/command')
@@ -183,12 +185,12 @@ def main():
                                 boxstyle='round,pad=0,rounding_size=0.5',
                                 facecolor=ACCENT_FACE, edgecolor=ACCENT,
                                 linestyle=(0, (4, 2.5)), lw=1.4))
-    ax.text(8, 62.8, 'contribution (spec 2)', fontsize=7.2, color=INK2,
+    ax.text(8, 62.8, 'contribution of this work', fontsize=7.2, color=INK2,
             va='center')
     ax.add_patch(FancyBboxPatch((25, 61.5), 5, 2.6,
                                 boxstyle='round,pad=0,rounding_size=0.5',
                                 facecolor=NODE_FACE, edgecolor=INK2, lw=1.1))
-    ax.text(31, 62.8, 'state of the art or infrastructure (spec 2.5)',
+    ax.text(31, 62.8, 'established technique or infrastructure',
             fontsize=7.2, color=INK2, va='center')
     fig.suptitle('Architecture: what runs, the flows between nodes, and '
                  'where the contributions sit', x=0.01, ha='left',

@@ -99,7 +99,7 @@ def method_overview():
         'whole 1.5 m footprint\nmust pass')
     box(ax, 76, 32, 23, 13, 'SLZ registry', 'zones matched each cycle;\n'
         'confirmed after two passes\nper cell (I4); loss detected\n'
-        'at the update (S9.5)', contribution=True)
+        'at the update', contribution=True)
     for a, b in ((14, 17.5), (34.5, 38), (54, 57.5), (72.5, 76)):
         arrow(ax, [(a, 38.5), (b, 38.5)])
 
